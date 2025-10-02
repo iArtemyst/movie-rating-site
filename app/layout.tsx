@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Daily Movie Rating",
-  description: "Movie Rating Site by iArtemyst",
+  description: "Daily Movie Rating Site by iArtemyst",
 };
 
 export default function RootLayout({

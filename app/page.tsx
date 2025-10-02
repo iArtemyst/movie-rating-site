@@ -1,13 +1,42 @@
 'use client'
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputSlider from "react-input-slider";
 import { MovieDatabase } from "./movie-database.json";
 
 const importedMovieList = MovieDatabase
 
-interface IMovieInformation
+interface IFullMovieInformation
+{
+  Title: string,
+  Year:number,
+  Rated:string,
+  Released:string,
+  Runtime:string,
+  Genre:string,
+  Director:string,
+  Writer:string,
+  Actors:string,
+  Plot:string,
+  Language:string,
+  Country:string,
+  Awards:string,
+  Poster:string,
+  Ratings:[{"Source":string,"Value":string}],
+  Metascore:number,
+  imdbRating:number,
+  imdbVotes:string,
+  imdbID:string,
+  Type:string,
+  DVD:string,
+  BoxOffice:string,
+  Production:string,
+  Website:string,
+  Response:string
+}
+
+interface ISimplifiedMovieInformation
 {
   movieTitle: string, 
   movieDirector: string, 
@@ -15,9 +44,13 @@ interface IMovieInformation
   movieTopBilled: string, 
   movieSummary: string, 
   moviePosterLink: string,
-  movieRating: number,
+  movieRatingIMDB: number,
+  movieRatingMetascore: number,
+  movieRatingOther1: string,
 }
 
+
+const recentlyUsedMovies : string[] = [];
 
 const textStyleTitle = "text-[24px] font-bold";
 const textStyleSubtitle = "text-[14px] font-semibold"
@@ -28,6 +61,115 @@ const maxRating = 10;
 const middleRating = ((maxRating-minRating)/2);
 
 
+// function ShuffleArrays(array: []) {
+//   const [shuffledArray, setArray] = useState<[]>([])
+  
+//   useEffect(() => {
+//       setArray(shuffle_array(array))
+//   }, []);
+  
+//   function shuffle_array(current_array: []) 
+//   {
+//       const shuffled_array = structuredClone(current_array);
+
+//       for (let i = current_array.length -1; i > 0; i--) {
+//           let j = Math.floor(Math.random() * (i - 1));
+//           [shuffled_array[i], shuffled_array[j]] = [shuffled_array[j], shuffled_array[i]];
+//       }
+
+//       return shuffled_array;
+//   }
+// }
+
+function ShuffleStringArray(array: string[]) 
+  {
+    const shuffled_array = structuredClone(array);
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i - 1));
+        [shuffled_array[i], shuffled_array[j]] = [shuffled_array[j], shuffled_array[i]];
+    }
+    return shuffled_array;
+  }
+
+
+function FilterMovieDatabase() {
+  // let currentMovieSelection = ["test", "test2", "test3"]
+  const copyMovieList = importedMovieList;
+  const tempMovieTitleArray = FilterToTitles();
+  const shuffledMovieTitleArray = ShuffleStringArray(tempMovieTitleArray);
+  // const recentlyUsedMovies : string[] = [];
+
+  function FilterToTitles() {
+    const movieNames : string[] = [];
+      for (let i = copyMovieList.length - 1; i >= 0; i--) {
+        movieNames.push(copyMovieList[i].Title)
+      }
+      return movieNames
+    }
+
+  function SelectThreeMovies() {
+    const tempSlicedArray : string[] = ShuffleStringArray(FilterToTitles()).slice(0,3);
+    let tempMoviesToUseToday : string[] = [];
+    
+    function AddMoviesToTodays() {
+      if (tempMoviesToUseToday.length < 3) {
+        const newMovieArray = ShuffleStringArray(FilterToTitles());
+        let oneMovie = newMovieArray.at(0);
+        if (recentlyUsedMovies.includes(`${oneMovie}`))
+        {
+          console.log("already used" + `${oneMovie}` + " recently")
+          const newMovie = newMovieArray.at(1);
+          oneMovie = newMovie
+          AddMoviesToTodays()
+        }
+        else
+        {
+          tempMoviesToUseToday.push(`${oneMovie}`)
+          console.log("adding " + `${oneMovie}` + " to todays queue")
+          console.log(tempMoviesToUseToday)
+        }
+      }
+      else
+      {
+        console.log("todays movie queue is ready:")
+        console.log(tempMoviesToUseToday)
+      }
+    }
+
+    if (tempMoviesToUseToday.length < 3)
+    {
+      AddMoviesToTodays()
+      // for (let i = tempSlicedArray.length - 1; i >= 0; i--) {
+      //   if (recentlyUsedMovies.includes(tempSlicedArray[i]))
+      //   {
+      //     console.log(`${tempSlicedArray[i]}` + " has been used recently")
+      //     tempSlicedArray.filter(item => item !== tempSlicedArray[i])
+      //     console.log(tempSlicedArray)
+      //     tempMoviesToUseToday = tempSlicedArray
+      //     console.log(tempMoviesToUseToday)
+      //   }
+      //   else 
+      //   {
+      //     console.log(`${tempSlicedArray[i]}` + " has been added to the queue for today")
+      //     tempMoviesToUseToday.push(tempSlicedArray[i])
+      //     recentlyUsedMovies.push(tempSlicedArray[i])
+      //     console.log(tempMoviesToUseToday)
+      //     console.log(recentlyUsedMovies)
+      //   };
+      // }
+    }
+    else
+    {
+      console.log("movie list is set already")
+      console.log(tempMoviesToUseToday)
+    }
+
+  }
+
+  SelectThreeMovies()
+}
+
+
 export default function Home() {
   let [selectedIndex, setSelectedIndex] = useState(0);
   let [currentRating, setCurrentRating] = useState(middleRating)
@@ -35,10 +177,21 @@ export default function Home() {
   let [winner, setWinner] = useState(false)
   let [perfect, setPerfect] = useState(false)
 
-  const handleRatingChange = (e:any) => {
-    console.log("rating value " + e.target.value)
-    setCurrentRating(e.target.value);
-  };
+  function NewMovieTesting() {
+    return (
+      <div className={`bg-gray-50 rounded-2xl px-[1em] py-[.25em]`}>
+        <button onClick={() => FilterMovieDatabase()}>
+          TESTING
+        </button>
+      </div>
+    )
+  }
+
+
+  // const handleRatingChange = (e:any) => {
+  //   console.log("rating value " + e.target.value)
+  //   setCurrentRating(e.target.value);
+  // };
   
   // function SelectMovieToDisplay({index}:{index:number}) {
   //   if (index < testingMovieInfo.length)
@@ -102,13 +255,40 @@ export default function Home() {
     )
   }
 
+  // function RatingSliderDiv2() {
+  //   const [state, setState] = useState({ x: 10 });
+    
+  //   return (
+  //     <div className="flex flex-col items-center my-[16px] gap-[6px]">
+  //       <p className={`text-[20px]`}>
+  //         What do you think this movie is rated?
+  //       </p>
+  //       <div>
+  //         ({state.x})
+  //           <InputSlider axis="x" x={state.x} onChange={setState} />
+  //           <InputSlider
+  //               axis="x"
+  //               x={state.x}
+  //               onChange={
+  //                   ({ x }) =>
+  //                       setState(state => ({ ...state, x }))}/>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
   function RatingSliderDiv() {
+  const handleRatingChange = (e:any) => {
+    console.log("rating value " + e.target.value)
+    setCurrentRating(e.target.value);
+  };
+
     return (
       <div className="flex flex-col items-center my-[16px] gap-[6px]">
         <p className={`text-[20px]`}>
           What do you think this movie is rated?
         </p>
-        <input name="ratingSlider" id="ratingSlider" type="range" min={minRating} max={maxRating} value={currentRating} step={.1} onChange={handleRatingChange} className="w-[960px]"/>
+        <input type="range" name="ratingSlider" id="ratingSlider" min={minRating} max={maxRating} defaultValue={currentRating} step={0.1} onChange={handleRatingChange} className="w-[960px]"/>
         <label htmlFor="ratingSlider">Rating: {currentRating}</label>
       </div>
     )
@@ -285,6 +465,7 @@ export default function Home() {
         <RatingSliderDiv />
         <SubmitRatingButton />
         <ProgressIcons />
+        <NewMovieTesting/>
       </main>
     </div>
   );
