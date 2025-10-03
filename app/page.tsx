@@ -166,7 +166,31 @@ function FilterMovieDatabase() {
 
   }
 
-  SelectThreeMovies()
+
+  function GetRatingFromTitle(title:string) {
+    let tempTitleInfo = importedMovieList.find(movie => movie.Title === title);
+    let titleRatingsArray = tempTitleInfo?.Ratings
+    let imdbRating = titleRatingsArray?.find(rating => rating.Source === "Internet Movie Database")
+    let metascoreRating = titleRatingsArray?.find(rating => rating.Source === "Metacritic")
+    let rottenTomatoesRating = titleRatingsArray?.find(rating => rating.Source === "Rotten Tomatoes")
+    let otherRating = titleRatingsArray?.find(rating => rating.Source !== "Internet Movie Database" && rating.Source !== "Metacritic" && rating.Source !== "Rotten Tomatoes")
+
+    let titleRatings = 
+    {
+        imdb: imdbRating?.Value,
+        metascore: metascoreRating?.Value,
+        rottenTomatoes: rottenTomatoesRating?.Value,
+        other: otherRating?.Value
+    }
+
+    console.log(title)
+    console.log(titleRatings)
+
+    return titleRatings
+  }
+  // SelectThreeMovies()
+
+  GetRatingFromTitle(tempMovieTitleArray.at(0) || "No Movie Found")
 }
 
 
