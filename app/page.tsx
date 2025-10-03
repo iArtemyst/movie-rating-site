@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import Image from "next/image";
@@ -6,11 +7,12 @@ import InputSlider from "react-input-slider";
 import { MovieDatabase } from "./movie-database.json";
 
 const importedMovieList = MovieDatabase
+let currentMovieInfoArray: ISimplifiedMovieInformation[] = [];
 
 interface IFullMovieInformation
 {
   Title: string,
-  Year:number,
+  Year:string,
   Rated:string,
   Released:string,
   Runtime:string,
@@ -23,9 +25,9 @@ interface IFullMovieInformation
   Country:string,
   Awards:string,
   Poster:string,
-  Ratings:[{"Source":string,"Value":string}],
-  Metascore:number,
-  imdbRating:number,
+  Ratings:{"Source":string,"Value":string}[],
+  Metascore:string,
+  imdbRating:string,
   imdbVotes:string,
   imdbID:string,
   Type:string,
@@ -44,13 +46,42 @@ interface ISimplifiedMovieInformation
   movieTopBilled: string, 
   movieSummary: string, 
   moviePosterLink: string,
-  movieRatingIMDB: number,
-  movieRatingMetascore: number,
-  movieRatingOther1: string,
+  movieRatingIMDB: string,
+  movieRatingMetascore: string,
+  movieRatingRottenTomatoes: string,
+  movieRatingOther: string,
 }
 
+const EmptyMovieData: IFullMovieInformation = {
+  Title: "",
+  Year:"",
+  Rated:"",
+  Released:"",
+  Runtime:"",
+  Genre:"",
+  Director:"",
+  Writer:"",
+  Actors:"",
+  Plot:"",
+  Language:"",
+  Country:"",
+  Awards:"",
+  Poster:"",
+  Ratings:[{"Source":"Internet Movie Database","Value":"0/10"},{"Source":"Rotten Tomatoes","Value":"0%"},{"Source":"Metacritic","Value":"0/100"}],
+  Metascore:"",
+  imdbRating:"",
+  imdbVotes:"",
+  imdbID:"",
+  Type:"",
+  DVD:"",
+  BoxOffice:"",
+  Production:"",
+  Website:"",
+  Response:""
+}
 
 const recentlyUsedMovies : string[] = [];
+const tempMovieTitleArray = FilterToTitles(importedMovieList);
 
 const textStyleTitle = "text-[24px] font-bold";
 const textStyleSubtitle = "text-[14px] font-semibold"
@@ -60,26 +91,6 @@ const minRating = 0;
 const maxRating = 10;
 const middleRating = ((maxRating-minRating)/2);
 
-
-// function ShuffleArrays(array: []) {
-//   const [shuffledArray, setArray] = useState<[]>([])
-  
-//   useEffect(() => {
-//       setArray(shuffle_array(array))
-//   }, []);
-  
-//   function shuffle_array(current_array: []) 
-//   {
-//       const shuffled_array = structuredClone(current_array);
-
-//       for (let i = current_array.length -1; i > 0; i--) {
-//           let j = Math.floor(Math.random() * (i - 1));
-//           [shuffled_array[i], shuffled_array[j]] = [shuffled_array[j], shuffled_array[i]];
-//       }
-
-//       return shuffled_array;
-//   }
-// }
 
 function ShuffleStringArray(array: string[]) 
   {
@@ -92,121 +103,138 @@ function ShuffleStringArray(array: string[])
   }
 
 
-function FilterMovieDatabase() {
-  // let currentMovieSelection = ["test", "test2", "test3"]
-  const copyMovieList = importedMovieList;
-  const tempMovieTitleArray = FilterToTitles();
-  const shuffledMovieTitleArray = ShuffleStringArray(tempMovieTitleArray);
-  // const recentlyUsedMovies : string[] = [];
-
-  function FilterToTitles() {
-    const movieNames : string[] = [];
-      for (let i = copyMovieList.length - 1; i >= 0; i--) {
-        movieNames.push(copyMovieList[i].Title)
-      }
-      return movieNames
+function FilterToTitles(data:IFullMovieInformation[]) {
+  const movieNames : string[] = [];
+    for (let i = data.length - 1; i >= 0; i--) {
+      movieNames.push(data[i].Title)
     }
+    return movieNames
+  }
 
-  function SelectThreeMovies() {
-    const tempSlicedArray : string[] = ShuffleStringArray(FilterToTitles()).slice(0,3);
-    let tempMoviesToUseToday : string[] = [];
-    
-    function AddMoviesToTodays() {
-      if (tempMoviesToUseToday.length < 3) {
-        const newMovieArray = ShuffleStringArray(FilterToTitles());
-        let oneMovie = newMovieArray.at(0);
-        if (recentlyUsedMovies.includes(`${oneMovie}`))
-        {
-          console.log("already used" + `${oneMovie}` + " recently")
-          const newMovie = newMovieArray.at(1);
-          oneMovie = newMovie
-          AddMoviesToTodays()
-        }
-        else
-        {
-          tempMoviesToUseToday.push(`${oneMovie}`)
-          console.log("adding " + `${oneMovie}` + " to todays queue")
-          console.log(tempMoviesToUseToday)
-        }
+
+
+function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
+  function GetMovieInfoFromTitle(title: string) {
+    const TitleInfo = data.find(movie => movie.Title === title) || EmptyMovieData;
+    const titleRatingsArray = TitleInfo.Ratings
+    const imdbRating = titleRatingsArray.find(rating => rating.Source === "Internet Movie Database") || EmptyMovieData.Ratings[0]
+    const metascoreRating = titleRatingsArray.find(rating => rating.Source === "Metacritic") || EmptyMovieData.Ratings[1]
+    const rottenTomatoesRating = titleRatingsArray.find(rating => rating.Source === "Rotten Tomatoes") || EmptyMovieData.Ratings[2]
+    const otherRating = titleRatingsArray?.find(rating => rating.Source !== "Internet Movie Database" && rating.Source !== "Metacritic" && rating.Source !== "Rotten Tomatoes")
+    const titleData: ISimplifiedMovieInformation =
+    {
+        movieTitle: title,
+        movieDirector: TitleInfo.Director,
+        moviePosterLink: TitleInfo.Poster,
+        movieReleaseYear: TitleInfo.Year,
+        movieSummary: TitleInfo.Plot,
+        movieTopBilled: TitleInfo.Actors,
+        movieRatingIMDB: imdbRating.Value,
+        movieRatingMetascore: metascoreRating.Value,
+        movieRatingRottenTomatoes: rottenTomatoesRating.Value,
+        movieRatingOther: otherRating?.Value || "No Other Ratings"
+    }
+    return(titleData)
+  }
+
+  function ClearCurrentMovieArray() {
+    if (currentMovieInfoArray.length > 0)
+      {
+        currentMovieInfoArray = []
+      }
+  }
+
+  function AddThreeNewMovies(titleArray: string[]) {
+    ClearCurrentMovieArray()
+    for (let i = 3; i > 0; i--) 
+      {
+        const thisMovieData = GetMovieInfoFromTitle(titleArray[i])
+        currentMovieInfoArray.push(thisMovieData)
+      }
+  }
+
+  AddThreeNewMovies(ShuffleStringArray(tempMovieTitleArray))
+}
+
+function SelectThreeMovies() {
+  // const tempSlicedArray : string[] = ShuffleStringArray(FilterToTitles(importedMovieList)).slice(0,3);
+  const tempMoviesToUseToday : string[] = [];
+  
+  function AddMoviesToTodays() {
+    if (tempMoviesToUseToday.length < 3) {
+      const newMovieArray = ShuffleStringArray(FilterToTitles(importedMovieList));
+      let oneMovie = newMovieArray.at(0);
+      if (recentlyUsedMovies.includes(`${oneMovie}`))
+      {
+        console.log("already used" + `${oneMovie}` + " recently")
+        const newMovie = newMovieArray.at(1);
+        oneMovie = newMovie
+        AddMoviesToTodays()
       }
       else
       {
-        console.log("todays movie queue is ready:")
+        tempMoviesToUseToday.push(`${oneMovie}`)
+        console.log("adding " + `${oneMovie}` + " to todays queue")
         console.log(tempMoviesToUseToday)
       }
     }
-
-    if (tempMoviesToUseToday.length < 3)
-    {
-      AddMoviesToTodays()
-      // for (let i = tempSlicedArray.length - 1; i >= 0; i--) {
-      //   if (recentlyUsedMovies.includes(tempSlicedArray[i]))
-      //   {
-      //     console.log(`${tempSlicedArray[i]}` + " has been used recently")
-      //     tempSlicedArray.filter(item => item !== tempSlicedArray[i])
-      //     console.log(tempSlicedArray)
-      //     tempMoviesToUseToday = tempSlicedArray
-      //     console.log(tempMoviesToUseToday)
-      //   }
-      //   else 
-      //   {
-      //     console.log(`${tempSlicedArray[i]}` + " has been added to the queue for today")
-      //     tempMoviesToUseToday.push(tempSlicedArray[i])
-      //     recentlyUsedMovies.push(tempSlicedArray[i])
-      //     console.log(tempMoviesToUseToday)
-      //     console.log(recentlyUsedMovies)
-      //   };
-      // }
-    }
     else
     {
-      console.log("movie list is set already")
+      console.log("todays movie queue is ready:")
       console.log(tempMoviesToUseToday)
     }
-
   }
 
-
-  function GetRatingFromTitle(title:string) {
-    let tempTitleInfo = importedMovieList.find(movie => movie.Title === title);
-    let titleRatingsArray = tempTitleInfo?.Ratings
-    let imdbRating = titleRatingsArray?.find(rating => rating.Source === "Internet Movie Database")
-    let metascoreRating = titleRatingsArray?.find(rating => rating.Source === "Metacritic")
-    let rottenTomatoesRating = titleRatingsArray?.find(rating => rating.Source === "Rotten Tomatoes")
-    let otherRating = titleRatingsArray?.find(rating => rating.Source !== "Internet Movie Database" && rating.Source !== "Metacritic" && rating.Source !== "Rotten Tomatoes")
-
-    let titleRatings = 
-    {
-        imdb: imdbRating?.Value,
-        metascore: metascoreRating?.Value,
-        rottenTomatoes: rottenTomatoesRating?.Value,
-        other: otherRating?.Value
-    }
-
-    console.log(title)
-    console.log(titleRatings)
-
-    return titleRatings
+  if (tempMoviesToUseToday.length < 3)
+  {
+    AddMoviesToTodays()
   }
-  // SelectThreeMovies()
+  else
+  {
+    console.log("movie list is set already")
+    console.log(tempMoviesToUseToday)
+  }
 
-  GetRatingFromTitle(tempMovieTitleArray.at(0) || "No Movie Found")
 }
+
+function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
+  // let [selectedRating, setSelectedRating] = useState(0)
+  const RatingsArray = 
+  [
+    data.movieRatingIMDB,
+    data.movieRatingMetascore,
+    data.movieRatingRottenTomatoes,
+  ]
+
+  const rolledRatingNumber = Math.floor(Math.random() * (3-0) + 0)
+  console.log(data.movieTitle)
+  console.log(RatingsArray[rolledRatingNumber])
+  return RatingsArray[rolledRatingNumber]
+}
+
 
 
 export default function Home() {
   let [selectedIndex, setSelectedIndex] = useState(0);
-  let [currentRating, setCurrentRating] = useState(middleRating)
-  let [endScreenVisibility, setEndScreenVisibility] = useState(false)
-  let [winner, setWinner] = useState(false)
-  let [perfect, setPerfect] = useState(false)
+  const [currentRating, setCurrentRating] = useState(middleRating)
+  const [endScreenVisibility, setEndScreenVisibility] = useState(false)
+  const [winner, setWinner] = useState(false)
+  const [perfect, setPerfect] = useState(false)
+
 
   function NewMovieTesting() {
     return (
-      <div className={`bg-gray-50 rounded-2xl px-[1em] py-[.25em]`}>
-        <button onClick={() => FilterMovieDatabase()}>
-          TESTING
+      <div>
+      <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
+        <button onClick={() => GenerateNewMovieInfo(importedMovieList)}>
+          NEW MOVIES
         </button>
+      </div>
+      <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
+        <button onClick={() => PickWhichRatingToUse(currentMovieInfoArray[0])}>
+          New Rating
+        </button>
+      </div>
       </div>
     )
   }
@@ -233,18 +261,16 @@ export default function Home() {
     return(
       <div className="grid grid-cols-2 gap-[12px] w-[960px] h-fit self-center">
         <div className="h-fit aspect-[3/4] rounded-[12px] place-content-center flex flex-col self-center">
-          {/* <p className=" w-fit h-fit place-self-center px-[1em] py-[.5em]">
-            poster spot
-          </p> */}
-          <img src={importedMovieList[selectedIndex].Poster}
+          <img src={currentMovieInfoArray[selectedIndex].moviePosterLink}
             alt="movie poster"
-            className={`object-cover rounded-[24px]`}/>
+            className={`object-cover rounded-[24px]`}
+            />
         </div>
 
         <div className="flex flex-col w-full gap-[.5em]">
           <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
             <p className={`${textStyleTitle}`}>
-              {importedMovieList[selectedIndex].Title} ({importedMovieList[selectedIndex].Year})
+              {currentMovieInfoArray[selectedIndex].movieTitle} ({currentMovieInfoArray[selectedIndex].movieReleaseYear})
             </p>
           </div>
 
@@ -253,7 +279,7 @@ export default function Home() {
               Director:
             </p>
             <p className={`${textStyleParagraph}`}>
-              {importedMovieList[selectedIndex].Director}
+              {currentMovieInfoArray[selectedIndex].movieDirector}
             </p>
           </div>
 
@@ -262,7 +288,7 @@ export default function Home() {
               Top Billed:
             </p>
             <p className={`${textStyleParagraph}`}>
-              {importedMovieList[selectedIndex].Actors}
+              {currentMovieInfoArray[selectedIndex].movieTopBilled}
             </p>
           </div>
 
@@ -271,7 +297,7 @@ export default function Home() {
               Summary:
             </p>
             <p className={`${textStyleParagraph}`}>
-              {importedMovieList[selectedIndex].Plot}
+              {currentMovieInfoArray[selectedIndex].movieSummary}
             </p>
           </div>
         </div>
@@ -320,14 +346,14 @@ export default function Home() {
 
   function CompareRatings() {
       console.log(currentRating)
-      console.log(importedMovieList[selectedIndex].imdbRating)
+      console.log(currentMovieInfoArray[selectedIndex].movieRatingIMDB)
 
-      const winRangeMin = (Number(importedMovieList[selectedIndex].imdbRating) - 0.3)
-      const winRangeMax = (Number(importedMovieList[selectedIndex].imdbRating) + 0.3)
+      const winRangeMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) - 0.3)
+      const winRangeMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) + 0.3)
 
       if (currentRating >= winRangeMin && currentRating <= winRangeMax) 
       {
-        if (currentRating == Number(importedMovieList[selectedIndex].imdbRating)) 
+        if (currentRating == Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB)) 
           {
             console.log("Perfectly Rated!")
             setWinner(true)
@@ -368,7 +394,7 @@ export default function Home() {
 
   function NextMovieButton() {
     function NextMovieIndex() {
-      if (selectedIndex < importedMovieList.length-1)
+      if (selectedIndex < currentMovieInfoArray.length-1)
       {
         setSelectedIndex(selectedIndex += 1)
         setEndScreenVisibility(false)
@@ -422,7 +448,7 @@ export default function Home() {
             {`Actual Rating:`}
           </p>
           <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-            {Number(importedMovieList[selectedIndex].imdbRating)}
+            {Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB)}
           </p>
         </div>
       </div>
@@ -481,6 +507,9 @@ export default function Home() {
       </div>
     )
   }
+
+
+  GenerateNewMovieInfo(importedMovieList)
 
   return (
     <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full">
