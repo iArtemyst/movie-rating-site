@@ -91,6 +91,11 @@ const minRating = 0;
 const maxRating = 10;
 const middleRating = ((maxRating-minRating)/2);
 
+let ratingsSelection = 0 // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
+const minRatingArray = [0, 0, 0]
+const maxRatingArray = [10, 100, 100]
+const middleRatingArray = [5, 50, 50]
+
 
 function ShuffleStringArray(array: string[]) 
   {
@@ -197,6 +202,13 @@ function SelectThreeMovies() {
 
 }
 
+function GetRandomInt(min:number, max:number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+
 function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
   // let [selectedRating, setSelectedRating] = useState(0)
   const RatingsArray = 
@@ -206,9 +218,11 @@ function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
     data.movieRatingRottenTomatoes,
   ]
 
-  const rolledRatingNumber = Math.floor(Math.random() * (3-0) + 0)
+  const rolledRatingNumber = GetRandomInt(0, RatingsArray.length)
   console.log(data.movieTitle)
-  console.log(RatingsArray[rolledRatingNumber])
+  console.log("rolled number: " + rolledRatingNumber)
+  console.log("picked rating: " + RatingsArray[rolledRatingNumber])
+  ratingsSelection = rolledRatingNumber;
   return RatingsArray[rolledRatingNumber]
 }
 
@@ -216,10 +230,10 @@ function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
 
 export default function Home() {
   let [selectedIndex, setSelectedIndex] = useState(0);
-  const [currentRating, setCurrentRating] = useState(middleRating)
-  const [endScreenVisibility, setEndScreenVisibility] = useState(false)
-  const [winner, setWinner] = useState(false)
-  const [perfect, setPerfect] = useState(false)
+  const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
+  const [endScreenVisibility, setEndScreenVisibility] = useState(false);
+  const [winner, setWinner] = useState(false);
+  const [perfect, setPerfect] = useState(false);
 
 
   function NewMovieTesting() {
@@ -231,31 +245,13 @@ export default function Home() {
         </button>
       </div>
       <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
-        <button onClick={() => PickWhichRatingToUse(currentMovieInfoArray[0])}>
+        <button onClick={() => PickWhichRatingToUse(currentMovieInfoArray[selectedIndex])}>
           New Rating
         </button>
       </div>
       </div>
     )
   }
-
-
-  // const handleRatingChange = (e:any) => {
-  //   console.log("rating value " + e.target.value)
-  //   setCurrentRating(e.target.value);
-  // };
-  
-  // function SelectMovieToDisplay({index}:{index:number}) {
-  //   if (index < testingMovieInfo.length)
-  //     {
-  //       setSelectedIndex(selectedIndex += 1)
-  //     }
-  //   else
-  //     {
-  //       setSelectedIndex(0)
-  //     }
-  //   return selectedIndex
-  // };
 
   function MovieInfoDiv() {
     return(
@@ -332,13 +328,18 @@ export default function Home() {
     console.log("rating value " + e.target.value)
     setCurrentRating(e.target.value);
   };
+  const movieRatingHubText = [
+    "IMDB (out of 10)",
+    "Metascore (out of 100)",
+    "Rotten Tomatoes (out of 100%)"
+  ]
 
     return (
       <div className="flex flex-col items-center my-[16px] gap-[6px]">
         <p className={`text-[20px]`}>
-          What do you think this movie is rated?
+          What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?
         </p>
-        <input type="range" name="ratingSlider" id="ratingSlider" min={minRating} max={maxRating} defaultValue={currentRating} step={0.1} onChange={handleRatingChange} className="w-[960px]"/>
+        <input type="range" name="ratingSlider" id="ratingSlider" min={minRatingArray[ratingsSelection]} max={maxRatingArray[ratingsSelection]} defaultValue={currentRating} step={0.1} onChange={handleRatingChange} className="w-[960px]"/>
         <label htmlFor="ratingSlider">Rating: {currentRating}</label>
       </div>
     )
@@ -348,14 +349,21 @@ export default function Home() {
       console.log(currentRating)
       console.log(currentMovieInfoArray[selectedIndex].movieRatingIMDB)
 
-      const winRangeMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) - 0.3)
-      const winRangeMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) + 0.3)
+      const winRangeIMDBMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) - 0.4)
+      const winRangeIMDBMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) + 0.4)
+      const winRangeMetascoreMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingMetascore) - 4)
+      const winRangeMetascoreMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingMetascore) + 4)
+      const winRangeRottenTomatoesMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes) - 4)
+      const winRangeRottenTomatoesMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes) + 4)
 
-      if (currentRating >= winRangeMin && currentRating <= winRangeMax) 
+      const minRatingArray = [winRangeIMDBMin, winRangeMetascoreMin, winRangeRottenTomatoesMin];
+      const maxRatingArray = [winRangeIMDBMax, winRangeMetascoreMax, winRangeRottenTomatoesMax];
+
+      if (currentRating >= minRatingArray[ratingsSelection] && currentRating <= maxRatingArray[ratingsSelection]) 
       {
-        if (currentRating == Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB)) 
+        if (currentRating == Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB || currentMovieInfoArray[selectedIndex].movieRatingMetascore || currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes)) 
           {
-            console.log("Perfectly Rated!")
+            console.log("Exact Rating!")
             setWinner(true)
             setPerfect(true)
             setEndScreenVisibility(true)
@@ -433,6 +441,13 @@ export default function Home() {
   }
 
   function CompareRatingText() {
+    const currentMovieRatingArray = 
+    [
+      currentMovieInfoArray[selectedIndex].movieRatingIMDB,
+      currentMovieInfoArray[selectedIndex].movieRatingMetascore,
+      currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes,
+    ]
+    
     return (
       <div className="w-fit h-fit self-center flex flex-col">
         <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
@@ -448,7 +463,7 @@ export default function Home() {
             {`Actual Rating:`}
           </p>
           <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-            {Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB)}
+            {Number(currentMovieRatingArray[ratingsSelection])}
           </p>
         </div>
       </div>
