@@ -1,22 +1,24 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React from "react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { InputSliderProps } from "react-input-slider";
-import InputSlider from "react-input-slider";
 import { MovieDatabase } from "./movie-database.json";
 
 const importedMovieList = MovieDatabase
 const recentlyUsedMovies : string[] = [];
-const tempMovieTitleArray = FilterToTitles(importedMovieList);
+const tempMovieTitleArray: string[] = FilterToTitles(importedMovieList);
 const minRatingArray = [0, 0, 0]
 const maxRatingArray = [10, 100, 100]
 const middleRatingArray = [5, 50, 50]
 const textStyleTitle = "text-[24px] font-bold";
 const textStyleSubtitle = "text-[14px] font-semibold"
 const textStyleParagraph = "text-[16px]"
+const movieRatingHubText = [
+  "IMDB (out of 10)",
+  "Metascore (out of 100)",
+  "Rotten Tomatoes (out of 100%)"
+]
 
 let currentMovieInfoArray: ISimplifiedMovieInformation[] = [];
 let ratingsSelection = 0 // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
@@ -95,14 +97,14 @@ const EmptyMovieData: IFullMovieInformation = {
 //------------------------------------------------------------------------
 
 function ShuffleStringArray(array: string[]) 
-  {
-    const shuffled_array = structuredClone(array);
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i - 1));
-        [shuffled_array[i], shuffled_array[j]] = [shuffled_array[j], shuffled_array[i]];
-    }
-    return shuffled_array;
+{
+  const shuffled_array = structuredClone(array);
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i - 1));
+      [shuffled_array[i], shuffled_array[j]] = [shuffled_array[j], shuffled_array[i]];
   }
+  return shuffled_array;
+}
 
 function GetRandomInt(min:number, max:number) {
   min = Math.ceil(min);
@@ -114,11 +116,12 @@ function GetRandomInt(min:number, max:number) {
 
 function FilterToTitles(data:IFullMovieInformation[]) {
   const movieNames : string[] = [];
-    for (let i = data.length - 1; i >= 0; i--) {
-      movieNames.push(data[i].Title)
-    }
-    return movieNames
+  for (let i = data.length - 1; i >= 0; i--) {
+    movieNames.push(data[i].Title)
   }
+
+  return movieNames
+}
 
 function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
   const RatingsArray = 
@@ -136,9 +139,8 @@ function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
   return RatingsArray[rolledRatingNumber]
 }
 
-function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
-  function GetMovieInfoFromTitle(title: string) {
-    const TitleInfo = data.find(movie => movie.Title === title) || EmptyMovieData;
+function GetMovieInfoFromTitle(title: string) {
+    const TitleInfo = MovieDatabase.find(movie => movie.Title === title) || EmptyMovieData;
     const titleRatingsArray = TitleInfo.Ratings
     const imdbRating = titleRatingsArray.find(rating => rating.Source === "Internet Movie Database") || EmptyMovieData.Ratings[0]
     const metascoreRating = titleRatingsArray.find(rating => rating.Source === "Metacritic") || EmptyMovieData.Ratings[1]
@@ -160,23 +162,24 @@ function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
     return(titleData)
   }
 
-  function ClearCurrentMovieArray() {
+function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
+  
+
+  function AddThreeNewMovies(titleArray: string[]) {
     if (currentMovieInfoArray.length > 0)
       {
         currentMovieInfoArray = []
       }
-  }
 
-  function AddThreeNewMovies(titleArray: string[]) {
-    ClearCurrentMovieArray()
+    const tempShuffledList = ShuffleStringArray(FilterToTitles(importedMovieList))
+
     for (let i = 3; i > 0; i--) 
       {
-        const thisMovieData = GetMovieInfoFromTitle(titleArray[i])
+        const thisMovieData = GetMovieInfoFromTitle(tempShuffledList[i])
         currentMovieInfoArray.push(thisMovieData)
       }
+    console.log(currentMovieInfoArray)
   }
-
-  AddThreeNewMovies(ShuffleStringArray(tempMovieTitleArray))
 }
 
 function SelectThreeMovies() {
@@ -224,303 +227,237 @@ function SelectThreeMovies() {
 
 
 export default function Home() {
-  let [selectedIndex, setSelectedIndex] = useState(0);
+  const [currentMovies, setCurrentMovies] = useState([GetMovieInfoFromTitle(MovieDatabase[0].Title), GetMovieInfoFromTitle(MovieDatabase[1].Title), GetMovieInfoFromTitle(MovieDatabase[2].Title)]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [endScreenVisibility, setEndScreenVisibility] = useState(false);
   const [winner, setWinner] = useState(false);
   const [perfect, setPerfect] = useState(false);
 
 
-  function NewMovieTesting() {
-    return (
-      <div>
-      <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
-        <button onClick={() => GenerateNewMovieInfo(importedMovieList)}>
-          NEW MOVIES
-        </button>
-      </div>
-      <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
-        <button onClick={() => PickWhichRatingToUse(currentMovieInfoArray[selectedIndex])}>
-          New Rating
-        </button>
-      </div>
-      </div>
-    )
-  }
-
-  function MovieInfoDiv() {
-    return(
-      <div className="grid grid-cols-2 gap-[12px] w-[960px] h-fit self-center">
-        <div className="h-fit aspect-[3/4] rounded-[12px] place-content-center flex flex-col self-center">
-          <img src={currentMovieInfoArray[selectedIndex].moviePosterLink}
-            alt="movie poster"
-            className={`object-cover rounded-[24px]`}
-            />
-        </div>
-
-        <div className="flex flex-col w-full gap-[.5em]">
-          <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
-            <p className={`${textStyleTitle}`}>
-              {currentMovieInfoArray[selectedIndex].movieTitle} ({currentMovieInfoArray[selectedIndex].movieReleaseYear})
-            </p>
-          </div>
-
-          <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
-            <p className={`${textStyleSubtitle}`}>
-              Director:
-            </p>
-            <p className={`${textStyleParagraph}`}>
-              {currentMovieInfoArray[selectedIndex].movieDirector}
-            </p>
-          </div>
-
-          <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
-            <p className={`${textStyleSubtitle}`}>
-              Top Billed:
-            </p>
-            <p className={`${textStyleParagraph}`}>
-              {currentMovieInfoArray[selectedIndex].movieTopBilled}
-            </p>
-          </div>
-
-          <div className=" w-full h-full place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]">
-            <p className={`${textStyleSubtitle}`}>
-              Summary:
-            </p>
-            <p className={`${textStyleParagraph}`}>
-              {currentMovieInfoArray[selectedIndex].movieSummary}
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  function RatingSliderDiv2() {
-    const [tempCurrentRating, setTempCurrentRating] = useState({x: middleRatingArray[ratingsSelection]});
-    const [state, setState] = useState({ x: 10 });
-
-    const handleRatingChange = (e:any) => {
-    console.log("rating value " + e.target.value)
-    setTempCurrentRating(e.target.value);
-  };
-
-    const test: InputSliderProps['styles'] = {
-      track: {
-        backgroundColor: '#ddd',
-      }
-    };
-    const movieRatingHubText = [
-      "IMDB (out of 10)",
-      "Metascore (out of 100)",
-      "Rotten Tomatoes (out of 100%)"
-    ]
-    
-    return (
-      <div className="flex flex-col items-center my-[16px] gap-[6px]">
-        <p className={`text-[20px]`}>
-          `What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?`
-        </p>
+    function NewMovieTesting() {
+      return (
         <div>
-          <InputSlider styles={test} axis="x" x={tempCurrentRating.x} onChange={handleRatingChange} />
-          {/* <InputSlider styles={test} axis="x" x={tempCurrentRating.x} /> */}
-          <p>`Rating {tempCurrentRating.x}`</p>
+        <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
+          <button onClick={() => GenerateNewMovieInfo(importedMovieList)}>
+            NEW MOVIES
+          </button>
         </div>
-      </div>
-    )
-  }
+        <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
+          <button onClick={() => PickWhichRatingToUse(currentMovies[selectedIndex])}>
+            New Rating
+          </button>
+        </div>
+        </div>
+      )
+    }
 
-  function RatingSliderDiv() {
-  const handleRatingChange = (e:any) => {
-    // console.log("rating value " + e.target.value)
-    setCurrentRating(e.target.value);
-  };
-  const [tempCurrentRating, setTempCurrentRating] = useState(middleRatingArray[ratingsSelection]);
-  const handleConsoleLogOnChange = (e:any) => {
-    console.log("rating value " + e.target.value)
-    // setCurrentRating(e.target.value);
-  };
+    function MovieInfoDiv() {
+      return(
+        <div className="grid grid-cols-2 gap-[12px] w-[960px] h-fit self-center">
+          <div className="h-fit aspect-[3/4] rounded-[12px] place-content-center flex flex-col self-center">
+            <img src={currentMovies[selectedIndex].moviePosterLink}
+              alt="movie poster"
+              className={`object-cover rounded-[24px]`}
+              />
+          </div>
 
+          <div className="flex flex-col w-full gap-[.5em]">
+            <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
+              <p className={textStyleTitle}>
+                {currentMovies[selectedIndex].movieTitle} ({currentMovies[selectedIndex].movieReleaseYear})
+              </p>
+            </div>
 
-  const movieRatingHubText = [
-    "IMDB (out of 10)",
-    "Metascore (out of 100)",
-    "Rotten Tomatoes (out of 100%)"
-  ]
+            <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
+              <p className={`${textStyleSubtitle}`}>
+                Director:
+              </p>
+              <p className={`${textStyleParagraph}`}>
+                {currentMovies[selectedIndex].movieDirector}
+              </p>
+            </div>
 
-    return (
-      <div className="flex flex-col items-center my-[16px] gap-[6px]">
-        <p className={`text-[20px]`}>
-          What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?
-        </p>
-        <input type="range" name="ratingSlider" id="ratingSlider" min={minRatingArray[ratingsSelection]} max={maxRatingArray[ratingsSelection]} defaultValue={middleRatingArray[ratingsSelection]} step={0.1} onChange={handleConsoleLogOnChange} className="w-[960px]"/>
-        <label htmlFor="ratingSlider">Rating: {currentRating}</label>
-      </div>
-    )
-  }
+            <div className={`w-full h-fit place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]`}>
+              <p className={`${textStyleSubtitle}`}>
+                Top Billed:
+              </p>
+              <p className={`${textStyleParagraph}`}>
+                {currentMovies[selectedIndex].movieTopBilled}
+              </p>
+            </div>
 
-  function CompareRatings() {
-      console.log(currentRating)
-      console.log(currentMovieInfoArray[selectedIndex].movieRatingIMDB)
+            <div className=" w-full h-full place-self-center px-[1em] py-[.5em] bg-[#FFFFFF10] rounded-[1em]">
+              <p className={`${textStyleSubtitle}`}>
+                Summary:
+              </p>
+              <p className={`${textStyleParagraph}`}>
+                {currentMovies[selectedIndex].movieSummary}
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    }
 
-      const winRangeIMDBMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) - 0.4)
-      const winRangeIMDBMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB) + 0.4)
-      const winRangeMetascoreMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingMetascore) - 4)
-      const winRangeMetascoreMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingMetascore) + 4)
-      const winRangeRottenTomatoesMin = (Number(currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes) - 4)
-      const winRangeRottenTomatoesMax = (Number(currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes) + 4)
+    function CompareRatings() {
+        console.log(currentRating)
+        console.log(currentMovies[selectedIndex].movieRatingIMDB)
 
-      const minRatingArray = [winRangeIMDBMin, winRangeMetascoreMin, winRangeRottenTomatoesMin];
-      const maxRatingArray = [winRangeIMDBMax, winRangeMetascoreMax, winRangeRottenTomatoesMax];
+        const winRangeIMDBMin = (Number(currentMovies[selectedIndex].movieRatingIMDB) - 0.4)
+        const winRangeIMDBMax = (Number(currentMovies[selectedIndex].movieRatingIMDB) + 0.4)
+        const winRangeMetascoreMin = (Number(currentMovies[selectedIndex].movieRatingMetascore) - 4)
+        const winRangeMetascoreMax = (Number(currentMovies[selectedIndex].movieRatingMetascore) + 4)
+        const winRangeRottenTomatoesMin = (Number(currentMovies[selectedIndex].movieRatingRottenTomatoes) - 4)
+        const winRangeRottenTomatoesMax = (Number(currentMovies[selectedIndex].movieRatingRottenTomatoes) + 4)
 
-      if (currentRating >= minRatingArray[ratingsSelection] && currentRating <= maxRatingArray[ratingsSelection]) 
-      {
-        if (currentRating == Number(currentMovieInfoArray[selectedIndex].movieRatingIMDB || currentMovieInfoArray[selectedIndex].movieRatingMetascore || currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes)) 
+        const minRatingArray = [winRangeIMDBMin, winRangeMetascoreMin, winRangeRottenTomatoesMin];
+        const maxRatingArray = [winRangeIMDBMax, winRangeMetascoreMax, winRangeRottenTomatoesMax];
+
+        if (currentRating >= minRatingArray[ratingsSelection] && currentRating <= maxRatingArray[ratingsSelection]) 
+        {
+          if (currentRating == Number(currentMovies[selectedIndex].movieRatingIMDB || currentMovies[selectedIndex].movieRatingMetascore || currentMovies[selectedIndex].movieRatingRottenTomatoes)) 
           {
             console.log("Exact Rating!")
             setWinner(true)
             setPerfect(true)
             setEndScreenVisibility(true)
           }
-        else 
+          else 
           {
             console.log("Close Enough")
             setWinner(true)
             setPerfect(false)
             setEndScreenVisibility(true)
           }
-      }
-      else 
-      { 
-        console.log("Not Close Enough!")
-        setWinner(false)
-        setEndScreenVisibility(true)
-      };
-  }
+        }
+        else 
+        { 
+          console.log("Not Close Enough!")
+          setWinner(false)
+          setEndScreenVisibility(true)
+        };
+    }
 
-  function SubmitRatingButton() {    
-    function CompareRatingText() {
-      const currentMovieRatingArray = 
-      [
-        currentMovieInfoArray[selectedIndex].movieRatingIMDB,
-        currentMovieInfoArray[selectedIndex].movieRatingMetascore,
-        currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes,
-      ]
+    function SubmitRatingButton() {    
+      function CompareRatingText() {
+        const currentMovieRatingArray = 
+        [
+          currentMovies[selectedIndex].movieRatingIMDB,
+          currentMovies[selectedIndex].movieRatingMetascore,
+          currentMovies[selectedIndex].movieRatingRottenTomatoes,
+        ]
+        
+        return (
+          <div className="w-fit h-fit self-center flex flex-col">
+            <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
+              <p className="text-[14px] align-middle">
+                {`Your Rating:`}
+              </p>
+              <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#FFFF00]"} text-[18px] font-bold align-middle`}>
+                {currentRating}
+              </p>
+            </div>
+            <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
+              <p className="text-[14px] align-middle">
+                {`Actual Rating:`}
+              </p>
+              <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
+                {Number(currentMovies[ratingsSelection])}
+              </p>
+            </div>
+          </div>
+        )
+      }
+
+      function CloseEnoughDiv() {
+        return (
+          <FullBlockerDiv>
+            <div className={`${perfect ? "bg-[#00ad5c] text-white" : "bg-[#62656b]"} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060]`}>
+              <div className="w-full h-full p-[24px] flex flex-col place-content-center">
+                {
+                  perfect ?
+                  <p className="self-center text-[24px] font-bold">BRILLIANTLY DONE!</p>
+                  :
+                  <p className="self-center text-[24px] font-bold">CLOSE ENOUGH, I GUESS</p>
+                }
+                <CompareRatingText />
+                <NextMovieButton />
+              </div>
+              <ExitThisDivButton/>
+            </div>
+          </FullBlockerDiv>
+        )
+      }
+
+      function LosingDiv(){
+        return (
+          <FullBlockerDiv>
+            <div className="absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] bg-[#923f3f] rounded-[12px] shadow-[2px_2px_12px_#00000060]">
+              <div className="w-full h-full p-[24px] flex flex-col place-content-center">
+                <p className="self-center text-[24px] font-bold">NO THAT IS WRONG</p>
+                <CompareRatingText />
+                <NextMovieButton />
+              </div>
+              <ExitThisDivButton/>
+            </div>
+          </FullBlockerDiv>
+        )
+      }
       
       return (
-        <div className="w-fit h-fit self-center flex flex-col">
-          <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
-            <p className="text-[14px] align-middle">
-              {`Your Rating:`}
-            </p>
-            <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#FFFF00]"} text-[18px] font-bold align-middle`}>
-              {currentRating}
-            </p>
+        <>
+          <div onClick={() => CompareRatings()} className="w-[196px] h-[64px] my-[12px] self-center place-content-center cursor-pointer bg-[#fafafa] hover:bg-[#dfdfdf] rounded-[1em] hover:scale-[98%] active:scale-[96%]">
+              <p className="text-center text-black font-bold">SUBMIT RATING</p>
           </div>
-          <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
-            <p className="text-[14px] align-middle">
-              {`Actual Rating:`}
-            </p>
-            <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-              {Number(currentMovieRatingArray[ratingsSelection])}
-            </p>
-          </div>
-        </div>
+          {
+            endScreenVisibility && winner && ( <CloseEnoughDiv /> )
+          }
+          {
+            endScreenVisibility && !winner && ( <LosingDiv /> )
+          }
+        </>
       )
     }
 
-    function CloseEnoughDiv() {
-      return (
-        <FullBlockerDiv>
-          <div className={`${perfect ? "bg-[#00ad5c] text-white" : "bg-[#62656b]"} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060]`}>
-            <div className="w-full h-full p-[24px] flex flex-col place-content-center">
-              {
-                perfect ?
-                <p className="self-center text-[24px] font-bold">BRILLIANTLY DONE!</p>
-                :
-                <p className="self-center text-[24px] font-bold">CLOSE ENOUGH, I GUESS</p>
-              }
-              <CompareRatingText />
-              <NextMovieButton />
-            </div>
-            <ExitThisDivButton/>
-          </div>
-        </FullBlockerDiv>
-      )
-    }
-
-    function LosingDiv(){
-      return (
-        <FullBlockerDiv>
-          <div className="absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] bg-[#923f3f] rounded-[12px] shadow-[2px_2px_12px_#00000060]">
-            <div className="w-full h-full p-[24px] flex flex-col place-content-center">
-              <p className="self-center text-[24px] font-bold">NO THAT IS WRONG</p>
-              <CompareRatingText />
-              <NextMovieButton />
-            </div>
-            <ExitThisDivButton/>
-          </div>
-        </FullBlockerDiv>
-      )
-    }
-    
-    return (
-      <>
-        <div onClick={() => CompareRatings()} className="w-[196px] h-[64px] my-[12px] self-center place-content-center cursor-pointer bg-[#fafafa] hover:bg-[#dfdfdf] rounded-[1em] hover:scale-[98%] active:scale-[96%]">
-            <p className="text-center text-black font-bold">SUBMIT RATING</p>
-        </div>
+    function NextMovieButton() {
+      function NextMovieIndex() {
+        if (selectedIndex < currentMovies.length - 1)
         {
-          endScreenVisibility && winner && ( <CloseEnoughDiv /> )
+          setSelectedIndex(selectedIndex + 1)
+          setEndScreenVisibility(false)
         }
+        else
         {
-          endScreenVisibility && !winner && ( <LosingDiv /> )
+          setSelectedIndex(0)
+          setEndScreenVisibility(false)
         }
-      </>
-    )
-  }
-
-  function NextMovieButton() {
-    function NextMovieIndex() {
-      if (selectedIndex < currentMovieInfoArray.length-1)
-      {
-        setSelectedIndex(selectedIndex += 1)
-        setEndScreenVisibility(false)
       }
-      else
-      {
-        setSelectedIndex(selectedIndex = 0)
-        setEndScreenVisibility(false)
-      }
-    }
-    
-    return (
-      <div className="h-[96px] flex flex-row place-content-center">
-        <div onClick={() => NextMovieIndex()} className={`w-[128px] h-[48px] bg-[#fafafa] hover:bg-[#dfdfdf] hover:scale-[98%] active:scale-[96%] cursor-pointer rounded-[12px] grid place-content-center my-[.5em] self-end`}>
-          <p className="place-self-center h-fit font-bold text-black">NEXT MOVIE</p>
+      
+      return (
+        <div className="h-[96px] flex flex-row place-content-center">
+          <div onClick={() => NextMovieIndex()} className={`w-[128px] h-[48px] bg-[#fafafa] hover:bg-[#dfdfdf] hover:scale-[98%] active:scale-[96%] cursor-pointer rounded-[12px] grid place-content-center my-[.5em] self-end`}>
+            <p className="place-self-center h-fit font-bold text-black">NEXT MOVIE</p>
+          </div>
         </div>
-      </div>
-    )
-  }
-
+      )
+    }
 
   function ExitThisDivButton() {
-    return (
-      <div className="w-fit h-fit text-[12px] text-black font-bold bg-[#fafafa] hover:bg-[#dfdfdf] rounded-full px-[1em] py-[.5em] absolute right-0 top-0 m-[.5em] hover:scale-[98%] cursor-pointer" onClick={() => setEndScreenVisibility(false)}>
-        <p className="">X</p>
-      </div>
-    )
+      return (
+        <div className="w-fit h-fit text-[12px] text-black font-bold bg-[#fafafa] hover:bg-[#dfdfdf] rounded-full px-[1em] py-[.5em] absolute right-0 top-0 m-[.5em] hover:scale-[98%] cursor-pointer" onClick={() => setEndScreenVisibility(false)}>
+          <p className="">X</p>
+        </div>
+      )
   }
 
   function FullBlockerDiv({children}:{children:any}) {
-    return (
-      <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#00000050]`}>
-        {children}
-      </div>
-    )
+      return (
+        <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#00000050]`}>
+          {children}
+        </div>
+      )
   }
-
-
-
 
   function ProgressIcons() {
     function CircleIcon({index}:{index:number}) {
@@ -538,14 +475,22 @@ export default function Home() {
     )
   }
 
-
-  GenerateNewMovieInfo(importedMovieList)
-
   return (
     <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full">
       <main className="flex flex-col items-center self-center">
         <MovieInfoDiv/>
-        <RatingSliderDiv2 />
+        <div className="flex flex-col items-center my-[16px] gap-[6px]">
+          <p className={`text-[20px]`}>
+            What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?
+          </p>
+          <input type="range" name="ratingSlider" id="ratingSlider" 
+                  min={minRatingArray[ratingsSelection]} 
+                  max={maxRatingArray[ratingsSelection]}
+                  step={0.1}
+                  value={currentRating}
+                  onChange={(e) => setCurrentRating(e.target.value)}/>
+          <label htmlFor="ratingSlider">Rating: {currentRating}</label>
+        </div>
         <SubmitRatingButton />
         <ProgressIcons />
         <NewMovieTesting/>
