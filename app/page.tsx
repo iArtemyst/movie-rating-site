@@ -1,13 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
+import React from "react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { InputSliderProps } from "react-input-slider";
 import InputSlider from "react-input-slider";
 import { MovieDatabase } from "./movie-database.json";
 
 const importedMovieList = MovieDatabase
+const recentlyUsedMovies : string[] = [];
+const tempMovieTitleArray = FilterToTitles(importedMovieList);
+const minRatingArray = [0, 0, 0]
+const maxRatingArray = [10, 100, 100]
+const middleRatingArray = [5, 50, 50]
+const textStyleTitle = "text-[24px] font-bold";
+const textStyleSubtitle = "text-[14px] font-semibold"
+const textStyleParagraph = "text-[16px]"
+
 let currentMovieInfoArray: ISimplifiedMovieInformation[] = [];
+let ratingsSelection = 0 // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
 
 interface IFullMovieInformation
 {
@@ -80,22 +92,7 @@ const EmptyMovieData: IFullMovieInformation = {
   Response:""
 }
 
-const recentlyUsedMovies : string[] = [];
-const tempMovieTitleArray = FilterToTitles(importedMovieList);
-
-const textStyleTitle = "text-[24px] font-bold";
-const textStyleSubtitle = "text-[14px] font-semibold"
-const textStyleParagraph = "text-[16px]"
-
-const minRating = 0;
-const maxRating = 10;
-const middleRating = ((maxRating-minRating)/2);
-
-let ratingsSelection = 0 // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
-const minRatingArray = [0, 0, 0]
-const maxRatingArray = [10, 100, 100]
-const middleRatingArray = [5, 50, 50]
-
+//------------------------------------------------------------------------
 
 function ShuffleStringArray(array: string[]) 
   {
@@ -107,6 +104,13 @@ function ShuffleStringArray(array: string[])
     return shuffled_array;
   }
 
+function GetRandomInt(min:number, max:number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+//------------------------------------------------------------------------
 
 function FilterToTitles(data:IFullMovieInformation[]) {
   const movieNames : string[] = [];
@@ -116,7 +120,21 @@ function FilterToTitles(data:IFullMovieInformation[]) {
     return movieNames
   }
 
+function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
+  const RatingsArray = 
+  [
+    data.movieRatingIMDB,
+    data.movieRatingMetascore,
+    data.movieRatingRottenTomatoes,
+  ]
 
+  const rolledRatingNumber = GetRandomInt(0, RatingsArray.length)
+  console.log(data.movieTitle)
+  console.log("rolled number: " + rolledRatingNumber)
+  console.log("picked rating: " + RatingsArray[rolledRatingNumber])
+  ratingsSelection = rolledRatingNumber;
+  return RatingsArray[rolledRatingNumber]
+}
 
 function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
   function GetMovieInfoFromTitle(title: string) {
@@ -202,30 +220,7 @@ function SelectThreeMovies() {
 
 }
 
-function GetRandomInt(min:number, max:number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
-
-
-function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
-  // let [selectedRating, setSelectedRating] = useState(0)
-  const RatingsArray = 
-  [
-    data.movieRatingIMDB,
-    data.movieRatingMetascore,
-    data.movieRatingRottenTomatoes,
-  ]
-
-  const rolledRatingNumber = GetRandomInt(0, RatingsArray.length)
-  console.log(data.movieTitle)
-  console.log("rolled number: " + rolledRatingNumber)
-  console.log("picked rating: " + RatingsArray[rolledRatingNumber])
-  ratingsSelection = rolledRatingNumber;
-  return RatingsArray[rolledRatingNumber]
-}
-
+//------------------------------------------------------------------------
 
 
 export default function Home() {
@@ -301,33 +296,52 @@ export default function Home() {
     )
   }
 
-  // function RatingSliderDiv2() {
-  //   const [state, setState] = useState({ x: 10 });
+  function RatingSliderDiv2() {
+    const [tempCurrentRating, setTempCurrentRating] = useState({x: middleRatingArray[ratingsSelection]});
+    const [state, setState] = useState({ x: 10 });
+
+    const handleRatingChange = (e:any) => {
+    console.log("rating value " + e.target.value)
+    setTempCurrentRating(e.target.value);
+  };
+
+    const test: InputSliderProps['styles'] = {
+      track: {
+        backgroundColor: '#ddd',
+      }
+    };
+    const movieRatingHubText = [
+      "IMDB (out of 10)",
+      "Metascore (out of 100)",
+      "Rotten Tomatoes (out of 100%)"
+    ]
     
-  //   return (
-  //     <div className="flex flex-col items-center my-[16px] gap-[6px]">
-  //       <p className={`text-[20px]`}>
-  //         What do you think this movie is rated?
-  //       </p>
-  //       <div>
-  //         ({state.x})
-  //           <InputSlider axis="x" x={state.x} onChange={setState} />
-  //           <InputSlider
-  //               axis="x"
-  //               x={state.x}
-  //               onChange={
-  //                   ({ x }) =>
-  //                       setState(state => ({ ...state, x }))}/>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+    return (
+      <div className="flex flex-col items-center my-[16px] gap-[6px]">
+        <p className={`text-[20px]`}>
+          `What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?`
+        </p>
+        <div>
+          <InputSlider styles={test} axis="x" x={tempCurrentRating.x} onChange={handleRatingChange} />
+          {/* <InputSlider styles={test} axis="x" x={tempCurrentRating.x} /> */}
+          <p>`Rating {tempCurrentRating.x}`</p>
+        </div>
+      </div>
+    )
+  }
 
   function RatingSliderDiv() {
   const handleRatingChange = (e:any) => {
-    console.log("rating value " + e.target.value)
+    // console.log("rating value " + e.target.value)
     setCurrentRating(e.target.value);
   };
+  const [tempCurrentRating, setTempCurrentRating] = useState(middleRatingArray[ratingsSelection]);
+  const handleConsoleLogOnChange = (e:any) => {
+    console.log("rating value " + e.target.value)
+    // setCurrentRating(e.target.value);
+  };
+
+
   const movieRatingHubText = [
     "IMDB (out of 10)",
     "Metascore (out of 100)",
@@ -339,7 +353,7 @@ export default function Home() {
         <p className={`text-[20px]`}>
           What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?
         </p>
-        <input type="range" name="ratingSlider" id="ratingSlider" min={minRatingArray[ratingsSelection]} max={maxRatingArray[ratingsSelection]} defaultValue={currentRating} step={0.1} onChange={handleRatingChange} className="w-[960px]"/>
+        <input type="range" name="ratingSlider" id="ratingSlider" min={minRatingArray[ratingsSelection]} max={maxRatingArray[ratingsSelection]} defaultValue={middleRatingArray[ratingsSelection]} step={0.1} onChange={handleConsoleLogOnChange} className="w-[960px]"/>
         <label htmlFor="ratingSlider">Rating: {currentRating}</label>
       </div>
     )
@@ -385,6 +399,71 @@ export default function Home() {
   }
 
   function SubmitRatingButton() {    
+    function CompareRatingText() {
+      const currentMovieRatingArray = 
+      [
+        currentMovieInfoArray[selectedIndex].movieRatingIMDB,
+        currentMovieInfoArray[selectedIndex].movieRatingMetascore,
+        currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes,
+      ]
+      
+      return (
+        <div className="w-fit h-fit self-center flex flex-col">
+          <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
+            <p className="text-[14px] align-middle">
+              {`Your Rating:`}
+            </p>
+            <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#FFFF00]"} text-[18px] font-bold align-middle`}>
+              {currentRating}
+            </p>
+          </div>
+          <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
+            <p className="text-[14px] align-middle">
+              {`Actual Rating:`}
+            </p>
+            <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
+              {Number(currentMovieRatingArray[ratingsSelection])}
+            </p>
+          </div>
+        </div>
+      )
+    }
+
+    function CloseEnoughDiv() {
+      return (
+        <FullBlockerDiv>
+          <div className={`${perfect ? "bg-[#00ad5c] text-white" : "bg-[#62656b]"} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060]`}>
+            <div className="w-full h-full p-[24px] flex flex-col place-content-center">
+              {
+                perfect ?
+                <p className="self-center text-[24px] font-bold">BRILLIANTLY DONE!</p>
+                :
+                <p className="self-center text-[24px] font-bold">CLOSE ENOUGH, I GUESS</p>
+              }
+              <CompareRatingText />
+              <NextMovieButton />
+            </div>
+            <ExitThisDivButton/>
+          </div>
+        </FullBlockerDiv>
+      )
+    }
+
+    function LosingDiv(){
+      return (
+        <FullBlockerDiv>
+          <div className="absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] bg-[#923f3f] rounded-[12px] shadow-[2px_2px_12px_#00000060]">
+            <div className="w-full h-full p-[24px] flex flex-col place-content-center">
+              <p className="self-center text-[24px] font-bold">NO THAT IS WRONG</p>
+              <CompareRatingText />
+              <NextMovieButton />
+            </div>
+            <ExitThisDivButton/>
+          </div>
+        </FullBlockerDiv>
+      )
+    }
+    
     return (
       <>
         <div onClick={() => CompareRatings()} className="w-[196px] h-[64px] my-[12px] self-center place-content-center cursor-pointer bg-[#fafafa] hover:bg-[#dfdfdf] rounded-[1em] hover:scale-[98%] active:scale-[96%]">
@@ -440,71 +519,7 @@ export default function Home() {
     )
   }
 
-  function CompareRatingText() {
-    const currentMovieRatingArray = 
-    [
-      currentMovieInfoArray[selectedIndex].movieRatingIMDB,
-      currentMovieInfoArray[selectedIndex].movieRatingMetascore,
-      currentMovieInfoArray[selectedIndex].movieRatingRottenTomatoes,
-    ]
-    
-    return (
-      <div className="w-fit h-fit self-center flex flex-col">
-        <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
-          <p className="text-[14px] align-middle">
-            {`Your Rating:`}
-          </p>
-          <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#FFFF00]"} text-[18px] font-bold align-middle`}>
-            {currentRating}
-          </p>
-        </div>
-        <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em]">
-          <p className="text-[14px] align-middle">
-            {`Actual Rating:`}
-          </p>
-          <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-            {Number(currentMovieRatingArray[ratingsSelection])}
-          </p>
-        </div>
-      </div>
-    )
-  }
 
-
-  function CloseEnoughDiv() {
-    return (
-      <FullBlockerDiv>
-        <div className={`${perfect ? "bg-[#00ad5c] text-white" : "bg-[#62656b]"} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060]`}>
-          <div className="w-full h-full p-[24px] flex flex-col place-content-center">
-            {
-              perfect ?
-              <p className="self-center text-[24px] font-bold">BRILLIANTLY DONE!</p>
-              :
-              <p className="self-center text-[24px] font-bold">CLOSE ENOUGH, I GUESS</p>
-            }
-            <CompareRatingText />
-            <NextMovieButton />
-          </div>
-          <ExitThisDivButton/>
-        </div>
-      </FullBlockerDiv>
-    )
-  }
-
-  function LosingDiv(){
-    return (
-      <FullBlockerDiv>
-        <div className="absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] bg-[#923f3f] rounded-[12px] shadow-[2px_2px_12px_#00000060]">
-          <div className="w-full h-full p-[24px] flex flex-col place-content-center">
-            <p className="self-center text-[24px] font-bold">NO THAT IS WRONG</p>
-            <CompareRatingText />
-            <NextMovieButton />
-          </div>
-          <ExitThisDivButton/>
-        </div>
-      </FullBlockerDiv>
-    )
-  }
 
 
   function ProgressIcons() {
@@ -530,7 +545,7 @@ export default function Home() {
     <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full">
       <main className="flex flex-col items-center self-center">
         <MovieInfoDiv/>
-        <RatingSliderDiv />
+        <RatingSliderDiv2 />
         <SubmitRatingButton />
         <ProgressIcons />
         <NewMovieTesting/>
