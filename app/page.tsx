@@ -363,7 +363,7 @@ export default function Home() {
                 {`Actual Rating:`}
               </p>
               <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-                {Number(currentMovies[ratingsSelection])}
+                {(currentMovieRatingArray[ratingsSelection])}
               </p>
             </div>
           </div>
@@ -488,7 +488,7 @@ export default function Home() {
                   max={maxRatingArray[ratingsSelection]}
                   step={0.1}
                   value={currentRating}
-                  onChange={(e) => setCurrentRating(e.target.value)}/>
+                  onChange={(e) => setCurrentRating(parseFloat(e.target.value))}/>
           <label htmlFor="ratingSlider">Rating: {currentRating}</label>
         </div>
         <SubmitRatingButton />
