@@ -123,20 +123,10 @@ function FilterToTitles(data:IFullMovieInformation[]) {
   return movieNames
 }
 
-function PickWhichRatingToUse(data:ISimplifiedMovieInformation) {
-  const RatingsArray = 
-  [
-    data.movieRatingIMDB,
-    data.movieRatingMetascore,
-    data.movieRatingRottenTomatoes,
-  ]
-
-  const rolledRatingNumber = GetRandomInt(0, RatingsArray.length)
-  console.log(data.movieTitle)
-  console.log("rolled number: " + rolledRatingNumber)
-  console.log("picked rating: " + RatingsArray[rolledRatingNumber])
+function PickWhichRatingToUse() {
+  const rolledRatingNumber = GetRandomInt(0, 3)
+  console.log("New Rating Selected: " + movieRatingHubText[rolledRatingNumber])
   ratingsSelection = rolledRatingNumber;
-  return RatingsArray[rolledRatingNumber]
 }
 
 function GetMovieInfoFromTitle(title: string) {
@@ -163,8 +153,6 @@ function GetMovieInfoFromTitle(title: string) {
   }
 
 function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
-  
-
   function AddThreeNewMovies(titleArray: string[]) {
     if (currentMovieInfoArray.length > 0)
       {
@@ -244,7 +232,7 @@ export default function Home() {
           </button>
         </div>
         <div className={`bg-gray-50 rounded-2xl mt-[.5em] text-black px-[1em] py-[.25em] hover:scale-[98%] active:scale-[96%]`}>
-          <button onClick={() => PickWhichRatingToUse(currentMovies[selectedIndex])}>
+          <button onClick={() => PickWhichRatingToUse()}>
             New Rating
           </button>
         </div>
@@ -253,6 +241,7 @@ export default function Home() {
     }
 
     function MovieInfoDiv() {
+      
       return(
         <div className="grid grid-cols-2 gap-[12px] w-[960px] h-fit self-center">
           <div className="h-fit aspect-[3/4] rounded-[12px] place-content-center flex flex-col self-center">
@@ -301,22 +290,35 @@ export default function Home() {
     }
 
     function CompareRatings() {
-        console.log(currentRating)
-        console.log(currentMovies[selectedIndex].movieRatingIMDB)
+        const currentMovieRatingArray = 
+        [
+          currentMovies[selectedIndex].movieRatingIMDB,
+          currentMovies[selectedIndex].movieRatingMetascore,
+          currentMovies[selectedIndex].movieRatingRottenTomatoes,
+        ]
 
-        const winRangeIMDBMin = (Number(currentMovies[selectedIndex].movieRatingIMDB) - 0.4)
-        const winRangeIMDBMax = (Number(currentMovies[selectedIndex].movieRatingIMDB) + 0.4)
-        const winRangeMetascoreMin = (Number(currentMovies[selectedIndex].movieRatingMetascore) - 4)
-        const winRangeMetascoreMax = (Number(currentMovies[selectedIndex].movieRatingMetascore) + 4)
-        const winRangeRottenTomatoesMin = (Number(currentMovies[selectedIndex].movieRatingRottenTomatoes) - 4)
-        const winRangeRottenTomatoesMax = (Number(currentMovies[selectedIndex].movieRatingRottenTomatoes) + 4)
+        const trimmedRatingsArray = [
+          currentMovieRatingArray[0].slice(0,3),
+          currentMovieRatingArray[1].slice(0,3),
+          currentMovieRatingArray[2].slice(0,3)
+        ]
+
+        const winRangeIMDBMin = (Number(trimmedRatingsArray[0]) - 0.4)
+        const winRangeIMDBMax = (Number(trimmedRatingsArray[0]) + 0.4)
+        const winRangeMetascoreMin = (Number(trimmedRatingsArray[1]) - 4)
+        const winRangeMetascoreMax = (Number(trimmedRatingsArray[1]) + 4)
+        const winRangeRottenTomatoesMin = (Number(trimmedRatingsArray[2]) - 4)
+        const winRangeRottenTomatoesMax = (Number(trimmedRatingsArray[2]) + 4)
 
         const minRatingArray = [winRangeIMDBMin, winRangeMetascoreMin, winRangeRottenTomatoesMin];
         const maxRatingArray = [winRangeIMDBMax, winRangeMetascoreMax, winRangeRottenTomatoesMax];
 
+        console.log(currentRating)
+        console.log(trimmedRatingsArray[selectedIndex])
+
         if (currentRating >= minRatingArray[ratingsSelection] && currentRating <= maxRatingArray[ratingsSelection]) 
         {
-          if (currentRating == Number(currentMovies[selectedIndex].movieRatingIMDB || currentMovies[selectedIndex].movieRatingMetascore || currentMovies[selectedIndex].movieRatingRottenTomatoes)) 
+          if (currentRating == Number(trimmedRatingsArray[selectedIndex])) 
           {
             console.log("Exact Rating!")
             setWinner(true)
@@ -347,6 +349,12 @@ export default function Home() {
           currentMovies[selectedIndex].movieRatingMetascore,
           currentMovies[selectedIndex].movieRatingRottenTomatoes,
         ]
+
+        const trimmedRatingsArray = [
+          currentMovieRatingArray[0].slice(0,3),
+          currentMovieRatingArray[1].slice(0,3),
+          currentMovieRatingArray[2].slice(0,3)
+        ]
         
         return (
           <div className="w-fit h-fit self-center flex flex-col">
@@ -363,7 +371,7 @@ export default function Home() {
                 {`Actual Rating:`}
               </p>
               <p className={`${perfect ? "text-[#FFFFFF]" : "text-[#00ff6a]"} text-[18px] font-bold align-middle `}>
-                {(currentMovieRatingArray[ratingsSelection])}
+                {(trimmedRatingsArray[ratingsSelection])}
               </p>
             </div>
           </div>
@@ -422,6 +430,7 @@ export default function Home() {
 
     function NextMovieButton() {
       function NextMovieIndex() {
+        PickWhichRatingToUse()
         if (selectedIndex < currentMovies.length - 1)
         {
           setSelectedIndex(selectedIndex + 1)
