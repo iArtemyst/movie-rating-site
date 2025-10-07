@@ -118,7 +118,7 @@ function ShuffleStringArray(array: string[])
 function GetRandomInt(min:number, max:number) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 //------------------------------------------------------------------------
@@ -162,21 +162,19 @@ function GetMovieInfoFromTitle(title: string) {
   }
 
 function GenerateNewMovieInfo(data:IFullMovieInformation[]) {
-  function AddThreeNewMovies(titleArray: string[]) {
-    if (currentMovieInfoArray.length > 0)
-      {
-        currentMovieInfoArray = []
-      }
+  if (currentMovieInfoArray.length > 0)
+    {
+      currentMovieInfoArray = []
+    }
 
-    const tempShuffledList = ShuffleStringArray(FilterToTitles(importedMovieList))
+  const tempShuffledList = ShuffleStringArray(FilterToTitles(importedMovieList))
 
-    for (let i = 3; i > 0; i--) 
-      {
-        const thisMovieData = GetMovieInfoFromTitle(tempShuffledList[i])
-        currentMovieInfoArray.push(thisMovieData)
-      }
-    console.log(currentMovieInfoArray)
-  }
+  for (let i = 3; i > 0; i--) 
+    {
+      const thisMovieData = GetMovieInfoFromTitle(tempShuffledList[i])
+      currentMovieInfoArray.push(thisMovieData)
+    }
+  console.log(currentMovieInfoArray)
 }
 
 function SelectThreeMovies() {
@@ -224,19 +222,38 @@ function SelectThreeMovies() {
 
 
 export default function Home() {
-  const [currentMovies, setCurrentMovies] = useState([GetMovieInfoFromTitle(MovieDatabase[0].Title), GetMovieInfoFromTitle(MovieDatabase[1].Title), GetMovieInfoFromTitle(MovieDatabase[2].Title)]);
+  const [currentMovies, setCurrentMovies] = useState([GetMovieInfoFromTitle(MovieDatabase[12].Title), GetMovieInfoFromTitle(MovieDatabase[8].Title), GetMovieInfoFromTitle(MovieDatabase[15].Title)]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [endScreenVisibility, setEndScreenVisibility] = useState(false);
-  const [moreMovies, setMoreMovies] = useState(true)
+  const [moreMovies, setMoreMovies] = useState(true);
   const [winner, setWinner] = useState(false);
   const [perfect, setPerfect] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   const stepAmount = [
     0.1,
     1,
     1,
   ]
+
+  function ShowMovieRatingInfo() {
+    PickWhichRatingToUse()
+    setCurrentRating(middleRatingArray[ratingsSelection])
+    setShowIntro(false)
+  }
+
+
+  function LandingDiv() {
+    return(
+      <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#00000040] z-10 flex justify-center flex-col`}>
+        
+          <button onClick={() => ShowMovieRatingInfo()} className="bg-blue-700 w-fit max-w-[360px] h-fit text-white py-[2em] px-[3em] rounded-full hover:scale-[95%] active:scale-[90%] self-center">
+            <p className="font-bold text-balance text-[24px]">CLICK TO BEGIN RATING MOVIES</p>
+          </button>
+      </div>
+    )
+  }
 
 
     // function NewMovieTesting() {
@@ -462,9 +479,19 @@ export default function Home() {
     function NoMoreMoviesToday() {
       return (
         <FullBlockerDiv>
-          <div className="w-[50%] h-[30%] bg-gray-800 absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] rounded-[1em] justify-center flex flex-col text-[24px] font-bold">
-            <p className="self-center">NO MORE MOVIES TODAY</p>
-            <p className="self-center">COME BACK TOMORROW!</p>
+          <div className="w-[50%] h-[30%] bg-gray-800 absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] rounded-[1em] justify-center flex flex-col text-[16px] font-bold">
+            <p className="self-center">NO MORE MOVIES TODAY, COME BACK TOMORROW!</p>
+            <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em] text-[24px]">
+              <p>
+                {`Your Score Today:`}
+              </p>
+              <p>
+                {Number(dailyPlayerPoints)}
+              </p>
+            </div>
+            <button onClick={() => window.location.reload()} className="bg-blue-700 w-fit h-fit py-[.5em] px-[1em] rounded-full hover:scale-[95%] active:scale-[90%] self-center mt-[1em]">
+              Refresh Page
+            </button>
           </div>
         </FullBlockerDiv>
       )
@@ -509,7 +536,7 @@ export default function Home() {
 
   function FullBlockerDiv({children}:{children:any}) {
       return (
-        <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#00000050]`}>
+        <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#00000080] z-10`}>
           {children}
         </div>
       )
@@ -535,8 +562,11 @@ export default function Home() {
   return (
     <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full">
       <main className="flex flex-col items-center self-center">
-        <MovieInfoDiv/>
-        <div className="flex flex-col items-center w-full my-[16px] gap-[6px]">
+
+        {showIntro && <LandingDiv />}
+        <>
+        {!showIntro && <MovieInfoDiv/> }
+        {!showIntro && <div className="flex flex-col items-center w-full my-[16px] gap-[6px]">
           <p className={`text-[20px]`}>
             What do you think this movie is rated on {movieRatingHubText[ratingsSelection]}?
           </p>
@@ -551,10 +581,12 @@ export default function Home() {
                                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[170%]"/>
           <label htmlFor="ratingSlider">Rating: {currentRating}</label>
         </div>
-        <SubmitRatingButton />
-        <ProgressIcons />
-        { !moreMovies && <NoMoreMoviesToday/> }
+        }
+        {!showIntro && <SubmitRatingButton /> }
+        {!showIntro && <ProgressIcons /> }
+        {!moreMovies && <NoMoreMoviesToday/> }
         {/* <NewMovieTesting/> */}
+        </>
       </main>
     </div>
   );
