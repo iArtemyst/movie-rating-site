@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MovieDatabase } from "./movie-database.json";
+import test from "node:test";
 
 const importedMovieList = MovieDatabase;
 const recentlyUsedMovies : string[] = [];
@@ -110,6 +111,8 @@ const EmptyMovieData: IFullMovieInformation = {
 };
 
 
+let unusedMovies : IFullMovieInformation[] = [];
+
 //------------------------------------------------------------------------
 
 
@@ -123,10 +126,23 @@ function ShuffleStringArray(array: string[])
   return shuffled_array;
 }
 
+
 function GetRandomInt(min:number, max:number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
+}
+
+
+function TestCompareNumbers({number1, number2}:{number1:number, number2:number}) {
+  if (number1 == number2) {
+    console.log("numbers are equal")
+      return true
+  }
+  else {
+    console.log("numbers are not equal")
+    return false
+  }
 }
 
 
@@ -138,15 +154,16 @@ function FilterToTitles(data:IFullMovieInformation[]) {
   for (let i = data.length - 1; i >= 0; i--) {
     movieNames.push(data[i].Title)
   }
-
   return movieNames
 }
+
 
 function PickWhichRatingToUse() {
   const rolledRatingNumber = GetRandomInt(0, 3)
   console.log("New Rating Selected: " + movieRatingHubText[rolledRatingNumber])
   ratingsSelection = rolledRatingNumber;
 }
+
 
 function GetMovieInfoFromTitle(title: string) {
     const TitleInfo = MovieDatabase.find(movie => movie.Title === title) || EmptyMovieData;
@@ -231,11 +248,74 @@ function GetMovieInfoFromTitle(title: string) {
 
 // }
 
+
+
+function GenerateThreeRandomNumbersWithinMovieArray() {
+  const testRandomNumbers: number[] = [];
+  
+  for (let i = 0; i < 3; i++) {
+    let newRandomNumber = GetRandomInt(0, MovieDatabase.length);
+    let newRandomNumber2 = GetRandomInt(0, MovieDatabase.length);
+    let newRandomNumber3 = GetRandomInt(0, MovieDatabase.length);
+
+    if (TestCompareNumbers({number1: newRandomNumber, number2: newRandomNumber2})) {
+      newRandomNumber2 =+ 1;
+      if (newRandomNumber2 > MovieDatabase.length) {
+        newRandomNumber2 = 0;
+      };
+    };
+    if (TestCompareNumbers({number1: newRandomNumber, number2: newRandomNumber3})) {
+      newRandomNumber3 =+ 1;
+      if (newRandomNumber3 > MovieDatabase.length) {
+        newRandomNumber3 = 0;
+      }
+    };
+    if (TestCompareNumbers({number1: newRandomNumber2, number2: newRandomNumber3})) {
+      newRandomNumber3 =+ 1;
+      if (newRandomNumber3 > MovieDatabase.length) {
+        newRandomNumber3 = 0;
+      }
+    };
+    if (newRandomNumber3 == newRandomNumber || newRandomNumber3 == newRandomNumber2) {
+      newRandomNumber3 =+ 1;
+      if (newRandomNumber3 == 0 && newRandomNumber == 0 || newRandomNumber3 == 0 && newRandomNumber2 == 0) {
+        newRandomNumber3 =+ 1;
+      }
+      if (newRandomNumber3 > MovieDatabase.length) {
+        newRandomNumber3 = 0;
+      }
+    };
+
+    testRandomNumbers.push(newRandomNumber);
+    testRandomNumbers.push(newRandomNumber2);
+    testRandomNumbers.push(newRandomNumber3);
+    console.log(newRandomNumber);
+    console.log(newRandomNumber2);
+    console.log(newRandomNumber3);
+  }
+
+  
+  return(testRandomNumbers);
+}
+
+function ReduceMovieArray() {
+  const tempMoviesUsed = importedMovieList
+
+  for (let i = 0; i < 3; i++) {
+    tempMoviesUsed.splice(randomNumbersForMovieSelection[i], 1)
+  }
+  unusedMovies = tempMoviesUsed
+}
+
+
+
 //------------------------------------------------------------------------
 
 
+const randomNumbersForMovieSelection: number[] = GenerateThreeRandomNumbersWithinMovieArray();
+
 export default function Home() {
-  const [currentMovies, setCurrentMovies] = useState([GetMovieInfoFromTitle(MovieDatabase[12].Title), GetMovieInfoFromTitle(MovieDatabase[8].Title), GetMovieInfoFromTitle(MovieDatabase[15].Title)]);
+  const [currentMovies, setCurrentMovies] = useState([GetMovieInfoFromTitle(importedMovieList[randomNumbersForMovieSelection[0]].Title), GetMovieInfoFromTitle(importedMovieList[randomNumbersForMovieSelection[1]].Title), GetMovieInfoFromTitle(importedMovieList[randomNumbersForMovieSelection[2]].Title)]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [endScreenVisibility, setEndScreenVisibility] = useState(false);
@@ -500,7 +580,7 @@ export default function Home() {
     function CircleIcon({index}:{index:number}) {
       const circleSize = "w-[16px] h-[16px]"
       return (
-        <div className={`${index == selectedIndex ? `scale-[125%] ${greenBGColour}` : index < selectedIndex ? "bg-[#8a8a8a]" : "scale-[100%] bg-[#FAFAFA]"} ${circleSize} rounded-full mt-[12px]`} />
+        <div className={`${index == selectedIndex ? `scale-[125%] bg-[#00ff73]` : index < selectedIndex ? "bg-[#8a8a8a]" : "scale-[100%] bg-[#FAFAFA]"} ${circleSize} rounded-full mt-[12px]`} />
       )
     }
 
@@ -513,8 +593,16 @@ export default function Home() {
     )
   }
 
+  function TestButton() {
+    return (
+      <div className={`w-fit h-fit absolute top-0 left-0 m-[3em] px-[1em] py-[.5em]`}>
+        <button onClick={() => GenerateThreeRandomNumbersWithinMovieArray()}>TEST</button>
+      </div>
+    )
+  }
+
   return (
-    <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full">
+    <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full touch-none">
       <main className="flex flex-col items-center self-center">
 
         {showIntro && <LandingDiv />}
@@ -531,13 +619,14 @@ export default function Home() {
                   onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
                   className={`w-full accent-blue-400 bg-transparent cursor-pointer appearance-none
                                   [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[#ececec] [&::-webkit-slider-runnable-track]:h-auto [&::-webkit-slider-runnable-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
-                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:${greenBGColour} [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[170%]`}/>
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[170%]`}/>
           <label htmlFor="ratingSlider">Rating: {currentRating}</label>
         </div>
         }
         {!showIntro && <SubmitRatingButton /> }
         {!showIntro && <ProgressIcons /> }
         {!moreMovies && <NoMoreMoviesToday/> }
+        {/* {!showIntro && <TestButton /> } */}
       </main>
     </div>
   );
