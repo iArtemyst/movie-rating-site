@@ -38,6 +38,7 @@ let currentMovieInfoArray: ISimplifiedMovieInformation[] = [];
 let ratingsSelection = 0; // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
 let tempPlayerWinningValue = 2; //0 = Perfect Rating, 1 = Almost Rating, 2 = Incorrect Rating
 let dailyPlayerPoints = 0;
+let hasPlayedToday = false;
 
 interface IFullMovieInformation
 {
@@ -310,6 +311,47 @@ function ReduceMovieArray() {
 
 
 //------------------------------------------------------------------------
+// LOCAL STORAGE COMPONENTS
+
+function SetPerfectGames() {
+  const [perfectGames, setPerfectGames] = useState(0);
+  useEffect(() => {
+    localStorage.setItem('perfectGames', `${perfectGames}`)})
+  };
+
+
+function SetPlayedToday() {
+  const [playToday, setPlayToday] = useState(false);
+  useEffect(() => {
+    localStorage.setItem('playedToday', `${playToday}`);}, [playToday])
+  };
+
+
+function CheckPlayedToday() {
+  const checkPlay = localStorage.getItem('playedToday')
+  if (checkPlay == `${hasPlayedToday}`) {
+    return true
+  }
+  else {
+    return false
+  }
+}
+
+
+function SaveScoreLocally() {
+  const [todaysScore, setTodaysScore] = useState(dailyPlayerPoints);
+  console.log("Saving Todays Score: " + todaysScore)
+  useEffect(() => {
+    localStorage.setItem('todaysScore', `${todaysScore}`);}, [todaysScore])
+  };
+
+
+function ClearLocalStorage() {
+  localStorage.clear()
+  console.log("cleared the local storage")
+}
+
+//------------------------------------------------------------------------
 
 
 const randomNumbersForMovieSelection: number[] = GenerateThreeRandomNumbersWithinMovieArray();
@@ -503,6 +545,7 @@ export default function Home() {
         "bg-[#02B99E] text-white",
         "bg-[#FF0000] text-white"
       ]
+      SaveScoreLocally()
       return (
         <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#000000DD] z-10`}>
           <div className={`${scoreDivStyle[tempPlayerWinningValue]} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060]`}>
@@ -529,6 +572,13 @@ export default function Home() {
   }
 
   function NoMoreMoviesToday() {
+    function OnReload() {
+      hasPlayedToday = true
+      localStorage.setItem('playedToday', `${hasPlayedToday}`)
+      console.log(hasPlayedToday)
+      window.location.reload()
+    }
+    
     return (
       <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#000000DD] z-10`}>
         <div className="w-[50%] h-[30%] bg-gray-800 absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] rounded-[1em] justify-center flex flex-col text-[16px] font-bold shadow-[0px_0px_24px_#FFFFFF30]">
@@ -541,7 +591,7 @@ export default function Home() {
               {Number(dailyPlayerPoints)}
             </p>
           </div>
-          <button onClick={() => window.location.reload()} className="bg-blue-700 w-fit h-fit py-[.5em] px-[1em] rounded-full hover:scale-[95%] active:scale-[90%] self-center mt-[1em]">
+          <button onClick={() => OnReload()} className="bg-blue-700 w-fit h-fit py-[.5em] px-[1em] rounded-full hover:scale-[95%] active:scale-[90%] self-center mt-[1em]">
             Refresh Page
           </button>
         </div>
@@ -593,10 +643,34 @@ export default function Home() {
     )
   }
 
+
   function TestButton() {
     return (
-      <div className={`w-fit h-fit absolute top-0 left-0 m-[3em] px-[1em] py-[.5em]`}>
-        <button onClick={() => GenerateThreeRandomNumbersWithinMovieArray()}>TEST</button>
+      <div className={`w-fit h-fit absolute top-0 left-0 m-[3em] px-[1em] py-[.5em] bg-blue-800 rounded-full hover:scale-[95%] active:scale-[90%] font-semibold`}>
+        <button onClick={() => ClearLocalStorage()}>TEST BUTTON</button>
+      </div>
+    )
+  }
+
+  function TestLocalScore() {
+    const localScore = localStorage.getItem('todaysScore') || '0'
+    const playedToday = localStorage.getItem('playedToday') || 'false'
+    const perfectGames = localStorage.getItem('perfectGames') || '0'
+    
+    return(
+      <div className={`absolute left-[50%] -translate-x-[50%] bottom-0 mb-[1em] flex flex-row gap-[1em]`}>
+        <div className={`flex flex-col items-center`}>
+          <p>Daily Score:</p>
+          <p>{localScore}</p>
+        </div>
+        <div className={`flex flex-col items-center`}>
+          <p>Has Played Today?</p>
+          <p>{playedToday}</p>
+        </div>
+        <div className={`flex flex-col items-center`}>
+          <p>Perfect Games:</p>
+          <p>{perfectGames}</p>
+        </div>
       </div>
     )
   }
@@ -617,16 +691,19 @@ export default function Home() {
                   step={stepAmount[ratingsSelection]}
                   value={currentRating}
                   onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
-                  className={`w-full accent-blue-400 bg-transparent cursor-pointer appearance-none
+                  className={`w-full bg-transparent cursor-pointer appearance-none
                                   [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[#ececec] [&::-webkit-slider-runnable-track]:h-auto [&::-webkit-slider-runnable-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
-                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[170%]`}/>
+                                  [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-[#ececec] [&::-moz-range-track]:h-[1em] [&::-moz-range-track]:rounded-full [&::-moz-range-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
+                                  [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-[#00ff73] [&::-moz-range-thumb]:scale-[125%] [&::-moz-range-thumb]:hover:scale-[150%] [&::-moz-range-thumb]:active:scale-[175%] [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-[0px_0px_8px_#00000040]
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[175%]`}/>
           <label htmlFor="ratingSlider">Rating: {currentRating}</label>
         </div>
         }
         {!showIntro && <SubmitRatingButton /> }
         {!showIntro && <ProgressIcons /> }
         {!moreMovies && <NoMoreMoviesToday/> }
-        {/* {!showIntro && <TestButton /> } */}
+        {!showIntro && <TestButton /> }
+        {!showIntro && <TestLocalScore /> }
       </main>
     </div>
   );
