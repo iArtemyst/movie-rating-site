@@ -14,7 +14,7 @@ import { ShuffleStringArray } from "./components/shuffle-array";
 import { CompareMovieRatings, UpdatePlayerScoreBasedOnRating } from "./components/compare-movie-scores";
 import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { ISimplifiedMovieInformation, IFullMovieInformation } from "./components/movie-interfaces";
-import { ChooseRatingsToCreate } from "./components/create-rating-ranges";
+import { GetRatingSelectionForMovie } from "./components/create-rating-ranges";
 import { GenerateThreeTrulyRandomNumbersWithinMovieDatabase } from "./components/generate-numbers-no-dupes";
 import * as lstorage from "./components/local-data-storage";
 import { IPlayerStats } from "./components/player-stats";
@@ -27,9 +27,9 @@ const maxRatingArray = [10, 100, 100];
 const middleRatingArray = [5, 50, 50];
 const moviePointValues = [500, 300, 0]; //500 = Perfect, 300 = Almost, 0 = Wrong
 const stepAmount = [0.1, 1, 1,];
-const checkLocalPlayed = lstorage.LoadDatalocally({keyName: 'playedToday'})
-const checkPlayedToday = lstorage.CheckPlayedToday(checkLocalPlayed || 'false')
-let playedTodayBool = checkLocalPlayed === 'true' ? true : false
+// const checkLocalPlayed = lstorage.LoadDatalocally({keyName: 'playedToday'})
+// const checkPlayedToday = lstorage.CheckPlayedToday(checkLocalPlayed || 'false')
+// let playedTodayBool = checkLocalPlayed === 'true' ? true : false
 let ratingsSelection = 0; // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
 const movieRatingHubText = [
   "IMDB (out of 10)",
@@ -42,44 +42,16 @@ const WinningTextArray: string[] = [
   "Incorrect Rating",
 ];
 
-const playerStats: IPlayerStats = {
+const testingPlayerStats: IPlayerStats = {
   totalGamesPlayed: 0,
   totalGamesWon: 0,
   totalPerfectGames: 0,
   highestScore: 0,
   todaysScore: 0,
+  hasPlayedToday: false,
 };
 
 const testMovies: ISimplifiedMovieInformation[] = [GetSimplifiedMovieInfo(MovieDatabase, 0), GetSimplifiedMovieInfo(MovieDatabase, 1), GetSimplifiedMovieInfo(MovieDatabase, 2)]
-
-const EmptyMovieData: IFullMovieInformation = {
-  Title: "",
-  Year:"",
-  Rated:"",
-  Released:"",
-  Runtime:"",
-  Genre:"",
-  Director:"",
-  Writer:"",
-  Actors:"",
-  Plot:"",
-  Language:"",
-  Country:"",
-  Awards:"",
-  Poster:"",
-  Ratings:[{"Source":"Internet Movie Database","Value":"0/10"},{"Source":"Rotten Tomatoes","Value":"0%"},{"Source":"Metacritic","Value":"0/100"}],
-  Metascore:"",
-  imdbRating:"",
-  imdbVotes:"",
-  imdbID:"",
-  Type:"",
-  DVD:"",
-  BoxOffice:"",
-  Production:"",
-  Website:"",
-  Response:""
-};
-
 
 //------------------------------------------------------------------------
 //TESTING FUNCTIONS
@@ -97,8 +69,7 @@ function TestButton() {
   )
 }
 
-function TestLocalScore() {
-  console.log("check played today: " + checkPlayedToday)
+function TestLocalScore({playerStats}:{playerStats:IPlayerStats}) {
   return (
     <div className={`absolute left-[50%] -translate-x-[50%] bottom-0 mb-[1em] flex flex-row gap-[1em]`}>
       <div className={`flex flex-col items-center`}>
@@ -107,7 +78,7 @@ function TestLocalScore() {
       </div>
       <div className={`flex flex-col items-center`}>
         <p>Has Played Today?</p>
-        <p>{`${checkPlayedToday}`}</p>
+        <p>{`${playerStats.hasPlayedToday}`}</p>
       </div>
       <div className={`flex flex-col items-center`}>
         <p>Perfect Games:</p>
@@ -152,35 +123,6 @@ function ResetPlayerDailyScore(tempPlayerStats: IPlayerStats) {
   localStorage.setItem('todaysScore', `0`)
 }
 
-function SubmitScoresToServer(todaysScore:number) {
-  playedTodayBool = true
-  console.log("thanks for playing, you got a score of:")
-  console.log(todaysScore + " today!")
-  localStorage.setItem('playedToday', `true`)
-}
-
-function NoMoreMoviesToday({playerStats}:{playerStats: IPlayerStats}) {
-  return (
-    <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#000000DD] z-10`}>
-      <div className="w-[50%] h-[30%] bg-gray-800 absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] rounded-[1em] justify-center flex flex-col text-[16px] font-bold shadow-[0px_0px_24px_#FFFFFF30]">
-        <p className="self-center">NO MORE MOVIES TODAY, COME BACK TOMORROW!</p>
-        <div className="w-fit h-fit self-center flex flex-row items-center gap-[.25em] text-[24px]">
-          <p>
-            {`Your Score Today:`}
-          </p>
-          <p>
-            {Number(playerStats.todaysScore)}
-          </p>
-        </div>
-        <div className={`self-center flex flex-row gap-[.5em]`}>
-          <p>Perfect Games:</p>
-          <p>{playerStats.totalPerfectGames}</p>
-        </div>
-        <ButtonWithClickHandler buttonText="See Scores" onClickFunction={() => SubmitScoresToServer(playerStats.todaysScore)}/>
-      </div>
-    </div>
-  )
-}
 
 function ScoreGraph() {
   return (
@@ -320,16 +262,12 @@ function SubmitRatingButton2({currentMovieArray, ratingsSelection, currentRating
 
 
 export default function Home() {
-  const [serverMovieInfoArray, setServerMovieInfoArray] = useState<string[] | null>(null);
+  const [serverMovieInfoArray, setServerMovieInfoArray] = useState<IFullMovieInformation[] | null>(null);
   const [currentMovies, setCurrentMovies] = useState(testMovies);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [endScreenVisibility, setEndScreenVisibility] = useState(false);
   const [moreMovies, setMoreMovies] = useState(true);
-  const [winner, setWinner] = useState(false);
-  const [perfect, setPerfect] = useState(false);
-  const [showIntro, setShowIntro] = useState(false);
-  const [cantPlay, setCantPlay] = useState(playedTodayBool) || false;
   const [showScore, setShowScore] = useState(false);
 
   // function SubmitRatingButton() {    
@@ -445,13 +383,20 @@ export default function Home() {
   // }
 
 
-  FetchMovieData();
+  useEffect(() => {
+    let fn = async () => {
+      let result = await FetchMovieData();
+      setServerMovieInfoArray(result);
+    }
+
+    if (serverMovieInfoArray !== null) {
+      fn();
+    }
+  }, [serverMovieInfoArray]);
 
   return (
     <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full touch-none">
       <main className="flex flex-col items-center self-center">
-        {/* {cantPlay && <AlreadyPlayedTodayDiv />} */}
-        {/* {showIntro && <LandingDiv />} */}
         { <MovieInfoDiv movies={currentMovies} selectedIndex={selectedIndex}/> }
         { <div className="flex flex-col items-center w-full my-[16px] gap-[6px]">
             <p className={`text-[20px]`}>
@@ -470,20 +415,18 @@ export default function Home() {
                                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[175%]`}/>
             <label htmlFor="ratingSlider">Rating: {currentRating}</label>
           </div> }
-        {/* { <SubmitRatingButton /> } */}
         { <SubmitRatingButton2 
             currentRating={currentRating} 
             ratingsSelection={ratingsSelection}
             currentMovieArray={currentMovies} 
             selectedIndex={selectedIndex} 
-            playerStats={playerStats}
+            playerStats={testingPlayerStats}
             scoreDivVisible={endScreenVisibility}/> 
             }
         { <GalleryProgressDots index1={0} index2={1} index3={2} selectedIndex={selectedIndex}/> }
-        { !moreMovies && <NoMoreMoviesToday playerStats={playerStats}/> }
         { showScore && <ScoreGraph/> }
         <TestButton />
-        <TestLocalScore />
+        <TestLocalScore playerStats={testingPlayerStats}/>
       </main>
     </div>
   );

@@ -4,4 +4,5 @@ export interface IPlayerStats {
     totalGamesWon: number;
     highestScore: number;
     todaysScore: number;
+    hasPlayedToday: boolean;
 }

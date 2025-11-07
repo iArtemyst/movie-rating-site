@@ -2,12 +2,12 @@
 'use client'
 
 import { ISimplifiedMovieInformation, IFullMovieInformation } from "./movie-interfaces";
-import { ChooseRatingsToCreate } from "./create-rating-ranges";
+import { GetRatingSelectionForMovie } from "./create-rating-ranges";
 
 const moviePointValues = [500, 300, 0]; //500 = Perfect, 300 = Almost, 0 = Wrong
 
 export function CompareMovieRatings(movies: ISimplifiedMovieInformation[], selectedRating: number, playerScore: number) {
-    const movieRatingArray = ChooseRatingsToCreate(selectedRating, movies);
+    const movieRatingArray = GetRatingSelectionForMovie(selectedRating, movies);
     console.log(movieRatingArray);
     console.log("player score: " + playerScore);
     if (playerScore == movieRatingArray[2])

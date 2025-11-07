@@ -39,7 +39,7 @@ function CreateRottenTomatoesRatingRanges({movies=[]}:{movies?: ISimplifiedMovie
 }
 
 
-export function ChooseRatingsToCreate(ratingIndex: number, movies: ISimplifiedMovieInformation[]) {
+export function GetRatingSelectionForMovie(ratingIndex: number, movies: ISimplifiedMovieInformation[]) {
     switch (ratingIndex) {
         case 0:
             return CreateIMDBRatingRanges({movies: movies});
