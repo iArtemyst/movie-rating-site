@@ -27,7 +27,7 @@ export interface IFullMovieInformation
     Response:string
 };
 
-export interface ISimplifiedMovieInformation
+export interface IMovieInformation
 {
     Title: string, 
     Director: string, 

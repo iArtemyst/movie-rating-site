@@ -6,14 +6,14 @@ import { FetchMovieData } from "./components/fetch-movie-data";
 import { GetSimplifiedMovieInfo } from "./components/simplify-movie-data";
 import { GetRandomInt } from "./components/get-random-int";
 import { MovieInfoDiv } from "./components/movie-info-div";
-import { GetPlayerRatingScoreIndexValue, UpdatePlayerScoreBasedOnRating } from "./components/compare-movie-scores";
+import { UpdatePlayerScoreBasedOnRating, GetPlayerRatingScoreIndexValue } from "./components/compare-movie-scores";
 import { IncrementArrayIndex } from "./components/increment-array-index";
 import { GalleryProgressDots } from "./components/gallery-progress-dots";
-import { ISimplifiedMovieInformation, IFullMovieInformation } from "./components/movie-interfaces";
-import { GetCurrentMovieRatingsRangeArray } from "./components/create-rating-ranges";
+import { IMovieInformation, IFullMovieInformation } from "./components/movie-interfaces";
 import { ScoreGraph } from "./components/score-graph";
 import { TestButtonResetLocalStorageAndReloadPage, TestDivWithPlayerStatInformation } from "./components/testing-functions";
 import { IPlayerStats } from "./components/player-stats";
+import { Loading } from "./components/loading";
 
 //------------------------------------------------------------------------
 
@@ -24,8 +24,8 @@ const stepAmount = [0.1, 1, 1,];
 const ratingsSelection: number = 0; // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
 const movieRatingHubText = [
   "IMDB (out of 10)",
-  "Metascore (out of 100)",
-  "Rotten Tomatoes (out of 100%)"
+  "Rotten Tomatoes (out of 100%)",
+  "Metacritic (out of 100)",
 ];
 const testingPlayerStats: IPlayerStats = {
   totalGamesPlayed: 0,
@@ -36,30 +36,31 @@ const testingPlayerStats: IPlayerStats = {
   hasPlayedToday: false,
 };
 
-const testMovies: ISimplifiedMovieInformation[] = [GetSimplifiedMovieInfo(MovieDatabase, 0), GetSimplifiedMovieInfo(MovieDatabase, 1), GetSimplifiedMovieInfo(MovieDatabase, 2)]
 
 //------------------------------------------------------------------------
 
+
 export default function Home() {
-  const [serverMovieInfoArray, setServerMovieInfoArray] = useState<IFullMovieInformation[] | null>(null);
-  const [currentMovies, setCurrentMovies] = useState<ISimplifiedMovieInformation[]>(testMovies);
+  const [serverMovieInfoArray, setServerMovieInfoArray] = useState<IMovieInformation[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [currentMovieScoreScreenVisibility, setCurrentMovieScoreScreenVisibility] = useState(false);
   const [ratingSiteIndex, setRatingSiteIndex] = useState(0)
-  const [selectedMovieRatingArray, setSelectedMovieRatingArray] = useState<number[]>(GetCurrentMovieRatingsRangeArray({movieRatingSiteIndex:ratingSiteIndex, movie:currentMovies[selectedIndex]}))
-  const [scoreGraphVisible, setScoreGraphVisible] = useState(false)
-  // const playerScoreValue = GetPlayerRatingScoreIndexValue({movie:currentMovies[selectedIndex], movieRatingSiteIndex:ratingsSelection, playerMovieRatingScore:currentRating})
+  const [dataLoaded, setDataLoaded] = useState(false)
 
 
   useEffect(() => {
     let fn = async () => {
       let result = await FetchMovieData();
-      console.log("TEST DATA FETCH RESULT")
-      console.log(result)
-      setServerMovieInfoArray(result);
+      console.log("MOVIE 1 INFO:" + result[0].Title + " | " + result[0].RatingSource + " | " + result[0].RatingValue)
+      console.log("MOVIE 2 INFO:" + result[1].Title + " | " + result[1].RatingSource + " | " + result[1].RatingValue)
+      console.log("MOVIE 3 INFO:" + result[2].Title + " | " + result[2].RatingSource + " | " + result[2].RatingValue)
+
+      setServerMovieInfoArray(result)
+      setCurrentRating(middleRatingArray[result[0].RandomRatingInt])
+      setDataLoaded(true);
     }
-    if (serverMovieInfoArray !== null) {
+    if (!dataLoaded) {
       fn();
     }
   }, [serverMovieInfoArray]);
@@ -93,9 +94,9 @@ export default function Home() {
 
       return (
         <div className="w-fit h-fit self-center flex flex-col">
-          <p className={`self-center text-[24px] font-bold`}>{WinningTextArray[0]}</p>
+          <p className={`self-center text-[24px] font-bold`}>{WinningTextArray[GetPlayerRatingScoreIndexValue({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentRating})]}</p>
           <TextAndScoreDiv titleText="Your Rating" secondaryText={`${currentRating}`} />
-          <TextAndScoreDiv titleText="Actual Rating" secondaryText={`${selectedMovieRatingArray[2]}`} />
+          <TextAndScoreDiv titleText="Actual Rating" secondaryText={`${serverMovieInfoArray[selectedIndex].RatingValue}`} />
           <TextAndScoreDiv titleText="Your Score Today" secondaryText={`${testingPlayerStats.todaysScore}`} />
         </div>
       )
@@ -103,15 +104,12 @@ export default function Home() {
 
     function NextMovieButton() {        
       function NextMovieButtonOnClick() {
-        const newIndex: number = IncrementArrayIndex({currentIndex:selectedIndex, arrayLength:currentMovies.length-1})
+        const newIndex: number = IncrementArrayIndex({currentIndex:selectedIndex, arrayLength:serverMovieInfoArray.length-1})
         setSelectedIndex(newIndex)
-        console.log("current movie index: " + newIndex)
-        const randomInt = GetRandomInt(0, 2)
-        setRatingSiteIndex(randomInt)
-        console.log("selected site for ratings: " + movieRatingHubText[randomInt])
-        setCurrentRating(middleRatingArray[randomInt])
+        setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RandomRatingInt])
         setCurrentMovieScoreScreenVisibility(false)
       }
+      
       
       return (
         <div className="h-[96px] flex flex-row place-content-center">
@@ -132,9 +130,9 @@ export default function Home() {
     )
   }
 
-  function SubmitRatingButton({currentMovieArray, playerMovieRatingScore}:{currentMovieArray: ISimplifiedMovieInformation[], playerMovieRatingScore: number}) {    
+  function SubmitRatingButton({currentPlayerMovieRating}:{currentPlayerMovieRating: number}) {    
     function SubmitRatingOnClick() {
-      // UpdatePlayerScoreBasedOnRating({movie:currentMovieArray[0], movieRatingSiteIndex:ratingSiteIndex, playerMovieRatingScore:playerMovieRatingScore, playerStats:testingPlayerStats})
+      UpdatePlayerScoreBasedOnRating({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentPlayerMovieRating, playerStats:testingPlayerStats})
       setCurrentMovieScoreScreenVisibility(true)
     }
 
@@ -148,36 +146,39 @@ export default function Home() {
   }
 
 
-  return (
-    <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full touch-none">
-      <main className="flex flex-col items-center self-center">
-        { <MovieInfoDiv movies={currentMovies} selectedIndex={selectedIndex}/> }
-        <div className="flex flex-col items-center w-full my-[16px] gap-[6px]">
-            <p className={`text-[20px]`}>
-              What do you think this movie is rated on {movieRatingHubText[ratingSiteIndex]}?
-            </p>
-            <input type="range" name="ratingSlider" id="ratingSlider" 
-                    min={minRatingArray[ratingSiteIndex]} 
-                    max={maxRatingArray[ratingSiteIndex]}
-                    step={stepAmount[ratingSiteIndex]}
-                    value={currentRating}
-                    onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
-                    className={`w-full bg-transparent cursor-pointer appearance-none
-                                    [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[#ececec] [&::-webkit-slider-runnable-track]:h-auto [&::-webkit-slider-runnable-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
-                                    [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-[#ececec] [&::-moz-range-track]:h-[1em] [&::-moz-range-track]:rounded-full [&::-moz-range-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
-                                    [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-[#00ff73] [&::-moz-range-thumb]:scale-[125%] [&::-moz-range-thumb]:hover:scale-[150%] [&::-moz-range-thumb]:active:scale-[175%] [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-[0px_0px_8px_#00000040]
-                                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[175%]`}/>
-            <label htmlFor="ratingSlider">Rating: {currentRating}</label>
-        </div>
-        <SubmitRatingButton
-            playerMovieRatingScore={currentRating} 
-            currentMovieArray={currentMovies}/>
-        { currentMovieScoreScreenVisibility && <ScoreComparisonDiv /> }
-        <GalleryProgressDots index1={0} index2={1} index3={2} selectedIndex={selectedIndex}/>
-        {/* <ScoreGraph visible={scoreGraphVisible}/> */}
-        <TestButtonResetLocalStorageAndReloadPage />
-        <TestDivWithPlayerStatInformation playerStats={testingPlayerStats}/>
-      </main>
-    </div>
-  );
+  if (!dataLoaded) 
+  {
+    return <Loading />
+  }
+  else
+  {
+    return (
+      <div className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] py-[24px] w-full touch-none">
+        <main className="flex flex-col items-center self-center">
+          { <MovieInfoDiv movies={serverMovieInfoArray} selectedIndex={selectedIndex}/> }
+          <div className="flex flex-col items-center w-full my-[16px] gap-[6px]">
+              <p className={`text-[20px]`}>
+                What do you think this movie is rated on {movieRatingHubText[serverMovieInfoArray[selectedIndex].RandomRatingInt]}?
+              </p>
+              <input type="range" name="ratingSlider" id="ratingSlider" 
+                      min={minRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]} 
+                      max={maxRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
+                      step={stepAmount[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
+                      value={currentRating}
+                      onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
+                      className={`w-full bg-transparent cursor-pointer appearance-none
+                                      [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[#ececec] [&::-webkit-slider-runnable-track]:h-auto [&::-webkit-slider-runnable-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
+                                      [&::-moz-range-track]:appearance-none [&::-moz-range-track]:bg-[#ececec] [&::-moz-range-track]:h-[1em] [&::-moz-range-track]:rounded-full [&::-moz-range-track]:inset-shadow-[2px_2px_4px_#00000020,-2px_-2px_4px_#00000020]
+                                      [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-[#00ff73] [&::-moz-range-thumb]:scale-[125%] [&::-moz-range-thumb]:hover:scale-[150%] [&::-moz-range-thumb]:active:scale-[175%] [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-[0px_0px_8px_#00000040]
+                                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[175%]`}/>
+              <label htmlFor="ratingSlider">Rating: {currentRating}</label>
+          </div>
+          <SubmitRatingButton
+              currentPlayerMovieRating={currentRating}/>
+          { currentMovieScoreScreenVisibility && <ScoreComparisonDiv /> }
+          <GalleryProgressDots index1={0} index2={1} index3={2} selectedIndex={selectedIndex}/>
+        </main>
+      </div>
+    );
+  }
 }

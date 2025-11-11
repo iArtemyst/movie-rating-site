@@ -1,7 +1,4 @@
-'use client'
-
-import React, { useEffect, useState } from "react";
-import { ISimplifiedMovieInformation, IFullMovieInformation } from "./movie-interfaces";
+import { IMovieInformation, IFullMovieInformation } from "./movie-interfaces";
 
 export function GetSimplifiedMovieInfo(movieDatabase: IFullMovieInformation[], index: number) {
     const TitleInfo = movieDatabase[index];
@@ -10,7 +7,7 @@ export function GetSimplifiedMovieInfo(movieDatabase: IFullMovieInformation[], i
     const metascoreRating = titleRatingsArray.find(rating => rating.Source === "Metacritic") || {Value: "No Metascore Rating"};
     const rottenTomatoesRating = titleRatingsArray.find(rating => rating.Source === "Rotten Tomatoes") || {Value: "No Rotten Tomatoes Rating"};
     const otherRating = titleRatingsArray?.find(rating => rating.Source !== "Internet Movie Database" && rating.Source !== "Metacritic" && rating.Source !== "Rotten Tomatoes");
-    const titleData: ISimplifiedMovieInformation =
+    const titleData: IMovieInformation =
     {
         movieTitle: TitleInfo.Title,
         movieDirector: TitleInfo.Director,

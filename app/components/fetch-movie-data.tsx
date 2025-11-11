@@ -1,6 +1,4 @@
-'use client'
-
-import { IFullMovieInformation } from "./movie-interfaces";
+import { IMovieInformation } from "./movie-interfaces";
 
 export async function FetchMovieData() {
     const response = await fetch("https://localhost:7090/MovieInfo", {
@@ -9,7 +7,8 @@ export async function FetchMovieData() {
     });
 
     if (!response.ok) throw new Error(`Fetch failed`);
-    const data: IFullMovieInformation[] = await response.json();
+
+    const data: IMovieInformation[] = await response.json();
     console.log("movie data fetch succeeded")
     console.log(data)
     return data;
