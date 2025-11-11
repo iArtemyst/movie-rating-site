@@ -1,17 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { MovieDatabase } from "./movie-database.json";
 import { FetchMovieData } from "./components/fetch-movie-data";
-import { GetSimplifiedMovieInfo } from "./components/simplify-movie-data";
-import { GetRandomInt } from "./components/get-random-int";
 import { MovieInfoDiv } from "./components/movie-info-div";
 import { UpdatePlayerScoreBasedOnRating, GetPlayerRatingScoreIndexValue } from "./components/compare-movie-scores";
 import { IncrementArrayIndex } from "./components/increment-array-index";
 import { GalleryProgressDots } from "./components/gallery-progress-dots";
-import { IMovieInformation, IFullMovieInformation } from "./components/movie-interfaces";
-import { ScoreGraph } from "./components/score-graph";
-import { TestButtonResetLocalStorageAndReloadPage, TestDivWithPlayerStatInformation } from "./components/testing-functions";
+import { IMovieInformation } from "./components/movie-interfaces";
 import { IPlayerStats } from "./components/player-stats";
 import { Loading } from "./components/loading";
 
@@ -45,7 +40,6 @@ export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [currentMovieScoreScreenVisibility, setCurrentMovieScoreScreenVisibility] = useState(false);
-  const [ratingSiteIndex, setRatingSiteIndex] = useState(0)
   const [dataLoaded, setDataLoaded] = useState(false)
 
 
@@ -67,6 +61,7 @@ export default function Home() {
 
 
   function ScoreComparisonDiv() {
+    const playerScoreRatingValue = GetPlayerRatingScoreIndexValue({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentRating})
     const WinningTextArray: string[] = [
       "Perfect Rating!",
       "Pretty Close",
@@ -94,7 +89,7 @@ export default function Home() {
 
       return (
         <div className="w-fit h-fit self-center flex flex-col">
-          <p className={`self-center text-[24px] font-bold`}>{WinningTextArray[GetPlayerRatingScoreIndexValue({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentRating})]}</p>
+          <p className={`self-center text-[24px] font-bold`}>{WinningTextArray[playerScoreRatingValue]}</p>
           <TextAndScoreDiv titleText="Your Rating" secondaryText={`${currentRating}`} />
           <TextAndScoreDiv titleText="Actual Rating" secondaryText={`${serverMovieInfoArray[selectedIndex].RatingValue}`} />
           <TextAndScoreDiv titleText="Your Score Today" secondaryText={`${testingPlayerStats.todaysScore}`} />
@@ -122,7 +117,7 @@ export default function Home() {
 
     return (
       <div className={`absolute left-0 top-0 bottom-0 right-0 bg-[#000000DD] z-10`}>
-        <div className={`${scoreDivStyle[0]} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060] flex flex-col place-content-center`}>
+        <div className={`${scoreDivStyle[playerScoreRatingValue]} absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%] w-[480px] aspect-[5/3] rounded-[12px] shadow-[2px_2px_12px_#00000060] flex flex-col place-content-center`}>
           <CompareRatingTextDiv />
           <NextMovieButton />
         </div>

@@ -1,4 +1,3 @@
-
 export function GalleryProgressDots({index1, index2, index3, selectedIndex}: {index1:number, index2:number, index3:number, selectedIndex:number}) {
     function CircleIcon({index}:{index:number}) {
         const circleSize = "w-[16px] h-[16px]"
