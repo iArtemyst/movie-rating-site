@@ -1,11 +1,24 @@
+import { useEffect, useState } from "react";
+
 export function LoadDatalocally({keyName}: {keyName: string}): string | null {
-    const loadedData = localStorage.getItem(keyName);
-    if (loadedData === null) {
-        console.log(`No Local Data Found for Key - ${keyName}`)
-        return null;
-    }
-    console.log(`Loading Data Locally: Key - ${keyName}, Value - ${loadedData}`)
-    return loadedData;
+    const [localData, setLocalData] = useState<string | null>(null)
+    useEffect(() => {
+        let fn = () => {
+            let data = localStorage.getItem(keyName)
+            if (data === null) {
+                console.log(`No Local Data Found for Key - ${keyName}`)
+                return null;
+            }
+            console.log(`Loading Data Locally: Key - ${keyName}, Value - ${data}`)
+            setLocalData(data)
+        }
+
+        if (localData === null) {
+            fn();
+        }
+    }, [setLocalData])
+
+    return localData;
 }
 
 export function SaveDataLocally(keyName: string, valueToSave: string) {

@@ -29,14 +29,13 @@ export interface IFullMovieInformation
 
 export interface ISimplifiedMovieInformation
 {
-    movieTitle: string, 
-    movieDirector: string, 
-    movieReleaseYear: string, 
-    movieTopBilled: string, 
-    movieSummary: string, 
-    moviePosterLink: string,
-    movieRatingIMDB: string,
-    movieRatingMetascore: string,
-    movieRatingRottenTomatoes: string,
-    movieRatingOther: string,
+    Title: string, 
+    Director: string, 
+    Year: string, 
+    Actors: string, 
+    Plot: string, 
+    Poster: string,
+    RatingSource: string,
+    RatingValue: string,
+    RandomRatingInt: number,
 };

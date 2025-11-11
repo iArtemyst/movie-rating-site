@@ -1,7 +1,6 @@
 import React from "react";
 import { LazyImageSizer } from "./load-asset";
 import { ISimplifiedMovieInformation, IFullMovieInformation } from "./movie-interfaces";
-import { FetchMovieData } from "./fetch-movie-data";
 
 const textStyleTitle = "text-[24px] font-bold";
 const textStyleSubtitle = "text-[14px] font-semibold";
