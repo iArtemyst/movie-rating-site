@@ -10,6 +10,7 @@ function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRatingStri
         return parsed
     }
 
+    
     // Fallback: if parseFloat didn't work, split the string apart from the secondary text
     const splitScoreArray = [
         movieRatingString.split("/10"),
