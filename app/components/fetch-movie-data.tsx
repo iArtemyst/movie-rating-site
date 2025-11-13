@@ -9,7 +9,5 @@ export async function FetchMovieData() {
     if (!response.ok) throw new Error(`Fetch failed`);
 
     const data: IMovieInformation[] = await response.json();
-    console.log("movie data fetch succeeded")
-    console.log(data)
     return data;
 }

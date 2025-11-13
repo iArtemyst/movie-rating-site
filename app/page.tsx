@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { IMovieInformation } from "./components/movie-interfaces";
-import { IPlayerStats } from "./components/player-stats";
+import { IPlayerStats, newPlayerStats } from "./components/player-stats";
 
 import { FetchMovieData } from "./components/fetch-movie-data";
 import { MovieInfoDiv } from "./components/movie-info-div";
@@ -11,6 +11,10 @@ import { IncrementArrayIndex } from "./components/increment-array-index";
 import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { Loading } from "./components/loading";
 import { ScoreComparisonDiv } from "./components/score-comparison-div";
+import { ScoreGraph } from "./components/score-graph";
+import { moviePointValues, scoreErrorMargin } from "./components/movie-interfaces";
+import * as testing from "./components/testing-functions"
+import * as lstorage from "./components/local-data-storage";
 
 //------------------------------------------------------------------------
 
@@ -24,14 +28,6 @@ const movieRatingHubText = [
   "Rotten Tomatoes (out of 100%)",
   "Metacritic (out of 100)",
 ];
-const testingPlayerStats: IPlayerStats = {
-  totalGamesPlayed: 0,
-  totalGamesWon: 0,
-  totalPerfectGames: 0,
-  highestScore: 0,
-  todaysScore: 0,
-  hasPlayedToday: false,
-};
 
 
 //------------------------------------------------------------------------
@@ -42,33 +38,91 @@ export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentRating, setCurrentRating] = useState(middleRatingArray[ratingsSelection]);
   const [currentMovieScoreScreenVisibility, setCurrentMovieScoreScreenVisibility] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false)
-
+  const [scoreScreenVisibility, setScoreScreenVisibility] = useState(false);
+  const [localPlayerData, setLocalPlayerData] = useState<IPlayerStats | null>(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [hasPlayedToday, setHasPlayedToday] = useState(false)
 
   useEffect(() => {
     let fn = async () => {
       let result = await FetchMovieData();
-      console.log("MOVIE 1 INFO:" + result[0].Title + " | " + result[0].RatingSource + " | " + result[0].RatingValue)
-      console.log("MOVIE 2 INFO:" + result[1].Title + " | " + result[1].RatingSource + " | " + result[1].RatingValue)
-      console.log("MOVIE 3 INFO:" + result[2].Title + " | " + result[2].RatingSource + " | " + result[2].RatingValue)
-
+      console.log("MOVIE 1: " + result[0].Title + " | " + result[0].RatingSource + " | " + result[0].RatingValue)
+      console.log("MOVIE 2: " + result[1].Title + " | " + result[1].RatingSource + " | " + result[1].RatingValue)
+      console.log("MOVIE 3: " + result[2].Title + " | " + result[2].RatingSource + " | " + result[2].RatingValue)
       setServerMovieInfoArray(result)
       setCurrentRating(middleRatingArray[result[0].RandomRatingInt])
       setDataLoaded(true);
     }
     if (!dataLoaded) {
+      setHasPlayedToday(false)
       fn();
     }
   }, [serverMovieInfoArray]);
 
+  useEffect(() => {
+    if (hasPlayedToday) {
+      setScoreScreenVisibility(true)
+    }
+    else {
+      setScoreScreenVisibility(false)
+    }
+  }, [hasPlayedToday])
+
+  useEffect(() => {
+    let firstTimeSave = async () => {
+      console.log("No Current Save Data, Saving Fresh Data")
+      lstorage.SavePlayerStats(newPlayerStats)
+    }
+    let fn = async () => {
+      let result = await lstorage.loadLocalPlayerStats()
+      if (result) {
+        setLocalPlayerData(result)
+        setHasPlayedToday(result.hasPlayedToday)
+        setScoreScreenVisibility(result.hasPlayedToday)
+        console.log("RESULT OF LOCAL DATA RETREIVAL")
+        console.log(result)
+      }
+      else {
+        firstTimeSave()
+      }
+    }
+    if (!localPlayerData) {
+      fn();
+    }
+  }, [localPlayerData])
+
+
+  function CheckPlayerPerfectScore(playerStats:IPlayerStats) {
+    const arrayLength = serverMovieInfoArray.length;
+    const maxIndvMovieScore = moviePointValues[0];
+    const perfectScoreValue = ( maxIndvMovieScore * arrayLength );
+    if ( playerStats.todaysScore === perfectScoreValue ) {
+      playerStats.totalPerfectGames += 1
+    }
+  }
+
+
+  function MarkPlayerStatsUponComplete({playedToday, playerStats}:{playedToday: boolean, playerStats:IPlayerStats}) {
+    playerStats.totalGamesPlayed += 1;
+    CheckPlayerPerfectScore(playerStats)
+    setLocalPlayerData(prev => {
+      const updated = prev ? { ...prev, hasPlayedToday: playedToday } : { ...newPlayerStats, hasPlayedToday: playedToday };
+      lstorage.SavePlayerStats(updated);
+      setHasPlayedToday(playedToday);
+      setScoreScreenVisibility(playedToday);
+      return updated;
+    });
+  }
 
 
   function SubmitRatingButton({currentPlayerMovieRating}:{currentPlayerMovieRating: number}) {    
     function SubmitRatingOnClick() {
-      UpdatePlayerScoreBasedOnRating({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentPlayerMovieRating, playerStats:testingPlayerStats})
+      if (localPlayerData) {
+        UpdatePlayerScoreBasedOnRating({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentPlayerMovieRating, playerStats:localPlayerData})
+        lstorage.SavePlayerStats(localPlayerData)
+      }
       setCurrentMovieScoreScreenVisibility(true)
     }
-
     return (
       <>
         <div onClick={() => SubmitRatingOnClick()} className="w-[196px] h-[64px] my-[12px] self-center place-content-center cursor-pointer bg-[#fafafa] hover:bg-[#dfdfdf] rounded-[1em] hover:scale-[98%] active:scale-[96%]">
@@ -79,11 +133,24 @@ export default function Home() {
   }
 
   function UpdateToNextMovie() {
-      const newIndex: number = IncrementArrayIndex({ currentIndex: selectedIndex, arrayLength: serverMovieInfoArray.length - 1 })
+    const newIndex: number | null = IncrementArrayIndex({ currentIndex: selectedIndex, arrayLength: serverMovieInfoArray.length - 1 })
+    if (newIndex) {
       setSelectedIndex(newIndex)
-      setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RandomRatingInt])
       setCurrentMovieScoreScreenVisibility(false)
+      setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RandomRatingInt])
+    }
+    else {
+      setSelectedIndex(0)
+      setCurrentMovieScoreScreenVisibility(false)
+      setCurrentRating(middleRatingArray[serverMovieInfoArray[0].RandomRatingInt])
+      setScoreScreenVisibility(true)
+      if (localPlayerData) {
+        MarkPlayerStatsUponComplete({playedToday:true, playerStats:localPlayerData})
+      }
+      setHasPlayedToday(true)
+    }
   }
+
 
   if (!dataLoaded) 
   {
@@ -113,19 +180,28 @@ export default function Home() {
                                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00ff73] [&::-webkit-slider-thumb]:shadow-[0px_0px_8px_#00000040] [&::-webkit-slider-thumb]:scale-[125%]  [&::-webkit-slider-thumb]:hover:scale-[150%] [&::-webkit-slider-thumb]:active:scale-[175%]`}/>
               <label htmlFor="ratingSlider">Rating: {currentRating}</label>
           </div>
-          <SubmitRatingButton
-              currentPlayerMovieRating={currentRating}/>
-          { 
-            currentMovieScoreScreenVisibility && 
-            <ScoreComparisonDiv 
-              ratingSourceInt={serverMovieInfoArray[selectedIndex].RandomRatingInt} 
-              actualMovieRating={serverMovieInfoArray[selectedIndex].RatingValue} 
-              playerMovieRating={currentRating} 
-              playerStats={testingPlayerStats} 
-              onNextMovie={UpdateToNextMovie}
-            /> 
-          }
+          <SubmitRatingButton currentPlayerMovieRating={currentRating}/>
           <GalleryProgressDots index1={0} index2={1} index3={2} selectedIndex={selectedIndex}/>
+          <testing.TestButtonResetLocalStorageAndReloadPage/>
+          {
+            localPlayerData ?
+            <>
+              { 
+                currentMovieScoreScreenVisibility && 
+                <ScoreComparisonDiv 
+                  ratingSourceInt={serverMovieInfoArray[selectedIndex].RandomRatingInt} 
+                  actualMovieRating={serverMovieInfoArray[selectedIndex].RatingValue} 
+                  playerMovieRating={currentRating} 
+                  playerStats={localPlayerData}
+                  onNextMovie={UpdateToNextMovie}
+                /> 
+              }
+              <testing.TestDivWithPlayerStatInformation playerStats={localPlayerData}/>
+              <ScoreGraph visible={scoreScreenVisibility} playerStats={localPlayerData}/>
+            </>
+            :
+            <Loading />
+          }
         </main>
       </div>
     );

@@ -3,6 +3,6 @@ export function IncrementArrayIndex({currentIndex, arrayLength}:{currentIndex:nu
         return currentIndex += 1
     }
     else {
-        return currentIndex = 0
+        return null
     }
 }
