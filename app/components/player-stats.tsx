@@ -4,6 +4,7 @@ export interface IPlayerStats
     totalPerfectGames: number;
     todaysScore: number;
     hasPlayedToday: boolean;
+    localGameIndex: number;
 }
 
 export const newPlayerStats: IPlayerStats = {
@@ -11,4 +12,5 @@ export const newPlayerStats: IPlayerStats = {
     totalPerfectGames: 0,
     todaysScore: 0,
     hasPlayedToday: false,
+    localGameIndex: 0,
 };

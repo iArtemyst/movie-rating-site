@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { IMovieInformation } from "./components/movie-interfaces";
 import { IPlayerStats, newPlayerStats } from "./components/player-stats";
-
-import { FetchMovieData } from "./components/fetch-movie-data";
+import { FetchMovieData, FetchDateData } from "./components/fetch-movie-data";
 import { MovieInfoDiv } from "./components/movie-info-div";
 import { UpdatePlayerScoreBasedOnRating } from "./components/compare-movie-scores";
 import { IncrementArrayIndex } from "./components/increment-array-index";
@@ -12,11 +11,12 @@ import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { Loading } from "./components/loading";
 import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { ScoreGraph } from "./components/score-graph";
-import { moviePointValues, scoreErrorMargin } from "./components/movie-interfaces";
+import { moviePointValues } from "./components/movie-interfaces";
 import * as testing from "./components/testing-functions"
 import * as lstorage from "./components/local-data-storage";
 
 //------------------------------------------------------------------------
+
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
@@ -29,9 +29,7 @@ const movieRatingHubText = [
   "Metacritic (out of 100)",
 ];
 
-
 //------------------------------------------------------------------------
-
 
 export default function Home() {
   const [serverMovieInfoArray, setServerMovieInfoArray] = useState<IMovieInformation[]>([]);
@@ -40,33 +38,26 @@ export default function Home() {
   const [currentMovieScoreScreenVisibility, setCurrentMovieScoreScreenVisibility] = useState(false);
   const [scoreScreenVisibility, setScoreScreenVisibility] = useState(false);
   const [localPlayerData, setLocalPlayerData] = useState<IPlayerStats | null>(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [hasPlayedToday, setHasPlayedToday] = useState(false)
+  const [movieDataLoaded, setMovieDataLoaded] = useState(false);
 
   useEffect(() => {
     let fn = async () => {
       let result = await FetchMovieData();
+      console.log("MOVIE DATA FOR TESTING:")
       console.log("MOVIE 1: " + result[0].Title + " | " + result[0].RatingSource + " | " + result[0].RatingValue)
       console.log("MOVIE 2: " + result[1].Title + " | " + result[1].RatingSource + " | " + result[1].RatingValue)
       console.log("MOVIE 3: " + result[2].Title + " | " + result[2].RatingSource + " | " + result[2].RatingValue)
+      console.log("MOVIE 4: " + result[3].Title + " | " + result[3].RatingSource + " | " + result[3].RatingValue)
+      console.log("MOVIE 5: " + result[4].Title + " | " + result[4].RatingSource + " | " + result[4].RatingValue)
       setServerMovieInfoArray(result)
       setCurrentRating(middleRatingArray[result[0].RandomRatingInt])
-      setDataLoaded(true);
+      setMovieDataLoaded(true);
     }
-    if (!dataLoaded) {
-      setHasPlayedToday(false)
+    if (!movieDataLoaded) {
       fn();
     }
   }, [serverMovieInfoArray]);
 
-  useEffect(() => {
-    if (hasPlayedToday) {
-      setScoreScreenVisibility(true)
-    }
-    else {
-      setScoreScreenVisibility(false)
-    }
-  }, [hasPlayedToday])
 
   useEffect(() => {
     let firstTimeSave = async () => {
@@ -74,14 +65,19 @@ export default function Home() {
       lstorage.SavePlayerStats(newPlayerStats)
     }
     let fn = async () => {
-      let result = await lstorage.loadLocalPlayerStats()
+      let result = await lstorage.loadLocalPlayerStats();
+      let dailyIndexResult = await FetchDateData();
       if (result) {
-        setLocalPlayerData(result)
-        setHasPlayedToday(result.hasPlayedToday)
+        if (result.localGameIndex !== dailyIndexResult) {
+          result.hasPlayedToday = false;
+          result.localGameIndex = dailyIndexResult;
+          result.todaysScore = 0
+        }
         setScoreScreenVisibility(result.hasPlayedToday)
-        console.log("RESULT OF LOCAL DATA RETREIVAL")
-        console.log(result)
+        setLocalPlayerData(result)
+        lstorage.SavePlayerStats(result)
       }
+
       else {
         firstTimeSave()
       }
@@ -108,7 +104,6 @@ export default function Home() {
     setLocalPlayerData(prev => {
       const updated = prev ? { ...prev, hasPlayedToday: playedToday } : { ...newPlayerStats, hasPlayedToday: playedToday };
       lstorage.SavePlayerStats(updated);
-      setHasPlayedToday(playedToday);
       setScoreScreenVisibility(playedToday);
       return updated;
     });
@@ -147,16 +142,14 @@ export default function Home() {
       if (localPlayerData) {
         MarkPlayerStatsUponComplete({playedToday:true, playerStats:localPlayerData})
       }
-      setHasPlayedToday(true)
     }
   }
 
 
-  if (!dataLoaded) 
+  if (!movieDataLoaded) 
   {
     return <Loading />
   }
-
   else
   {
     return (
