@@ -1,6 +1,5 @@
 'use client'
 
-
 export function GalleryProgressDots({selectedIndex}: {selectedIndex:number}) {
     function CircleIcon({index}:{index:number}) {
         return (

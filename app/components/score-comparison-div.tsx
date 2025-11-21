@@ -4,7 +4,6 @@ import React from "react";
 import { GetPlayerRatingScoreIndexValue } from "./compare-movie-scores";
 import { IPlayerStats } from "./player-stats";
 
-//------------------------------------------------------------------------
 
 const WinningTextArray: string[] = [
     "Perfect Rating!",
@@ -17,21 +16,19 @@ const scoreDivStyle: string[] = [
     "bg-[#FF0000] text-white"
 ];
 
-//------------------------------------------------------------------------
-
-function TextAndScoreDiv({titleText, statsText}:{titleText:string, statsText:string}) {
-    return (
-        <div className="divCenterHorizontalText">
-            <p className="scoreTextSecondary">{titleText}</p>
-            <p className={`scoreTextPrimary`}>{statsText}</p>
-        </div>
-    )
-}
-
-//------------------------------------------------------------------------
 
 export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating, playerMovieRating, playerStats, onNextMovie}:{visible:boolean, ratingSourceInt:number, actualMovieRating:string, playerMovieRating:number, playerStats:IPlayerStats | null, onNextMovie:()=>void}) {
     const playerScoreRatingValue = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:actualMovieRating, playerMovieRating:playerMovieRating})
+    
+    function TextAndScoreDiv({titleText, statsText}:{titleText:string, statsText:string}) {
+        return (
+            <div className="divCenterHorizontalText">
+                <p className="scoreTextSecondary">{titleText}</p>
+                <p className={`scoreTextPrimary`}>{statsText}</p>
+            </div>
+        )
+    }
+    
     return (
         <>
         { 

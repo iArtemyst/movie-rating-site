@@ -3,7 +3,6 @@
 import { IPlayerStats } from "./player-stats";
 import "@/app/globals.css";
 
-
 export function TodaysFinalScoreScreen({visible, playerStats}:{visible:boolean, playerStats:IPlayerStats | null}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
         return (
