@@ -1,3 +1,6 @@
+'use client'
+
+
 import { IPlayerStats } from "./player-stats";
 
 
@@ -57,8 +60,7 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
     } catch (err) {
         console.error('Error saving player stats to localStorage', err);
     }
-
-    console.log("LOCAL PLAYER STATS:")
+    console.log("SAVING LOCAL PLAYER STATS:")
     console.log(stats)
 }
 
@@ -66,14 +68,4 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
 export function ClearLocalStorage() {
     console.log("clearing the local storage")
     localStorage.clear()
-}
-
-
-export function CheckPlayedToday(localCheck: string): boolean {
-    if (localCheck === 'true') {
-        return true
-    }
-    else {
-        return false
-    }
 }

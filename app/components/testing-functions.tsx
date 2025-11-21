@@ -1,12 +1,14 @@
+'use client'
+
+
 import React from "react";
 import * as lstorage from "./local-data-storage";
-import { IPlayerStats, newPlayerStats } from "./player-stats";
+import { IPlayerStats } from "./player-stats";
 
 //TESTING FUNCTIONS
 export function TestButtonResetLocalStorageAndReloadPage() {
     function HandleClick() {
         lstorage.ClearLocalStorage()
-        lstorage.SavePlayerStats(newPlayerStats)
         window.location.reload()
     }
     return (
@@ -16,24 +18,28 @@ export function TestButtonResetLocalStorageAndReloadPage() {
     )
 }
 
-export function TestDivWithPlayerStatInformation({playerStats}:{playerStats:IPlayerStats}) {
+export function TestDivWithPlayerStatInformation({playerStats}:{playerStats:IPlayerStats | null}) {
     return (
         <div className={`absolute left-[50%] -translate-x-[50%] bottom-0 mb-[1em] flex flex-row gap-[1em]`}>
             <div className={`flex flex-col items-center`}>
                 <p>Today's Score:</p>
-                <p>{playerStats.todaysScore}</p>
+                <p>{playerStats ? `${playerStats.todaysScore}` : "No Stats"}</p>
             </div>
             <div className={`flex flex-col items-center`}>
                 <p>Has Played Today?</p>
-                <p>{`${playerStats.hasPlayedToday}`}</p>
+                <p>{playerStats ? `${playerStats.hasPlayedToday}` : "No Stats"}</p>
             </div>
             <div className={`flex flex-col items-center`}>
                 <p>Total Games Played:</p>
-                <p>{playerStats.totalGamesPlayed}</p>
+                <p>{playerStats ? `${playerStats.totalGamesPlayed}` : "No Stats"}</p>
             </div>
             <div className={`flex flex-col items-center`}>
                 <p>Perfect Games:</p>
-                <p>{playerStats.totalPerfectGames}</p>
+                <p>{playerStats ? `${playerStats.totalPerfectGames}` : "No Stats"}</p>
+            </div>
+            <div className={`flex flex-col items-center`}>
+                <p>Day Index:</p>
+                <p>{playerStats ? `${playerStats.localGameIndex}` : "No Stats"}</p>
             </div>
         </div>
     )

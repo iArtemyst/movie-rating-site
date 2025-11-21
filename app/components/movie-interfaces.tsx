@@ -1,3 +1,9 @@
+export interface IDailyMovieInformation
+{
+    movies: IMovieInformation[],
+    dailyId: number
+}
+
 export interface IMovieInformation
 {
     Title: string, 

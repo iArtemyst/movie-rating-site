@@ -1,3 +1,6 @@
+'use client'
+
+
 import { IPlayerStats } from "./player-stats";
 import { moviePointValues, scoreErrorMargin } from "./movie-interfaces";
 

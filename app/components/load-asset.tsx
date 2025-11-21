@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { Loading } from "./loading";
-
+import { LoadingAsset } from "./loading";
 
 //------------------------------------------------------------------------
 
-function LazyImageCoreSizer({imgLink, imgAlt = "Default Image", imgSize="w-fit max-h-[960px]"}: {imgLink: string, imgAlt: string, imgSize:string,}) {
+export function LazyImageCoreSizer({imgLink, imgAlt, imgStyle}: {imgLink: string, imgAlt: string, imgStyle:string,}) {
     const [loadedSrc, setLoadedSrc] = useState('');
+
     useEffect(() => {
         async function loadImage() { 
             const source = await LoadAsset(imgLink);
@@ -18,11 +18,9 @@ function LazyImageCoreSizer({imgLink, imgAlt = "Default Image", imgSize="w-fit m
 
     return (
         loadedSrc === '' ?
-        <Loading/> :
-        <img src={loadedSrc}
-            alt={imgAlt}
-            className={`${imgSize} place-self-center object-cover`}
-        />
+            <LoadingAsset text="Loading Movie Poster..."/> 
+            :
+            <img src={loadedSrc} alt={imgAlt} className={`${imgStyle}`}/>
     )
 }
 
@@ -32,9 +30,4 @@ export async function LoadAsset(path: string): Promise<string>
 {
     if (process.env.NODE_ENV === "development") { return `${path}`; }
     else { return `${path}`; }
-}
-
-export function LazyImageSizer({imgLink, imgAlt="Default Image", imgSize="w-fit max-h-[960px]"}: {imgLink: string, imgAlt: string, imgSize:string})
-{
-    return <LazyImageCoreSizer imgLink={imgLink} imgAlt={imgAlt} imgSize={imgSize}/>
 }
