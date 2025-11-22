@@ -135,13 +135,13 @@ export default function Home() {
 
   if (!movieDataLoaded) 
   {
-    return <LoadingPage text="Trying to load Movie Data From Server..." />
+    return <LoadingPage text="Could not load movie data from server. Please try again." />
   }
   else
   {
     return (
-        <main className="font-sans grid grid-cols-1 items-center place-items-center h-[100dvh] w-[100dvw] touch-none">
-          <div className="w-fit h-fit lg:max-w-[840px] md:max-w-[640px] xl:max-w-[960px] flex flex-col p-[24px]">
+        <main className="mainPage font-sans">
+          <div className="mainContainer">
             <div className="mainQuestionDiv">
               <p >What do you think</p>
               <p className={`movieTitleText`}>{serverMovieInfoArray[selectedIndex].Title} ({serverMovieInfoArray[selectedIndex].Year})</p>
