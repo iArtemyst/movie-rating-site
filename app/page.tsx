@@ -13,10 +13,11 @@ import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { TodaysFinalScoreScreen } from "./components/score-graph";
 import { moviePointValues } from "./components/movie-interfaces";
 import * as lstorage from "./components/local-data-storage";
+import { SwitchThemeButton } from "./components/theme-switch-button";
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
-const middleRatingArray = [5, 50, 50];
+const middleRatingArray = [5.0, 50, 50];
 const stepAmount = [0.1, 1, 1,];
 const ratingsSelection: number = 0; // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
 const movieRatingHubText = [
@@ -155,7 +156,7 @@ export default function Home() {
                     value={currentRating}
                     onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
                     className={`ratingSliderStyle`}/>
-            <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {currentRating}</label>
+            <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RandomRatingInt === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
             <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
             <GalleryProgressDots selectedIndex={selectedIndex}/>
             <ScoreComparisonDiv 
@@ -167,6 +168,7 @@ export default function Home() {
               onNextMovie={UpdateToNextMovie}
               /> 
             <TodaysFinalScoreScreen visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
+            <SwitchThemeButton />
           </div>
         </main>
     );

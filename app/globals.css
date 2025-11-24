@@ -1,23 +1,70 @@
 @import "tailwindcss";
 
-@media (prefers-color-scheme: light){
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
+:root {
+    --base-color: #1c1c1c;
+    --base-variant: #1f1f1f;
+    --base-variant2: #bbbbbb;
+    --text-color: #fcfcfc;
+    --text-variant: #1f1f1f;
+    --primary-color: #dddddd;
+    --accent-color: #00ff6a;
+    --accent-color-2: #2cbe69;
+    --inactive-color: #838383;
+    --border-color: #000000;
+    --background-color: #111111;
+    --blocker-color: #000000DD;
+    --hover-text: #eeeeee;
+    --shadow-style: 0px 0px 8px #ffffff40;
+    --shadow-style-hover: 0px 0px 4px #ffffff60;
+    --shadow-style-thumb: 0px 0px 4px #5f5f5fdd;
+    --shadow-style-thumb-hover: 0px 0px 2px #5f5f5fdd;
   };
+
+.lightmode {
+  --base-color: #fafafa;
+  --base-variant: #dfdfdf;
+  --text-color: #111111;
+  --text-variant: #fcfcfc;
+  --primary-color: #333333;
+  --accent-color: #00ff6a;
+  --accent-color-2: #2cbe69;
+  --inactive-color: #838383;
+  --border-color: #ffffff;
+  --background-color: #fcfcfc;
+  --blocker-color: #cfcfcfdd;
+  --hover-text: #eeeeee;
+  --shadow-style: 0px 0px 8px #000000DD;
+  --shadow-style-hover: 0px 0px 4px #000000f5;
+  --shadow-style-thumb: 0px 0px 4px #c5c5c5dd;
+  --shadow-style-thumb-hover: 0px 0px 2px #c5c5c5dd;
 };
 
-:root {
-  --background: #0e0e0e;
-  --foreground: #ededed;
+.darkmode {
+  --base-color: #1c1c1c;
+  --base-variant: #1f1f1f;
+  --base-variant2: #bbbbbb;
+  --text-color: #fcfcfc;
+  --text-variant: #1f1f1f;
+  --primary-color: #dddddd;
+  --accent-color: #00ff6a;
+  --accent-color-2: #2cbe69;
+  --inactive-color: #838383;
+  --border-color: #000000;
+  --background-color: #111111;
+  --blocker-color: #000000DD;
+  --hover-text: #eeeeee;
+  --shadow-style: 0px 0px 8px #ffffff40;
+  --shadow-style-hover: 0px 0px 4px #ffffff60;
+  --shadow-style-thumb: 0px 0px 4px #5f5f5fdd;
+  --shadow-style-thumb-hover: 0px 0px 2px #5f5f5fdd;
 };
 
 main, body, html {
   margin: 0;
   padding: 0;
   overscroll-behavior-x: none;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--background-color);
+  color: var(--text-color);
   font-family: Arial, Helvetica, sans-serif;
 };
 
@@ -29,7 +76,7 @@ main, body, html {
 .popupBackgroundDiv {
   width: fit-content;
   height: fit-content;
-  color: white;
+  color: var(--text-color);
   padding-left: 4em;
   padding-right: 4em;
   padding-top: 3em;
@@ -39,7 +86,7 @@ main, body, html {
   display: flex;
   flex-direction: column;
   gap: .25em;
-  box-shadow: 2px 2px 12px #000000DD;
+  box-shadow: var(--shadow-style);
 }
 
 .fullScreenBlockingDiv {
@@ -48,7 +95,7 @@ main, body, html {
   right: 0;
   top: 0;
   bottom: 0;
-  background-color: #000000DD;
+  background-color: var(--blocker-color);
   z-index: 10;
   display: flex;
   place-items: center;
@@ -58,14 +105,14 @@ main, body, html {
 .movieInfoTextDiv {
   display: flex;
   flex-direction: column;
-  background-color: #161616;
+  background-color: var(--base-color);
   margin-top: 2em;
   padding-top: .75em;
   padding-bottom: .75em;
   padding-right: 1.25em;
   padding-left: 1.25em;
   border-radius: 1em;
-  box-shadow: 0px 0px 8px #FFFFFF40;
+  box-shadow: var(--shadow-style);
   cursor: pointer;
 
   @media screen and (max-width:560px) {
@@ -81,20 +128,20 @@ main, body, html {
 }
 
 .movieInfoTextDiv:hover {
-  box-shadow: 0px 0px 4px #FFFFFF40;
+  box-shadow: var(--shadow-style-hover);
 }
 
 .movieInfoLongTextDiv {
   display: flex;
   flex-direction: column;
-  background-color: #161616;
+  background-color: var(--base-color);
   margin-top: 2em;
   padding-top: .75em;
   padding-bottom: .75em;
   padding-right: 1.25em;
   padding-left: 1.25em;
   border-radius: 1em;
-  box-shadow: 0px 0px 8px #FFFFFF40;
+  box-shadow: var(--shadow-style);
   cursor: pointer;
 
   @media screen and (max-width:560px) {
@@ -104,7 +151,7 @@ main, body, html {
 }
 
 .movieInfoLongTextDiv:hover {
-  box-shadow: 0px 0px 4px #FFFFFF40;
+  box-shadow: var(--shadow-style-hover);
 }
 
 .movieInfoPrimaryText {
@@ -132,12 +179,14 @@ main, body, html {
   font-size: 14px;
   font-weight: 800;
   display: flex;
+  margin-bottom: .25em;
 
   @media screen and (max-width:560px) {
     font-size:12px;
     align-self: center;
     place-self: center;
     margin-top:0;
+    margin-bottom:0em;
   };
 
   @media screen and (min-width:1280px) {
@@ -179,7 +228,7 @@ main, body, html {
   width: 480px;
   object-fit: cover;
   border-radius: 24px;
-  box-shadow: 0px 0px 8px #FFFFFF40;
+  box-shadow: var(--shadow-style);
   cursor: pointer;
 
   @media screen and (max-width:560px) {
@@ -192,7 +241,7 @@ main, body, html {
 };
 
 .moviePosterImage:hover {
-  box-shadow: 0px 0px 4px #FFFFFF40;
+  box-shadow: var(--shadow-style-hover);
 };
 
 .movieInfoDivCol2 {
@@ -218,7 +267,7 @@ main, body, html {
   scale: 125%;
   width: 16px;
   height: 16px;
-  background: #00ff73;
+  background: var(--accent-color);
   border-radius: 100%;
 
   @media screen and (max-width:560px) {
@@ -230,7 +279,7 @@ main, body, html {
 .galleryIconInactive {
   width: 16px;
   height: 16px;
-  background: #838383;
+  background: var(--inactive-color);
   border-radius: 100%;
 
   @media screen and (max-width:560px) {
@@ -242,7 +291,7 @@ main, body, html {
 .galleryIconDefault {
   width: 16px;
   height: 16px;
-  background: #ededed;
+  background: var(--primary-color);
   border-radius: 100%;
 
   @media screen and (max-width:560px) {
@@ -271,13 +320,14 @@ main, body, html {
   padding-top: 1em;
   padding-bottom:1em;
   border-radius: 1em;
-  color: black;
-  background-color: #dfdfdf;
+  color: var(--text-variant);
+  background-color: var(--primary-color);
   place-content: center;
   place-self: center;
   cursor: pointer;
   font-weight: 700;
   font-size: 16px;
+  opacity: .85;
 
   @media screen and (max-width:560px) {
     font-size:12px;
@@ -291,7 +341,7 @@ main, body, html {
 .submitButton:hover {
   transform: scale(.94);
   font-weight: 700;
-  background-color: #FAFAFA;
+  opacity: 1;
 }
 
 .submitButton:active {
@@ -393,7 +443,7 @@ main, body, html {
 .ratingSliderStyle {
   width: 100%;
   height: 16px;
-  background-color: white;
+  background-color: var(--primary-color);
   cursor: pointer;
   appearance: none;
   margin-top: 4em;
@@ -410,45 +460,49 @@ main, body, html {
   appearance: none;
   width: 16px;
   height: 32px;
-  background: #00db63;
+  background: var(--accent-color-2);
   cursor: pointer;
   border-radius: 1em;
+  box-shadow: var(--shadow-style-thumb);
 }
 
 .ratingSliderStyle::-webkit-slider-thumb:hover {
   width: 20px;
   height: 54px;
-  background: #00ff73;
+  background: var(--accent-color);
+  box-shadow: var(--shadow-style-thumb-hover);
 }
 
 .ratingSliderStyle::-webkit-slider-thumb:active {
   width: 24px;
   height: 64px;
-  background: #00ff73;
+  background: var(--accent-color);
+  box-shadow: var(--shadow-style-thumb-hover);
 }
 
 .ratingSliderStyle::-moz-range-thumb {
   width: 16px;
   height: 48px;
-  background: #00db63;
+  background: var(--accent-color-2);
   border: none;
   cursor: pointer;
   border-radius: 1em;
-  box-shadow: 0px 0px 8px #00000040;
+  box-shadow: var(--shadow-style-thumb);
 }
 
 .ratingSliderStyle::-moz-range-thumb:hover {
   width: 20px;
   height: 54px;
-  background: #00ff73;
+  background: var(--accent-color);
+  box-shadow: var(--shadow-style-thumb-hover);
 }
 
 .ratingSliderStyle::-moz-range-thumb:active {
   width: 24px;
   height: 64px;
-  background: #00ff73;
+  background: var(--accent-color);
+  box-shadow: var(--shadow-style-thumb-hover);
 }
-
 
 .mainPage {
   display: flex;
@@ -458,4 +512,29 @@ main, body, html {
   touch-action: none;
   place-items: center;
   justify-items: center;
+}
+
+.switchThemeButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 2em;
+  font-size: 14px;
+  font-weight: 700;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  background-color: var(--base-variant2);
+  border-radius: 2em;
+  scale: 1;
+  cursor: pointer;
+}
+
+.switchThemeButton:hover {
+  scale: .9;
+}
+
+.switchThemeButton:active {
+  scale: .85;
 }
