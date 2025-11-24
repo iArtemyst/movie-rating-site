@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "chart.js": "^4.5.1",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -24,9 +23,5 @@
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "browserslist": [
-      "> 1%",
-      "last 2 versions"
-  ]
+  }
 }
