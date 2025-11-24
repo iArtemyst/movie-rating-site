@@ -26,7 +26,7 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
     
     return (
         <div className={`mainMovieInfoDiv`}>
-            <LazyImageCoreSizer imgLink={movie.Poster} imgAlt="movie poster" imgStyle="moviePosterImage"/>
+            <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="moviePosterImage"/>
             <div className="movieInfoDivCol2">
                 <div className="movieInfoTextDiv">
                     <p className="movieInfoSecondaryText">Director:</p>

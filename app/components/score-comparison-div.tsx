@@ -11,9 +11,9 @@ const WinningTextArray: string[] = [
     "Incorrect Rating",
 ];
 const scoreDivStyle: string[] = [
-    "bg-[#00ad5c] text-white",
-    "bg-[#02B99E] text-white",
-    "bg-[#FF0000] text-white"
+    "bg-[#00ad5c]",
+    "bg-[#02B99E]",
+    "bg-[#FF0000]"
 ];
 
 
@@ -35,10 +35,12 @@ export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating,
             visible &&
             <div className={`fullScreenBlockingDiv`}>
                 <div className={`${scoreDivStyle[playerScoreRatingValue]} popupBackgroundDiv`}>
-                    <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
-                    <TextAndScoreDiv titleText="Your Rating:" statsText={`${playerMovieRating}`} />
-                    <TextAndScoreDiv titleText="Actual Rating:" statsText={`${actualMovieRating}`} />
-                    <TextAndScoreDiv titleText="Your Score Today:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />                    
+                    <div className="popupTextContainer">
+                        <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
+                        <TextAndScoreDiv titleText="Your Rating:" statsText={`${playerMovieRating}`} />
+                        <TextAndScoreDiv titleText="Actual Rating:" statsText={`${actualMovieRating}`} />
+                        <TextAndScoreDiv titleText="Your Score Today:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />  
+                    </div>
                     <div onClick={() => onNextMovie?.()} className={`submitButton`}>
                         <p>NEXT MOVIE</p>
                     </div>

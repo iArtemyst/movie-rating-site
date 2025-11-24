@@ -13,7 +13,7 @@ import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { TodaysFinalScoreScreen } from "./components/score-graph";
 import { moviePointValues } from "./components/movie-interfaces";
 import * as lstorage from "./components/local-data-storage";
-import { SwitchThemeButton } from "./components/theme-switch-button";
+import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components/theme-switch-button";
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
@@ -52,6 +52,11 @@ export default function Home() {
         console.log(tempPlayerStats)
       }
 
+      if (tempPlayerStats.playerTheme === 'light') {
+        enableLightMode({playerStats:tempPlayerStats});
+      } else {
+        enableDarkMode({playerStats:tempPlayerStats});
+      }
       setLocalPlayerData(tempPlayerStats)
       setMovieDataLoaded(true);
       lstorage.SavePlayerStats(tempPlayerStats)
@@ -141,24 +146,30 @@ export default function Home() {
   else
   {
     return (
-        <main className="mainPage font-sans">
+        <main className="mainPage">
           <div className="mainContainer">
-            <div className="mainQuestionDiv">
-              <p >What do you think</p>
-              <p className={`movieTitleText`}>{serverMovieInfoArray[selectedIndex].Title} ({serverMovieInfoArray[selectedIndex].Year})</p>
-              <p >is rated on {movieRatingHubText[serverMovieInfoArray[selectedIndex].RandomRatingInt]}?</p>
+            <div className="contentContainer">
+              <div className="mainQuestionDiv">
+                <p >What do you think</p>
+                <p className={`movieTitleText`}>{serverMovieInfoArray[selectedIndex].Title} ({serverMovieInfoArray[selectedIndex].Year})</p>
+                <p >is rated on {movieRatingHubText[serverMovieInfoArray[selectedIndex].RandomRatingInt]}?</p>
+              </div>
+              <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]}/>
+              <div className="controllerContentContainer">
+                <div className="sliderContainer">
+                  <input type="range" name="ratingSlider" id="ratingSlider"
+                          min={minRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]} 
+                          max={maxRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
+                          step={stepAmount[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
+                          value={currentRating}
+                          onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
+                          className={`ratingSliderStyle`}/>
+                  <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RandomRatingInt === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
+                </div>
+                <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
+                <GalleryProgressDots selectedIndex={selectedIndex}/>
+                </div>
             </div>
-            <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]}/>
-            <input type="range" name="ratingSlider" id="ratingSlider"
-                    min={minRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]} 
-                    max={maxRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
-                    step={stepAmount[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
-                    value={currentRating}
-                    onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
-                    className={`ratingSliderStyle`}/>
-            <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RandomRatingInt === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
-            <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
-            <GalleryProgressDots selectedIndex={selectedIndex}/>
             <ScoreComparisonDiv 
               ratingSourceInt={serverMovieInfoArray[selectedIndex].RandomRatingInt} 
               actualMovieRating={serverMovieInfoArray[selectedIndex].RatingValue} 
@@ -168,7 +179,7 @@ export default function Home() {
               onNextMovie={UpdateToNextMovie}
               /> 
             <TodaysFinalScoreScreen visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
-            <SwitchThemeButton />
+            <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
           </div>
         </main>
     );

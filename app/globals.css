@@ -6,6 +6,7 @@
     --base-variant2: #bbbbbb;
     --text-color: #fcfcfc;
     --text-variant: #1f1f1f;
+    --text-button: #fcfcfc;
     --primary-color: #dddddd;
     --accent-color: #00ff6a;
     --accent-color-2: #2cbe69;
@@ -22,21 +23,22 @@
 
 .lightmode {
   --base-color: #fafafa;
-  --base-variant: #dfdfdf;
+  --base-variant: #f1f1f1;
   --text-color: #111111;
-  --text-variant: #fcfcfc;
-  --primary-color: #333333;
+  --text-variant: #fafafa;
+  --text-button: #111111;
+  --primary-color: #ececec;
   --accent-color: #00ff6a;
-  --accent-color-2: #2cbe69;
+  --accent-color-2: #31dd79;
   --inactive-color: #838383;
   --border-color: #ffffff;
   --background-color: #fcfcfc;
-  --blocker-color: #cfcfcfdd;
+  --blocker-color: #3d3d3d91;
   --hover-text: #eeeeee;
   --shadow-style: 0px 0px 8px #000000DD;
   --shadow-style-hover: 0px 0px 4px #000000f5;
-  --shadow-style-thumb: 0px 0px 4px #c5c5c5dd;
-  --shadow-style-thumb-hover: 0px 0px 2px #c5c5c5dd;
+  --shadow-style-thumb: 0px 0px 2px #c5c5c5dd;
+  --shadow-style-thumb-hover: 0px 0px 4px #c5c5c581;
 };
 
 .darkmode {
@@ -44,7 +46,8 @@
   --base-variant: #1f1f1f;
   --base-variant2: #bbbbbb;
   --text-color: #fcfcfc;
-  --text-variant: #1f1f1f;
+  --text-variant: #e0e0e0;
+  --text-button: #1f1f1f;
   --primary-color: #dddddd;
   --accent-color: #00ff6a;
   --accent-color-2: #2cbe69;
@@ -62,8 +65,11 @@
 main, body, html {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
   overscroll-behavior-x: none;
   background: var(--background-color);
+  background-color: var(--background-color);
   color: var(--text-color);
   font-family: Arial, Helvetica, sans-serif;
 };
@@ -71,6 +77,13 @@ main, body, html {
 .popupTitleText {
   font-size:24px;
   font-weight: 700;
+  align-self: center;
+  text-align: center;
+
+  @media screen and (max-width:560px) {
+    font-size:18px;
+    margin-bottom: .5em;
+  };
 }
 
 .popupBackgroundDiv {
@@ -85,16 +98,24 @@ main, body, html {
   align-self: center;
   display: flex;
   flex-direction: column;
-  gap: .25em;
+  gap: 1em;
   box-shadow: var(--shadow-style);
 }
 
+.popupTextContainer {
+  display: flex;
+  flex-direction: column;
+  gap: .25em;
+}
+
 .fullScreenBlockingDiv {
-  position: absolute;
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  top: 0;
   bottom: 0;
+  width: 100%;
+  height: 100%;
   background-color: var(--blocker-color);
   z-index: 10;
   display: flex;
@@ -235,6 +256,10 @@ main, body, html {
     width: 360px;
   };
 
+  @media screen and (min-width:560px) and (max-width:768px) {
+    width: 320px;
+  };
+
   @media screen and (min-width:1280px) {
     width: 540px;
   };
@@ -277,14 +302,14 @@ main, body, html {
 };
 
 .galleryIconInactive {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: var(--inactive-color);
   border-radius: 100%;
 
   @media screen and (max-width:560px) {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
   };
 };
 
@@ -306,28 +331,27 @@ main, body, html {
   display: flex;
   flex-direction: row;
   place-self: center;
-  gap: 1em;
+  gap: 1.25em;
   z-index: 5;
+  margin-top: .5em;
 };
 
 .submitButton {
   width: fit-content;
   height: fit-content;
-  margin-top: 2em;
-  margin-bottom: 2em;
   padding-left: 2em;
   padding-right:2em;
   padding-top: 1em;
   padding-bottom:1em;
   border-radius: 1em;
-  color: var(--text-variant);
+  color: var(--text-button);
   background-color: var(--primary-color);
   place-content: center;
   place-self: center;
   cursor: pointer;
   font-weight: 700;
   font-size: 16px;
-  opacity: .85;
+  opacity: .9;
 
   @media screen and (max-width:560px) {
     font-size:12px;
@@ -410,6 +434,7 @@ main, body, html {
   display: flex;
   flex-direction: column;
   padding: 24px;
+  background-color: var(--background-color);
 
   @media screen and (max-width:560px) {
     font-size:14px;
@@ -421,6 +446,36 @@ main, body, html {
     font-size:20px;
     max-width: 960px;
   };
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.controllerContentContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-items: center;
+  gap: 1em;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-items: center;
+  gap: .25em;
+  margin-bottom: .25em;
 }
 
 .sliderLabelText {
@@ -509,26 +564,39 @@ main, body, html {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  touch-action: none;
   place-items: center;
   justify-items: center;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  background-color: var(--background-color);
 }
 
 .switchThemeButton {
   position: absolute;
   right: 0;
   top: 0;
-  margin: 2em;
-  font-size: 14px;
+  margin-right: 2em;
+  margin-top: 4em;
+  font-size: 12px;
   font-weight: 700;
   padding-top: .5em;
   padding-bottom: .5em;
   padding-left: 1em;
   padding-right: 1em;
-  background-color: var(--base-variant2);
+  background-color: var(--base-variant);
   border-radius: 2em;
   scale: 1;
+  z-index: 20;
   cursor: pointer;
+
+  @media screen and (max-width:560px) {
+    margin-top: 2em;
+    font-size:10px;
+    padding-top: .25em;
+    padding-bottom: .25em;
+    padding-left: .5em;
+    padding-right: .5em;
+  };
 }
 
 .switchThemeButton:hover {

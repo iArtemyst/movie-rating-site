@@ -5,6 +5,7 @@ export interface IPlayerStats
     todaysScore: number;
     hasPlayedToday: boolean;
     localGameIndex: number;
+    playerTheme: "light" | "dark";
 }
 
 export const newPlayerStats: IPlayerStats = {
@@ -13,4 +14,5 @@ export const newPlayerStats: IPlayerStats = {
     todaysScore: 0,
     hasPlayedToday: false,
     localGameIndex: 0,
+    playerTheme: "dark",
 };
