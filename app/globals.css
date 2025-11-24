@@ -224,7 +224,6 @@ main, body, html {
     flex-direction: row;
     align-self: center;
     place-self: center;
-    text-wrap-mode: nowrap;
     gap: .5em;
   };
 };
