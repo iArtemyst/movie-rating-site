@@ -1,4 +1,3 @@
 Movie Rating Website
 
-
-CURRENTLY WORK IN PROGRESS
+0.0.1
