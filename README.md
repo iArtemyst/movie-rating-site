@@ -1,3 +1,5 @@
 Movie Rating Website
 
-0.0.1
+https://iartemyst.github.io/movie-rating-site/
+
+0.1.0
