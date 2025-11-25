@@ -35,15 +35,15 @@ export default function Home() {
   const [movieDataLoaded, setMovieDataLoaded] = useState(false);
 
   useEffect(() => {
-    let fn = async () => {
-      let result: IDailyMovieInformation = await FetchMovieData();
+    const fn = async () => {
+      const result: IDailyMovieInformation = await FetchMovieData();
 
       // Movie info
       setServerMovieInfoArray(result.movies)
       setCurrentRating(middleRatingArray[result.movies[0].RandomRatingInt])
 
       // Current day
-      let tempPlayerStats: IPlayerStats = getLocalPlayerData();
+      const tempPlayerStats: IPlayerStats = getLocalPlayerData();
       if (tempPlayerStats.localGameIndex !== result.dailyId) {
         tempPlayerStats.hasPlayedToday = false;
         tempPlayerStats.localGameIndex = result.dailyId;
@@ -70,7 +70,7 @@ export default function Home() {
   //------------------------------------------------------------------------
 
   function getLocalPlayerData() {
-    let localDataResult = lstorage.loadLocalPlayerStats();
+    const localDataResult = lstorage.loadLocalPlayerStats();
     if (!localDataResult) {
       console.log("no current local stats: saving new player stats")
       lstorage.SavePlayerStats(newPlayerStats)

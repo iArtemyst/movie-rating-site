@@ -4,7 +4,7 @@
 import { IPlayerStats } from "./player-stats";
 
 
-export function useLocalData(keyName: string): string | null {
+export function getLocalData(keyName: string): string | null {
     const data = localStorage.getItem(keyName)
     return data;
 }
@@ -12,12 +12,12 @@ export function useLocalData(keyName: string): string | null {
 
 export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
     const keys = (s: string) => `${prefix}${s}`;
-    const totalGamesPlayed = useLocalData(keys('totalGamesPlayed'));
-    const totalPerfectGames = useLocalData(keys('totalPerfectGames'));
-    const todaysScore = useLocalData(keys('todaysScore'));
-    const hasPlayedToday = useLocalData(keys('hasPlayedToday'));
-    const localDailyIndex = useLocalData(keys(`localGameIndex`));
-    const playerTheme = useLocalData(keys(`playerTheme`));
+    const totalGamesPlayed = getLocalData(keys('totalGamesPlayed'));
+    const totalPerfectGames = getLocalData(keys('totalPerfectGames'));
+    const todaysScore = getLocalData(keys('todaysScore'));
+    const hasPlayedToday = getLocalData(keys('hasPlayedToday'));
+    const localDailyIndex = getLocalData(keys(`localGameIndex`));
+    const playerTheme = getLocalData(keys(`playerTheme`));
     const anyLoaded = [
         totalGamesPlayed,
         totalPerfectGames,

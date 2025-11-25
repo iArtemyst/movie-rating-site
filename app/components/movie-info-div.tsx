@@ -6,7 +6,7 @@ import { IMovieInformation } from "./movie-interfaces";
 import "@/app/globals.css";
 
 export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
-    let splitActors = movie.Actors.split(",");
+    const splitActors = movie.Actors.split(",");
 
     function ActorBulletPoint({actor}:{actor:string}) {
         return(
@@ -17,7 +17,7 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
     }
     
     function MapActorsToBullets({count}:{count:number}) {
-        let actorArray = []
+        const actorArray = []
         for (let i=0; i < count; i++) {
             actorArray.push(<ActorBulletPoint actor={splitActors[i]} key={i}/>)
         };

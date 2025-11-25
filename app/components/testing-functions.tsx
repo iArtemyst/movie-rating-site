@@ -22,7 +22,7 @@ export function TestDivWithPlayerStatInformation({playerStats}:{playerStats:IPla
     return (
         <div className={`absolute left-[50%] -translate-x-[50%] bottom-0 mb-[1em] flex flex-row gap-[1em]`}>
             <div className={`flex flex-col items-center`}>
-                <p>Today's Score:</p>
+                <p>Today&apos;s Score:</p>
                 <p>{playerStats ? `${playerStats.todaysScore}` : "No Stats"}</p>
             </div>
             <div className={`flex flex-col items-center`}>

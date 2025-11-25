@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build && type NUL > .\\docs\\.nojekyll",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fix-lint": "eslint --fix"
   },
   "dependencies": {
     "next": "15.5.4",

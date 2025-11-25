@@ -8,7 +8,7 @@ export function GalleryProgressDots({selectedIndex}: {selectedIndex:number}) {
     }
 
     function MapCircleIconsAmount({count}:{count:number}) {
-        let iconArray = [];
+        const iconArray = [];
         for (let i = 0; i < count; i++ ) {
             iconArray.push(<CircleIcon index={i} key={i}/>);
         }
