@@ -518,6 +518,7 @@ main, body, html {
   flex-direction: column;
   padding: 24px;
   position: relative;
+  background-color: var(--background-color);
 
   @media screen and (max-width:560px) {
     font-size:14px;
@@ -704,7 +705,6 @@ main, body, html {
   font-size: 10px;
   color: var(--inactive-color);
   cursor: pointer;
-  background-color: var(--background-color);
 
   @media screen and (max-width:560px) {
     font-size:8px;

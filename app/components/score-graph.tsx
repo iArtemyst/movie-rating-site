@@ -24,8 +24,8 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
             moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[2].RandomRatingInt, movieRatingString:movies[2].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[2] : 0})],
         ]
         const shareTextExpanded =   "Check out my movie rating score! 🎬🍿\n\n" +
-                                    String(movies[0].Title) + ": " + String(playersPointValuesArray[0]) + ",\n" +
-                                    String(movies[1].Title) + ": " + String(playersPointValuesArray[1]) + ",\n" +
+                                    String(movies[0].Title) + ": " + String(playersPointValuesArray[0]) + "\n" +
+                                    String(movies[1].Title) + ": " + String(playersPointValuesArray[1]) + "\n" +
                                     String(movies[2].Title) + ": " + String(playersPointValuesArray[2]) + "\n" +
                                     `Total Score: ${playerStats?.todaysScore} points`;
         function CopyScoreToClipboard() {

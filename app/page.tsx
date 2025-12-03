@@ -8,7 +8,6 @@ import { FetchMovieData } from "./components/fetch-movie-data";
 import { MovieInfoDiv } from "./components/movie-info-div";
 import { UpdatePlayerScoreBasedOnRating } from "./components/compare-movie-scores";
 import { IncrementArrayIndex } from "./components/increment-array-index";
-import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { LoadingPage } from "./components/loading";
 import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { TodaysFinalScoreScreen } from "./components/score-graph";
@@ -29,17 +28,6 @@ const maxRatingArray = [10, 100, 100];
 const middleRatingArray = [5.0, 50, 50];
 const stepAmount = [0.1, 1, 1,];
 const ratingsSelection: number = 0; // 0 = IMDB, 1 = Metacritic, 2 = Rotten Tomatoes
-const movieRatingHubText = [
-  "IMDB",
-  "Rotten Tomatoes",
-  "Metacritic",
-];
-const sourceLogos = [
-  IMDBLogo,
-  [MCLogoDark, MCLogoLight],
-  RTLogo,
-]
-
 
 function SiteFooter() {
   const [visible, setVisible] = useState(false)
@@ -109,7 +97,7 @@ function SiteFooter() {
     )
 }
 
-function MainQuestionContainer({title, year, source, theme}:{title:string, year:string, source:number, theme:string}) {
+function MainQuestionContainer({source, theme}:{source:number, theme:string}) {
   const sourceLogos = [
     IMDBLogo,
     [MCLogoDark, MCLogoLight],
@@ -271,8 +259,6 @@ export default function Home() {
             <div className="contentContainer">
               <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]} index={selectedIndex}/>
               <MainQuestionContainer 
-                title={serverMovieInfoArray[selectedIndex].Title} 
-                year={serverMovieInfoArray[selectedIndex].Year} 
                 source={serverMovieInfoArray[selectedIndex].RandomRatingInt}
                 theme={localPlayerData ? localPlayerData?.playerTheme : "dark"}
                 />
