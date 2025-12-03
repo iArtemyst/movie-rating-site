@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { IDailyMovieInformation, IMovieInformation } from "./components/movie-interfaces";
 import { IPlayerStats, newPlayerStats } from "./components/player-stats";
 import { FetchMovieData } from "./components/fetch-movie-data";
@@ -14,29 +15,127 @@ import { TodaysFinalScoreScreen } from "./components/score-graph";
 import { moviePointValues } from "./components/movie-interfaces";
 import * as lstorage from "./components/local-data-storage";
 import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components/theme-switch-button";
+import * as testing from "./components/testing-functions";
+import { LazyImageCoreSizer } from "./components/load-asset";
+
+const IMDBLogo = "https://eevee-feywild.art/__other/source_IMDB-logo-cropping.png";
+const MCLogoDark = "https://eevee-feywild.art/__other/source_MC-logo-cropping_dark.png";
+const MCLogoLight = "https://eevee-feywild.art/__other/source_MC-logo-cropping_light.png";
+const RTLogo = "https://eevee-feywild.art/__other/source_RT-logo-cropping.png";
+
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
 const middleRatingArray = [5.0, 50, 50];
 const stepAmount = [0.1, 1, 1,];
-const ratingsSelection: number = 0; // 0 = IMDB, 1 = Metascore, 2 = Rotten Tomatoes
+const ratingsSelection: number = 0; // 0 = IMDB, 1 = Metacritic, 2 = Rotten Tomatoes
 const movieRatingHubText = [
   "IMDB",
   "Rotten Tomatoes",
   "Metacritic",
 ];
+const sourceLogos = [
+  IMDBLogo,
+  [MCLogoDark, MCLogoLight],
+  RTLogo,
+]
+
 
 function SiteFooter() {
+  const [visible, setVisible] = useState(false)
+
+  function FooterOnClick() {
+    setVisible(true)
+  }
+
   function ShowAboutDiv() {
-    alert("Daily Movie Rating\n\nA daily game where you rate movies based on their actual ratings from popular movie rating sites!\n\nData provided by the OMDB API.\n\nDesigned and Developed by iArtemyst.");
+    return (
+      <>
+        {
+          visible &&
+          <div className="fullScreenBlockingDiv" onClick={() => setVisible(false)}>
+            <div className="footerAboutDiv">
+                <div className="w-fit flex flex-col place-items-center">
+                  <p className="my-[.5em] font-semibold mb-[1em]">Thanks for playing my Daily Movie Rating Site!</p>
+                  <div className="w-fit flex flex-col place-items-center text-[16px]">
+                    <div className="w-fit flex flex-row gap-[.375em]">
+                      <p>Data obtained from</p>
+                        <Link href="https://www.omdbapi.com/" rel="noopener noreferrer" target="_blank">
+                          <p className="font-bold">OMDB</p>
+                        </Link>
+                    </div>
+                    <div className="w-fit flex flex-row gap-[.375em]">
+                      <p>Most recent update:</p>
+                      <p>December 2025</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-fit flex flex-col place-items-center text-[16px] mb-[1em]">
+                  <div className="w-fit flex flex-row gap-[.25em]">
+                    <p>Designed by</p>
+                    <Link href="https://github.com/iartemyst" rel="noopener noreferrer" target="_blank">
+                        <p className="font-bold">iArtemyst,</p>
+                    </Link>
+                    <p> with special thanks to </p>
+                    {/* <Link href="https://github.com/asundheim" rel="noopener noreferrer" target="_blank">
+                        <p className="font-bold">Ders</p>
+                    </Link> */}
+                    <p className="font-bold">Ders</p>
+                    <p>for support</p>
+                  </div>
+                  <div className="w-fit flex flex-row gap-[.375em]">
+                    <p>Please check out my</p>
+                    <Link href="https://eevee-feywild.com/" rel="noopener noreferrer" target="_blank">
+                        <p className="font-bold">portfolio</p>
+                    </Link>
+                    <p>for more of my work</p>
+                  </div>
+                </div>
+                <p className="hideMeText">click anywhere to close</p>
+            </div>
+          </div>
+        }
+      </>
+    )
   }
   
   return (
-      <div className="siteFooterDiv" onClick={(() => ShowAboutDiv())}>
-        <p>Daily Movie Rating © 2025 | Designed by iArtemyst</p>
-        <p>Data Updated Dec. 2025</p>
-      </div>
+      <>
+        <div className="siteFooterDiv" onClick={(() => FooterOnClick())}>
+          <p>Daily Movie Rating © 2025 | Designed by iArtemyst</p>
+        </div>
+        <ShowAboutDiv/>
+      </>
     )
+}
+
+function MainQuestionContainer({title, year, source, theme}:{title:string, year:string, source:number, theme:string}) {
+  const sourceLogos = [
+    IMDBLogo,
+    [MCLogoDark, MCLogoLight],
+    RTLogo,
+  ]
+  
+  function pickLogo() {
+    if (source === 1) {
+      if (theme === `dark`) {
+        return String(sourceLogos[1][1])
+      }
+      else { 
+        return String(sourceLogos[1][0])
+      }
+    }
+    else return String(sourceLogos[source])
+  }
+  
+  return (
+      <div className="mainQuestionDiv">
+        <div className="flex flex-row place-items-center text-[16px] sm:text-[16px] md:text-[20px] lg:text-[24px]">
+          <p className="pr-[.25em]">What is it rated on</p>
+          <LazyImageCoreSizer imgLink={pickLogo()} imgAlt={`${source} logo`} imgStyle="h-[1.5em]" />
+        </div>
+      </div>
+  )
 }
 
 export default function Home() {
@@ -162,7 +261,7 @@ export default function Home() {
 
   if (!movieDataLoaded) 
   {
-    return <LoadingPage text="Could not load movie data from server. Please try again." />
+    return <LoadingPage text="Loading Data from Movie Server..." />
   }
   else
   {
@@ -170,12 +269,13 @@ export default function Home() {
         <main className="mainPage">
           <div className="mainContainer">
             <div className="contentContainer">
-              <div className="mainQuestionDiv">
-                <p >What do you think</p>
-                <p className={`movieTitleText`}>{serverMovieInfoArray[selectedIndex].Title} ({serverMovieInfoArray[selectedIndex].Year})</p>
-                <p >is rated on {movieRatingHubText[serverMovieInfoArray[selectedIndex].RandomRatingInt]}?</p>
-              </div>
-              <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]}/>
+              <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]} index={selectedIndex}/>
+              <MainQuestionContainer 
+                title={serverMovieInfoArray[selectedIndex].Title} 
+                year={serverMovieInfoArray[selectedIndex].Year} 
+                source={serverMovieInfoArray[selectedIndex].RandomRatingInt}
+                theme={localPlayerData ? localPlayerData?.playerTheme : "dark"}
+                />
               <div className="controllerContentContainer">
                 <div className="sliderContainer">
                   <input type="range" name="ratingSlider" id="ratingSlider"
@@ -188,7 +288,6 @@ export default function Home() {
                   <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RandomRatingInt === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
                 </div>
                 <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
-                <GalleryProgressDots selectedIndex={selectedIndex}/>
                 </div>
             </div>
             <ScoreComparisonDiv 
@@ -202,6 +301,7 @@ export default function Home() {
             <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
             <SiteFooter />
+            <testing.TestButtonResetLocalStorageAndReloadPage />
           </div>
         </main>
     );

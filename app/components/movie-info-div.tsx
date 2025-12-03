@@ -3,9 +3,10 @@
 import React from "react";
 import { LazyImageCoreSizer } from "./load-asset";
 import { IMovieInformation } from "./movie-interfaces";
+import { GalleryProgressDots } from "./gallery-progress-dots";
 import "@/app/globals.css";
 
-export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
+export function MovieInfoDiv({movie, index}:{movie: IMovieInformation, index:number}) {
     const splitActors = movie.Actors.split(",");
 
     function ActorBulletPoint({actor}:{actor:string}) {
@@ -25,26 +26,32 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
     }
     
     return (
-        <div className={`mainMovieInfoDiv`}>
-            <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="moviePosterImage"/>
-            <div className="movieInfoDivCol2">
-                <div className="movieInfoTextDiv">
-                    <p className="movieInfoSecondaryText">Director:</p>
-                    <p className="movieInfoPrimaryText">{movie.Director}</p>
-                </div>
+        <>
+            <div className={`mainMovieInfoDiv`}>
+                <p className="movieTitleText">{`${movie.Title} \(${movie.Year}\)`}</p>
+                <div className={`secMovieInfoDiv`}>
+                    <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="moviePosterImage"/>
+                    <div className="movieInfoDivCol2">
+                        <div className="movieInfoTextDiv">
+                            <p className="movieInfoSecondaryText">Director:</p>
+                            <p className="movieInfoPrimaryText">{movie.Director}</p>
+                        </div>
 
-                <div className="movieInfoTextDiv">
-                    <p className="movieInfoSecondaryText">Top Billed:</p>
-                    <div className="movieActorBulletPoints">
-                        <MapActorsToBullets count={splitActors.length} />
+                        <div className="movieInfoTextDiv">
+                            <p className="movieInfoSecondaryText">Top Billed:</p>
+                            <div className="movieActorBulletPoints">
+                                <MapActorsToBullets count={splitActors.length} />
+                            </div>
+                        </div>
+
+                        <div className="movieInfoLongTextDiv">
+                            <p className="movieInfoSecondaryText">Movie Summary:</p>
+                            <p className="movieInfoPrimaryText text-balance">{movie.Plot}</p>
+                        </div> 
                     </div>
                 </div>
-
-                <div className="movieInfoLongTextDiv">
-                    <p className="movieInfoSecondaryText">Movie Summary:</p>
-                    <p className="movieInfoPrimaryText text-balance">{movie.Plot}</p>
-                </div> 
             </div>
-        </div>
+            <GalleryProgressDots selectedIndex={index}/>
+        </>
     )
 }

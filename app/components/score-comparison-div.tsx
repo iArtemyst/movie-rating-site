@@ -17,6 +17,16 @@ const scoreDivStyle: string[] = [
 ];
 
 
+function DisplayErrorOnGuess() {
+    return (
+        <div className="w-full h-fit bg-blue-400">
+            <div>
+                How Close Were You?
+            </div>
+        </div>
+    )
+}
+
 export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating, playerMovieRating, playerStats, onNextMovie}:{visible:boolean, ratingSourceInt:number, actualMovieRating:string, playerMovieRating:number, playerStats:IPlayerStats | null, onNextMovie:()=>void}) {
     const playerScoreRatingValue = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:actualMovieRating, playerMovieRating:playerMovieRating})
     

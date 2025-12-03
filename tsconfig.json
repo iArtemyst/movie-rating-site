@@ -31,6 +31,7 @@
     "**/*.tsx", 
     ".next/types/**/*.ts", 
     "**/*.css",
+    "**/*.png",
     "docs/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
