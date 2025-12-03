@@ -26,6 +26,19 @@ const movieRatingHubText = [
   "Metacritic",
 ];
 
+function SiteFooter() {
+  function ShowAboutDiv() {
+    alert("Daily Movie Rating\n\nA daily game where you rate movies based on their actual ratings from popular movie rating sites!\n\nData provided by the OMDB API.\n\nDesigned and Developed by iArtemyst.");
+  }
+  
+  return (
+      <div className="siteFooterDiv" onClick={(() => ShowAboutDiv())}>
+        <p>Daily Movie Rating © 2025 | Designed by iArtemyst</p>
+        <p>Data Updated Dec. 2025</p>
+      </div>
+    )
+}
+
 export default function Home() {
   const [serverMovieInfoArray, setServerMovieInfoArray] = useState<IMovieInformation[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -47,16 +60,24 @@ export default function Home() {
       if (tempPlayerStats.localGameIndex !== result.dailyId) {
         tempPlayerStats.hasPlayedToday = false;
         tempPlayerStats.localGameIndex = result.dailyId;
-        tempPlayerStats.todaysScore = 0
+        tempPlayerStats.todaysScore = 0;
+        tempPlayerStats.todaysMovieRatings = [];
         console.log("Resetting Daily Stats")
         console.log(tempPlayerStats)
       }
-
       if (tempPlayerStats.playerTheme === 'light') {
         enableLightMode({playerStats:tempPlayerStats});
       } else {
         enableDarkMode({playerStats:tempPlayerStats});
       }
+
+      // Check if partially through today's game
+      if (tempPlayerStats.todaysMovieRatings.length < result.movies.length) {
+        console.log("Partially completed game found for today, resuming...")
+        setSelectedIndex(tempPlayerStats.todaysMovieRatings.length);
+        setCurrentRating(middleRatingArray[result.movies[tempPlayerStats.todaysMovieRatings.length].RandomRatingInt])
+      }
+
       setLocalPlayerData(tempPlayerStats)
       setMovieDataLoaded(true);
       lstorage.SavePlayerStats(tempPlayerStats)
@@ -178,8 +199,9 @@ export default function Home() {
               visible={currentMovieScoreScreenVisibility}
               onNextMovie={UpdateToNextMovie}
               /> 
-            <TodaysFinalScoreScreen visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
+            <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
+            <SiteFooter />
           </div>
         </main>
     );

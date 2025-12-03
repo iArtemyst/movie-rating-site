@@ -17,6 +17,7 @@ export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
     const todaysScore = getLocalData(keys('todaysScore'));
     const hasPlayedToday = getLocalData(keys('hasPlayedToday'));
     const localDailyIndex = getLocalData(keys(`localGameIndex`));
+    const todaysMovieRatings = getLocalData(keys(`todaysMovieRatings`));
     const playerTheme = getLocalData(keys(`playerTheme`));
     const anyLoaded = [
         totalGamesPlayed,
@@ -24,6 +25,7 @@ export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
         todaysScore,
         hasPlayedToday,
         localDailyIndex,
+        todaysMovieRatings,
         playerTheme,
     ].some(v => v !== null);
     if (!anyLoaded) return null;
@@ -42,6 +44,7 @@ export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
         todaysScore: parseNumber(todaysScore, 0),
         hasPlayedToday: parseBool(hasPlayedToday, false),
         localGameIndex: parseNumber(localDailyIndex, 0),
+        todaysMovieRatings: todaysMovieRatings ? JSON.parse(todaysMovieRatings) as number[] : [],
         playerTheme: (playerTheme === "light" || playerTheme === "dark") ? playerTheme : "dark",
     } as IPlayerStats;
 }
@@ -60,6 +63,7 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
         SaveDataLocally(keys('todaysScore'), String(stats.todaysScore));
         SaveDataLocally(keys('hasPlayedToday'), stats.hasPlayedToday ? 'true' : 'false');
         SaveDataLocally(keys(`localGameIndex`), String(stats.localGameIndex));
+        SaveDataLocally(keys(`todaysMovieRatings`), JSON.stringify(stats.todaysMovieRatings));
         SaveDataLocally(keys(`playerTheme`), stats.playerTheme);
     } catch (err) {
         console.error('Error saving player stats to localStorage', err);

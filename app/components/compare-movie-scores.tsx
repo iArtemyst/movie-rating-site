@@ -40,5 +40,6 @@ export function UpdatePlayerScoreBasedOnRating({ratingSourceInt, movieRatingStri
     const playersMovieRatingIndex = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:movieRatingString, playerMovieRating:playerMovieRating})
     const getPlayerScoreValue = moviePointValues[playersMovieRatingIndex];
     playerStats.todaysScore += getPlayerScoreValue;
+    playerStats.todaysMovieRatings.push(playerMovieRating);
     console.log("TODAYS SCORE: " + playerStats.todaysScore)
 }

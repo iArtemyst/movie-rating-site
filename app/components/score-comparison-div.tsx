@@ -28,7 +28,9 @@ export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating,
             </div>
         )
     }
-    
+
+    const ratingSiteOutOf = ["/10", "%", "/100" ];
+
     return (
         <>
         { 
@@ -37,7 +39,7 @@ export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating,
                 <div className={`${scoreDivStyle[playerScoreRatingValue]} popupBackgroundDiv`}>
                     <div className="popupTextContainer">
                         <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
-                        <TextAndScoreDiv titleText="Your Rating:" statsText={`${playerMovieRating}`} />
+                        <TextAndScoreDiv titleText="Your Rating:" statsText={`${playerMovieRating}${ratingSiteOutOf[ratingSourceInt]}`} />
                         <TextAndScoreDiv titleText="Actual Rating:" statsText={`${actualMovieRating}`} />
                         <TextAndScoreDiv titleText="Your Score Today:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />  
                     </div>
