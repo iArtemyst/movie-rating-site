@@ -12,7 +12,7 @@ export function TestButtonResetLocalStorageAndReloadPage() {
         window.location.reload()
     }
     return (
-        <div className={`w-fit h-fit absolute top-0 left-0 m-[3em] px-[1em] py-[.5em] bg-blue-800 rounded-full hover:scale-[95%] active:scale-[90%] font-semibold z-200`}>
+        <div className={`w-fit h-fit fixed top-0 left-0 m-[3em] px-[1em] py-[.5em] bg-blue-800 rounded-full hover:scale-[95%] active:scale-[90%] font-semibold z-200`}>
             <button onClick={() => HandleClick()}>RESET LOCAL</button>
         </div>
     )

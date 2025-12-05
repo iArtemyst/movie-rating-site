@@ -87,7 +87,6 @@ main, body, html {
   font-weight: 700;
   align-self: center;
   text-align: center;
-  margin-bottom: 1em;
   color: var(--text-variant);
 
   @media screen and (max-width:560px) {
@@ -126,8 +125,9 @@ main, body, html {
 .popupTextContainer {
   display: flex;
   flex-direction: column;
-  gap: .25em;
+  gap: 0em;
   color: var(--text-variant);
+  margin-bottom: 3em;
 }
 
 .fullScreenBlockingDiv {
@@ -248,7 +248,7 @@ main, body, html {
   flex-direction: row;
   gap: 0px;
   width:100%;
-  place-items: center;
+  place-items: start;
   aspect-ratio: 4/3;
   align-self: center;
   gap: 1em;
@@ -256,10 +256,12 @@ main, body, html {
   @media screen and (max-width:560px) {
     aspect-ratio: unset;
     flex-direction: column;
+    place-items: center;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
     aspect-ratio: unset;
+    place-items: center;
   };
 }
 
@@ -310,19 +312,17 @@ main, body, html {
   grid-column: 2;
   gap: 2em;
   width: 100%;
-  place-items: center;
+  place-items: start;
 
   @media screen and (max-width:560px) {
     gap: 1em;
+    place-items: center;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
     gap: 1em;
+    place-items: center;
   };
-
-  /* @media screen and (min-width:1280px) {
-    width: 420px;
-  }; */
 };
 
 .galleryIconSelected {
@@ -429,6 +429,24 @@ main, body, html {
   };
 };
 
+.siteTitleText {
+  font-weight: 800;
+  font-size: 32px;
+  align-self: center;
+  place-self: center;
+  text-align: center;
+  margin-bottom: .25em;
+  color: var(--text-color);
+
+  @media screen and (max-width:560px) {
+    font-size: 24px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 24px;
+  };
+};
+
 .divCenterHorizontalText {
   display: flex;
   flex-direction: row;
@@ -496,8 +514,8 @@ main, body, html {
   align-self:center;
   place-content: center;
   place-items:center;
-  margin-top: 1em;
-  gap: .5em;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
 
   @media screen and (max-width:560px) {
     font-size:14px;

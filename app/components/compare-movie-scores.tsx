@@ -20,21 +20,33 @@ export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRat
     return movieScoreAsNumber
 }
 
-
 export function GetPlayerRatingScoreIndexValue({ratingSourceInt, movieRatingString, playerMovieRating}:{ratingSourceInt:number, movieRatingString: string, playerMovieRating: number}) {
     const actualRatingNumber = SplitMovieRatingStringAndReturnNumber({ratingSourceInt:ratingSourceInt, movieRatingString:movieRatingString});
-    const scoreRange = [(actualRatingNumber-scoreErrorMargin[ratingSourceInt]), (actualRatingNumber+scoreErrorMargin[ratingSourceInt]), actualRatingNumber]
-    if (playerMovieRating === scoreRange[2]) {
+    const ratingDifference = (playerMovieRating <= actualRatingNumber ? actualRatingNumber - playerMovieRating : playerMovieRating - actualRatingNumber);
+    if (ratingDifference === 0) {
         return 0; //perfect score
     }
-    if (playerMovieRating >= scoreRange[0] && playerMovieRating <= scoreRange[1]) {
-        return 1; //within range
+    if (ratingDifference <= scoreErrorMargin[ratingSourceInt]) {
+        return 1; //within range 1
+    }
+    if (ratingDifference >= scoreErrorMargin[ratingSourceInt] && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 2)) {
+        return 2; //within range 2
+    }
+    if (ratingDifference >= (scoreErrorMargin[ratingSourceInt] * 2) && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 3)) {
+        return 3; //within range 3
     }
     else {
-        return 2; //out of range
+        return 4; //out of range
     }
 }
 
+export function CheckPlayerPerfectScore({playerStats, arrayLength}:{playerStats:IPlayerStats, arrayLength:number}) {
+    const maxIndvMovieScore = moviePointValues[0];
+    const perfectScoreValue = ( maxIndvMovieScore * arrayLength );
+    if ( playerStats.todaysScore === perfectScoreValue ) {
+        playerStats.totalPerfectGames += 1
+    }
+}
 
 export function UpdatePlayerScoreBasedOnRating({ratingSourceInt, movieRatingString, playerMovieRating, playerStats}:{ratingSourceInt: number, movieRatingString: string, playerMovieRating: number, playerStats: IPlayerStats}) {
     const playersMovieRatingIndex = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:movieRatingString, playerMovieRating:playerMovieRating})

@@ -17,5 +17,5 @@ export interface IMovieInformation
     RandomRatingInt: number,
 };
 
-export const moviePointValues = [500, 300, 0]; //500 = Perfect, 300 = Almost, 0 = Wrong
+export const moviePointValues = [500, 350, 200, 100, 0]; //500 = Perfect, 350 = Really Close, 200 = Fair, 100 = Within Reason, 0 = Wrong
 export const scoreErrorMargin = [.5, 5, 5]

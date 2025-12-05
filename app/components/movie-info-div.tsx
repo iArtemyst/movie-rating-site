@@ -28,7 +28,6 @@ export function MovieInfoDiv({movie, index}:{movie: IMovieInformation, index:num
     return (
         <>
             <div className={`mainMovieInfoDiv`}>
-                <p className="movieTitleText">{`${movie.Title} \(${movie.Year}\)`}</p>
                 <div className={`secMovieInfoDiv`}>
                     <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="moviePosterImage"/>
                     <div className="movieInfoDivCol2">
