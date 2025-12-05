@@ -179,7 +179,7 @@ export default function Home() {
             <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
             <SiteFooter />
-            {/* <testing.TestButtonResetLocalStorageAndReloadPage /> */}
+            <testing.TestButtonResetLocalStorageAndReloadPage />
           </div>
         </main>
     );

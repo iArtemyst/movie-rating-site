@@ -456,6 +456,54 @@ main, body, html {
   place-items: center;
 }
 
+.scoreTitleText {
+  font-size:24px;
+  font-weight: 700;
+  align-self: center;
+  text-align: center;
+  margin-bottom: 1em;
+  color: var(--text-variant);
+
+  @media screen and (max-width:560px) {
+    font-size:18px;
+    margin-bottom: .5em;
+  };
+}
+
+.finalScoreTextContainer {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-variant);
+}
+
+
+.finalScoreBackgroundDiv {
+  width: 60%;
+  max-width: 540px;
+  height: fit-content;
+  color: var(--text-variant);
+  padding-left: 4em;
+  padding-right: 4em;
+  padding-top: 3em;
+  padding-bottom:3em;
+  border-radius: 2em;
+  align-self: center;
+  place-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  box-shadow: var(--shadow-style);
+
+  @media screen and (max-width:560px) {
+    width: 80%;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-top: 2em;
+    padding-bottom:2em;
+    gap: .5em;
+  };
+}
+
 .scoreTextPrimary {
   font-size: 18px;
   font-weight: 700;

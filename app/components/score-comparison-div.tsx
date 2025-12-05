@@ -6,9 +6,9 @@ import { IPlayerStats } from "./player-stats";
 
 
 const WinningTextArray: string[] = [
-    "Perfect Guess!",
-    "Almost Perfect!",
-    "Great Guess!",
+    "Perfect!",
+    "Excellent!",
+    "Pretty Good!",
     "Close Enough!",
     "Sorry, That's Incorrect!",
 ];

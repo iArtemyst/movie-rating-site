@@ -78,9 +78,9 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
         <>
             {   visible &&
                 <div className={`fullScreenBlockingDiv`} onClick={e => {e.stopPropagation()}}>
-                    <div className="popupBackgroundDiv bg-[#001f1a]">
-                        <div className="popupTextContainer">
-                            <p className="popupTitleText">{`Today\'s Final Score: `}{playerStats?.todaysScore}</p>
+                    <div className="finalScoreBackgroundDiv bg-[#001f1a]">
+                        <div className="finalScoreTextContainer">
+                            <p className="scoreTitleText">{`Today\'s Final Score: `}{playerStats?.todaysScore}</p>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&
                                     <PlayerVsActualRatingsToday />
