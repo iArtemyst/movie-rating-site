@@ -12,7 +12,6 @@ import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { TodaysFinalScoreScreen } from "./components/score-graph";
 import * as lstorage from "./components/local-data-storage";
 import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components/theme-switch-button";
-import * as testing from "./components/testing-functions";
 import { SiteFooter } from "./components/site-footer";
 import { MovieTitleAndSourceLogoContainer } from "./components/movie-title-source-logo";
 
@@ -179,7 +178,6 @@ export default function Home() {
             <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
             <SiteFooter />
-            {/* <testing.TestButtonResetLocalStorageAndReloadPage /> */}
           </div>
         </main>
     );
