@@ -900,19 +900,34 @@ main, body, html {
 };
 
 .footerAboutDiv {
-  width: 40%;
+  width: fit-content;
   position: relative;
   height: fit-content;
   display: flex;
   gap: 1em;
   padding-top: 1.5em;
   padding-bottom: 2em;
+  padding-left: 2em;
+  padding-right: 2em;
   flex-direction: column;
   border-radius: 2em;
   place-content: space-between;
   place-items: center;
   background-color: var(--base-variant);
   box-shadow: var(--shadow-style);
+  font-size: 14px;
+
+  @media screen and (max-width:560px) {
+    font-size:12px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 12px;
+  };
+
+  @media screen and (min-width:1280px) {
+    font-size: 18px;
+  };
 }
 
 .hideMeText {
@@ -920,6 +935,18 @@ main, body, html {
   bottom: .75em;
   color: var(--inactive-color);
   font-size: 12px;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 10px;
+  };
+
+  @media screen and (min-width:1280px) {
+    font-size: 14px;
+  };
 }
 
 
