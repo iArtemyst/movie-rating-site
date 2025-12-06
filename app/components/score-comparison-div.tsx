@@ -83,7 +83,7 @@ export function ScoreComparisonDiv({visible, ratingSourceInt, actualMovieRating,
                 <div className={`${scoreDivStyle[playerScoreRatingValue]} popupBackgroundDiv`}>
                     <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
                     <DisplayErrorOnGuess playerRating={playerMovieRating} correctRating={movieRatingAsNumber} sourceIndex={ratingSourceInt}/>
-                    <TextAndScoreDiv titleText="Your Total Score Today:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />
+                    <TextAndScoreDiv titleText="Today's Score:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />
                     <div onClick={() => onNextMovie?.()} className={`submitButton`}>
                         <p>
                             { 

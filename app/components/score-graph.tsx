@@ -1,5 +1,6 @@
 'use client'
 
+import React, {useState} from "react";
 import { IMovieInformation } from "./movie-interfaces";
 import { IPlayerStats } from "./player-stats";
 import { SplitMovieRatingStringAndReturnNumber, GetPlayerRatingScoreIndexValue } from "./compare-movie-scores";
@@ -18,6 +19,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
     }
     
     function ShareScoreButton() {
+        const [shareButtonText, setShareButtonText] = useState("Share Your Score!")
         const playersPointValuesArray = [ 
             moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[0].RandomRatingInt, movieRatingString:movies[0].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[0] : 0})],
             moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[1].RandomRatingInt, movieRatingString:movies[1].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[1] : 0})],
@@ -37,12 +39,12 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
             );
             console.log("Score copied to clipboard: ");
             console.log(shareTextExpanded);
-            alert("Score copied to clipboard! Share it with your friends!");
+            setShareButtonText("Score Copied!");
         }
 
         return (
             <div className="shareScoreButtonDiv" onClick={CopyScoreToClipboard}>
-                <p className="shareScoreButtonText">Share Your Score</p>
+                <p className="shareScoreButtonText">{shareButtonText}</p>
             </div>
         )
     }
@@ -87,8 +89,8 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
                                 }
                             </>
                             <div className="w-fit flex flex-row gap-[1em] self-center">
-                                <TextWithStats text="Total Games Played:" stats={playerStats?.totalGamesPlayed } />
-                                <TextWithStats text="Number of Perfect Games:" stats={playerStats?.totalPerfectGames } />
+                                <TextWithStats text="Games Played:" stats={playerStats?.totalGamesPlayed } />
+                                <TextWithStats text="Perfect Games:" stats={playerStats?.totalPerfectGames } />
                             </div>
                         </div>
                         <ShareScoreButton />
