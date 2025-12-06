@@ -594,18 +594,18 @@ main, body, html {
 };
 
 .sourceLogo {
-  width: 96px;
+  width: 164px;
 
   @media screen and (max-width:560px) {
-    width: 64px;
+    width: 108px;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
-    width: 84px;
+    width: 128px;
   };
 
   @media screen and (min-width:1280px) {
-    width: 108px;
+    width: 196px;
   };
 }
 
