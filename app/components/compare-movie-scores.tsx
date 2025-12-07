@@ -7,13 +7,16 @@ import { moviePointValues, scoreErrorMargin } from "./movie-interfaces";
 export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRatingString}:{ratingSourceInt:number, movieRatingString:string}) {
     //parse the string into a float
     const parsed = parseFloat(movieRatingString);
-    if (Number.isFinite(parsed) && !Number.isNaN(parsed)) { return parsed }
+    if (Number.isFinite(parsed) && !Number.isNaN(parsed)) 
+    { 
+        return parsed 
+    }
     // Fallback: if parseFloat didn't work, split the string apart from the secondary text
     const splitScoreArray = 
     [
         movieRatingString.split("/10"),
+        movieRatingString.split("%"),
         movieRatingString.split("/100"),
-        movieRatingString.split("%")
     ]
     const splitScore = splitScoreArray[ratingSourceInt] ? splitScoreArray[ratingSourceInt][0] : ""
     const movieScoreAsNumber = Number(splitScore)
@@ -48,7 +51,7 @@ export function CheckPlayerPerfectScore({playerStats, arrayLength}:{playerStats:
     }
 }
 
-export function UpdatePlayerScoreBasedOnRating({ratingSourceInt, movieRatingString, playerMovieRating, playerStats}:{ratingSourceInt: number, movieRatingString: string, playerMovieRating: number, playerStats: IPlayerStats}) {
+export function UpdatePlayerScoreBasedOnRating({ratingIndex: ratingSourceInt, movieRatingString, playerMovieRating, playerStats}:{ratingIndex: number, movieRatingString: string, playerMovieRating: number, playerStats: IPlayerStats}) {
     const playersMovieRatingIndex = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:movieRatingString, playerMovieRating:playerMovieRating})
     const getPlayerScoreValue = moviePointValues[playersMovieRatingIndex];
     playerStats.todaysScore += getPlayerScoreValue;

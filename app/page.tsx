@@ -36,7 +36,7 @@ export default function Home() {
 
       // Movie info
       setServerMovieInfoArray(result.movies)
-      setCurrentRating(middleRatingArray[result.movies[0].RandomRatingInt])
+      setCurrentRating(middleRatingArray[result.movies[0].RatingInfo.RatingIndex])
 
       // Current day
       const tempPlayerStats: IPlayerStats = getLocalPlayerData();
@@ -58,7 +58,7 @@ export default function Home() {
       if (tempPlayerStats.todaysMovieRatings.length < result.movies.length) {
         console.log("Loading game status...")
         setSelectedIndex(tempPlayerStats.todaysMovieRatings.length);
-        setCurrentRating(middleRatingArray[result.movies[tempPlayerStats.todaysMovieRatings.length].RandomRatingInt])
+        setCurrentRating(middleRatingArray[result.movies[tempPlayerStats.todaysMovieRatings.length].RatingInfo.RatingIndex])
       }
 
       setLocalPlayerData(tempPlayerStats)
@@ -101,7 +101,7 @@ export default function Home() {
   function SubmitRatingButton({currentPlayerMovieRating, playerStats}:{currentPlayerMovieRating: number, playerStats:IPlayerStats | null}) {    
     function SubmitRatingOnClick() {
       if (playerStats) {
-        UpdatePlayerScoreBasedOnRating({ratingSourceInt:serverMovieInfoArray[selectedIndex].RandomRatingInt, movieRatingString:serverMovieInfoArray[selectedIndex].RatingValue, playerMovieRating:currentPlayerMovieRating, playerStats:playerStats})
+        UpdatePlayerScoreBasedOnRating({ratingIndex: serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex, movieRatingString: serverMovieInfoArray[selectedIndex].RatingInfo.RatingValue, playerMovieRating: currentPlayerMovieRating, playerStats: playerStats})
         lstorage.SavePlayerStats(playerStats)
       }
       setCurrentMovieScoreScreenVisibility(true)
@@ -120,12 +120,12 @@ export default function Home() {
     if (newIndex) {
       setSelectedIndex(newIndex)
       setCurrentMovieScoreScreenVisibility(false)
-      setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RandomRatingInt])
+      setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RatingInfo.RatingIndex])
     }
     else {
       setSelectedIndex(0)
       setCurrentMovieScoreScreenVisibility(false)
-      setCurrentRating(middleRatingArray[serverMovieInfoArray[0].RandomRatingInt])
+      setCurrentRating(middleRatingArray[serverMovieInfoArray[0].RatingInfo.RatingIndex])
       if (localPlayerData) {
         SavePlayerStatsUponComplete({playedToday:true, playerStats:localPlayerData})
       }
@@ -149,26 +149,26 @@ export default function Home() {
               <MovieTitleAndSourceLogoContainer 
                 title={serverMovieInfoArray[selectedIndex].Title}
                 year={serverMovieInfoArray[selectedIndex].Year}
-                source={serverMovieInfoArray[selectedIndex].RandomRatingInt}
+                source={serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex}
                 theme={localPlayerData ? localPlayerData?.playerTheme : "dark"}
                 />
               <div className="controllerContentContainer">
                 <div className="sliderContainer">
                   <input type="range" name="ratingSlider" id="ratingSlider"
-                          min={minRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]} 
-                          max={maxRatingArray[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
-                          step={stepAmount[serverMovieInfoArray[selectedIndex].RandomRatingInt]}
+                          min={minRatingArray[serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex]} 
+                          max={maxRatingArray[serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex]}
+                          step={stepAmount[serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex]}
                           value={currentRating}
                           onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
                           className={`ratingSliderStyle`}/>
-                  <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RandomRatingInt === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
+                  <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
                 </div>
                 <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
                 </div>
             </div>
             <ScoreComparisonDiv 
-              ratingSourceInt={serverMovieInfoArray[selectedIndex].RandomRatingInt} 
-              actualMovieRating={serverMovieInfoArray[selectedIndex].RatingValue} 
+              ratingIndex={serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex} 
+              actualMovieRating={serverMovieInfoArray[selectedIndex].RatingInfo.RatingValue} 
               playerMovieRating={currentRating} 
               playerStats={localPlayerData}
               visible={currentMovieScoreScreenVisibility}

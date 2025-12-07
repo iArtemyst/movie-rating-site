@@ -21,9 +21,9 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
     function ShareScoreButton() {
         const [shareButtonText, setShareButtonText] = useState("Share Your Score!")
         const playersPointValuesArray = [ 
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[0].RandomRatingInt, movieRatingString:movies[0].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[0] : 0})],
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[1].RandomRatingInt, movieRatingString:movies[1].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[1] : 0})],
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[2].RandomRatingInt, movieRatingString:movies[2].RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[2] : 0})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[0].RatingInfo.RatingIndex, movieRatingString:movies[0].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[0] : 0})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[1].RatingInfo.RatingIndex, movieRatingString:movies[1].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[1] : 0})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[2].RatingInfo.RatingIndex, movieRatingString:movies[2].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[2] : 0})],
         ]
         const shareTextExpanded =   "Check out my movie rating score! 🎬🍿\n\n" +
                                     String(movies[0].Title) + ": " + String(playersPointValuesArray[0]) + "\n" +
@@ -62,8 +62,8 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
             return (
                 <div className="scoreScreenMoviePosterAndRatingDiv">
                     <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
-                    <TextWithStatsSmall text={"Actual Rating: "} stats={Number(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RandomRatingInt, movieRatingString:movie.RatingValue}))} />
-                    <TextWithStatsSmall text={"Your Rating: "} stats={movie.RandomRatingInt === 0 ? playerMovieRating : Number(playerMovieRating.toFixed(1))} />
+                    <TextWithStatsSmall text={"Actual Rating: "} stats={Number(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue}))} />
+                    <TextWithStatsSmall text={"Your Rating: "} stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating : Number(playerMovieRating.toFixed(1))} />
                 </div>
             )
         }
