@@ -4,4 +4,4 @@ Each day, three movies will be given to you in sequence, with some information a
 
 https://iartemyst.github.io/movie-rating-site/
 
-0.4.0
+1.0.0

@@ -1,10 +1,10 @@
 {
   "name": "movie-rating-site",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && type NUL > .\\docs\\.nojekyll",
+    "build": "next build && type NUL > .\\docs\\.nojekyll && echo whatisitrated.com > .\\docs\\CNAME",
     "start": "next start",
     "lint": "eslint",
     "fix-lint": "eslint --fix"
