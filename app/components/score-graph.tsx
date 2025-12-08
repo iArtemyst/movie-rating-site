@@ -6,15 +6,15 @@ import { IPlayerStats } from "./player-stats";
 import { SplitMovieRatingStringAndReturnNumber, GetPlayerRatingScoreIndexValue } from "./compare-movie-scores";
 import { moviePointValues } from "./movie-interfaces";
 import { LazyImageCoreSizer } from "./load-asset";
-import { pickLogo } from "./movie-source-logos";
+import { pickLogo, pickLogoNoTheme } from "./movie-source-logos";
 import "@/app/globals.css";
 
 export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats | null}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
         return (
             <div className={`divCenterHorizontalText`}>
-                <p className={`scoreTextSecondary`}>{text}</p>
-                <p className={`scoreTextPrimary`}>{stats ?? "No Stats"}</p>
+                <p className={`finalScoreTextSecondary`}>{text}</p>
+                <p className={`finalScoreTextPrimary`}>{stats ?? "No Stats"}</p>
             </div>
         )
     }
@@ -64,7 +64,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
             function SourceLogoWithRating({stats}:{stats:string | undefined}) {
                 return (
                     <div className={`divCenterHorizontalTextSmall`}>
-                        <LazyImageCoreSizer imgLink={pickLogo({source:movie.RatingInfo.RatingIndex, theme:playerStats ? playerStats.playerTheme : 'dark'})} imgAlt={`${movie.RatingInfo.RatingIndex} logo`} imgStyle="smallMovieSourceLogoImage" />
+                        <LazyImageCoreSizer imgLink={pickLogoNoTheme({source:movie.RatingInfo.RatingIndex})} imgAlt={`${movie.RatingInfo.RatingIndex} logo`} imgStyle="smallMovieSourceLogoImage" />
                         <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
                     </div>
                 )

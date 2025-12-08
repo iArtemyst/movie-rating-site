@@ -25,3 +25,14 @@ export function pickLogo({source, theme}:{source:number, theme:string}) {
     
     return String(sourceLogos[source])
 }
+
+
+export function pickLogoNoTheme({source}:{source:number}) {
+    const sourceLogos = [
+        IMDBLogo,
+        RTLogo,
+        MCLogoLight, //the dark is actually the light, don't think about it too hard
+    ]
+    
+    return String(sourceLogos[source])
+}
