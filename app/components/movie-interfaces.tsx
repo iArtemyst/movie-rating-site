@@ -27,5 +27,12 @@ export enum RatingIndex {
     Metacritic = 2
 }
 
+
+export const ratingStringEndings = 
+    [
+        "/10",
+        "%",
+        "/100",
+    ]
 export const moviePointValues = [500, 350, 200, 100, 0]; //500 = Perfect, 350 = Really Close, 200 = Fair, 100 = Within Reason, 0 = Wrong
 export const scoreErrorMargin = [.5, 5, 5]

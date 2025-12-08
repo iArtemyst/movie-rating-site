@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { IDailyMovieInformation, IMovieInformation } from "./components/movie-interfaces";
+import { IDailyMovieInformation, IMovieInformation, ratingStringEndings } from "./components/movie-interfaces";
 import { IPlayerStats, newPlayerStats } from "./components/player-stats";
 import { FetchMovieData } from "./components/fetch-movie-data";
 import { MovieInfoDiv } from "./components/movie-info-div";
@@ -161,7 +161,7 @@ export default function Home() {
                           value={currentRating}
                           onChange={(e) => setCurrentRating(parseFloat(e.target.value))}
                           className={`ratingSliderStyle`}/>
-                  <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex === 0) ? Number(currentRating).toFixed(1) : currentRating}</label>
+                  <label htmlFor="ratingSlider" className="sliderLabelText">Your Rating: {(serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex === 0) ? Number(currentRating).toFixed(1) : currentRating}{ratingStringEndings[serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex]}</label>
                 </div>
                 <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
                 </div>

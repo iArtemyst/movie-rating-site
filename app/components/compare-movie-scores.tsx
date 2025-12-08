@@ -2,7 +2,7 @@
 
 
 import { IPlayerStats } from "./player-stats";
-import { moviePointValues, scoreErrorMargin } from "./movie-interfaces";
+import { moviePointValues, scoreErrorMargin, ratingStringEndings } from "./movie-interfaces";
 
 export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRatingString}:{ratingSourceInt:number, movieRatingString:string}) {
     //parse the string into a float
@@ -14,9 +14,9 @@ export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRat
     // Fallback: if parseFloat didn't work, split the string apart from the secondary text
     const splitScoreArray = 
     [
-        movieRatingString.split("/10"),
-        movieRatingString.split("%"),
-        movieRatingString.split("/100"),
+        movieRatingString.split(ratingStringEndings[0]),
+        movieRatingString.split(ratingStringEndings[1]),
+        movieRatingString.split(ratingStringEndings[2]),
     ]
     const splitScore = splitScoreArray[ratingSourceInt] ? splitScoreArray[ratingSourceInt][0] : ""
     const movieScoreAsNumber = Number(splitScore)
