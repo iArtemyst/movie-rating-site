@@ -85,7 +85,7 @@ export function ScoreComparisonDiv({visible, ratingIndex: ratingSourceInt, actua
             <div className={`fullScreenBlockingDiv`}>
                 <div className={` popupBackgroundDiv`}>
                     <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
-                    <PlayerVsActualRatingsGraph playerRating={playerMovieRating} correctRating={movieRatingAsNumber} sourceIndex={ratingSourceInt}/>
+                    <PlayerVsActualRatingsGraph playerRating={playerMovieRating} correctRating={String(movieRatingAsNumber)} sourceIndex={ratingSourceInt}/>
                     <TextAndScoreDiv titleText="Today's Score:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />
                     <div onClick={() => onNextMovie?.()} className={`submitButton`}>
                         <p>
