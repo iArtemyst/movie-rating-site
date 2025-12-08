@@ -3,6 +3,7 @@
 import React from "react";
 import { GetPlayerRatingScoreIndexValue, SplitMovieRatingStringAndReturnNumber } from "./compare-movie-scores";
 import { IPlayerStats } from "./player-stats";
+import { ratingStringEndings } from "./movie-interfaces";
 
 
 const WinningTextArray: string[] = [
@@ -13,45 +14,47 @@ const WinningTextArray: string[] = [
     "Sorry, That's Incorrect!",
 ];
 const scoreDivStyle: string[] = [
-    "bg-[#005731]",
-    "bg-[#00362a]",
-    "bg-[#2a337a]",
-    "bg-[#432a5e]",
+    "bg-[#18a045]",
+    "bg-[#388863]",
+    "bg-[#5c3fa0]",
+    "bg-[#296392]",
     "bg-[#612323]"
 ];
 
 
-function DisplayErrorOnGuess({correctRating, playerRating, sourceIndex}:{correctRating:number, playerRating:number, sourceIndex:number}) {
+function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{correctRating:string, playerRating:number, sourceIndex:number}) {
+    const playerScoreRatingValue = GetPlayerRatingScoreIndexValue({ratingSourceInt:sourceIndex, movieRatingString:correctRating, playerMovieRating:playerRating});
+
     return (
         <div className="ratingBarComparisonContainer">
             <div className="w-full h-fit relative">
                 <p 
                     className={`ratingBarCorrectScoreText`}
-                    style={{ left: `${sourceIndex === 0 ? correctRating*10 : correctRating}%` }}>
-                Actual Rating: {correctRating}</p>
+                    style={{ left: `${sourceIndex === 0 ? Number(correctRating)*10 : correctRating}%` }}>
+                Actual Rating: {correctRating}{ratingStringEndings[sourceIndex]}</p>
             </div>
 
             <div className={`fullRatingBarBG bg-slate-50`}>
                 <div 
-                    className={`closeEnoughRatingBar bg-[#a8bfff99]`}
-                    style={{ left: `${sourceIndex === 0 ? correctRating*10 : correctRating}%` }}>
-                    <div className={`greatRatingBar bg-[#6a90f899]`}>
-                        <div className={`excellentRatingBar bg-[#4073ff99]`}>
-                            <div className={`perfectRatingBar bg-[#2f00ff]`} />
+                    className={`closeEnoughRatingBar bg-[#b13c46]`}
+                    style={{ left: `${sourceIndex === 0 ? Number(correctRating)*10 : correctRating}%` }}>
+                    <div className={`greatRatingBar bg-[#ff6a56]`}>
+                        <div className={`excellentRatingBar bg-[#ff985d]`}>
+                            <div className={`perfectRatingBar bg-[#ffbb00]`} />
                         </div>
                     </div>
                 </div>
                 <div 
-                    className={`playerRatingBar bg-[#00a558]`}
+                    className={`playerRatingBar ${scoreDivStyle[playerScoreRatingValue]}`}
                     style={{ left: `${sourceIndex === 0 ? playerRating*10 : playerRating}%` }}
                 />
             </div>
 
             <div className="w-full h-fit relative">
                 <p 
-                    className={`ratingBarPlayerText`}
+                    className={`${scoreDivStyle[playerScoreRatingValue]} ratingBarPlayerText`}
                     style={{ left: `${sourceIndex === 0 ? playerRating*10 : playerRating}%` }}>
-                    Your Rating: {playerRating}
+                    Your Rating: {playerRating}{ratingStringEndings[sourceIndex]}
                 </p>
             </div>
         </div>
@@ -80,9 +83,9 @@ export function ScoreComparisonDiv({visible, ratingIndex: ratingSourceInt, actua
         { 
             visible &&
             <div className={`fullScreenBlockingDiv`}>
-                <div className={`${scoreDivStyle[playerScoreRatingValue]} popupBackgroundDiv`}>
+                <div className={` popupBackgroundDiv`}>
                     <p className={`popupTitleText`}>{WinningTextArray[playerScoreRatingValue]}</p>
-                    <DisplayErrorOnGuess playerRating={playerMovieRating} correctRating={movieRatingAsNumber} sourceIndex={ratingSourceInt}/>
+                    <PlayerVsActualRatingsGraph playerRating={playerMovieRating} correctRating={movieRatingAsNumber} sourceIndex={ratingSourceInt}/>
                     <TextAndScoreDiv titleText="Today's Score:" statsText={playerStats ? `${playerStats.todaysScore}` : "No Stats"} />
                     <div onClick={() => onNextMovie?.()} className={`submitButton`}>
                         <p>

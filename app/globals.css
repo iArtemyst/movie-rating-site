@@ -100,11 +100,12 @@ main, body, html {
 }
 
 .popupBackgroundDiv {
-  width: 60%;
-  max-width: 540px;
+  width: fit-content;
+  min-width: 540px;
+  max-width: 960px;
   height: fit-content;
-  padding-left: 4em;
-  padding-right: 4em;
+  padding-left: 6em;
+  padding-right: 6em;
   padding-top: 3em;
   padding-bottom:3em;
   border-radius: 2em;
@@ -114,14 +115,17 @@ main, body, html {
   flex-direction: column;
   gap: 1em;
   box-shadow: var(--shadow-style);
+  background-color: var(--base-variant);
 
   @media screen and (max-width:560px) {
-    width: 80%;
+    width: fit-content;
     padding-left: 2em;
     padding-right: 2em;
     padding-top: 2em;
     padding-bottom:2em;
     gap: .5em;
+    min-width: 320px;
+    max-width: 360px;
   };
 }
 
@@ -457,6 +461,7 @@ main, body, html {
   width: auto;
   place-content: center;
   place-items: center;
+
 }
 
 .scoreTitleText {
@@ -481,10 +486,11 @@ main, body, html {
 
 
 .finalScoreBackgroundDiv {
-  width: 60%;
-  max-width: 540px;
+  width: fit-content;
+  max-width: 720px;
   height: fit-content;
   color: var(--text-variant);
+  background-color: #001f1a;
   padding-left: 4em;
   padding-right: 4em;
   padding-top: 3em;
@@ -498,7 +504,8 @@ main, body, html {
   box-shadow: var(--shadow-style);
 
   @media screen and (max-width:560px) {
-    width: 80%;
+    width: fit-content;
+    max-width: 360px;
     padding-left: 2em;
     padding-right: 2em;
     padding-top: 2em;
@@ -530,20 +537,32 @@ main, body, html {
 .divCenterHorizontalTextSmall {
   display: flex;
   flex-direction: row;
-  gap: .125em;
+  gap: .25em;
   width: auto;
   height: fit-content;
   place-content: center;
   place-items: center;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  padding-left: .5em;
+  padding-right: .5em;
+  border-radius: 1em;
+  background-color: #03140b;
+  box-shadow: var(--shadow-style);
 }
 
 .scoreTextPrimarySmall {
   font-size: 14px;
   font-weight: 700;
+  text-align: center;
 
   @media screen and (max-width:560px) {
-    font-size:12px;
+    font-size:9px;
   }
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 12px;
+  };
 }
 
 .scoreTextSecondarySmall {
@@ -551,8 +570,12 @@ main, body, html {
   font-weight: 400;
 
   @media screen and (max-width:560px) {
-    font-size:8px;
+    font-size:7px;
   }
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 10px;
+  };
 }
 
 .mainQuestionDiv {
@@ -879,20 +902,34 @@ main, body, html {
   };
 };
 
+.smallMovieSourceLogoImage {
+  height: 16px;
+  align-self: center;
+  position: relative;
+  text-shadow: 0px 0px 8px #000000;
+
+
+  @media screen and (max-width:560px) {
+    height: 10px;
+  };
+};
+
 .scoreScreenMoviePosterAndRatingDiv {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
-  width: fit-content;
+  width: 33%;
 }
 
 .scoreScreenMoviePostersAndRatingsContainer {
   display: flex;
   flex-direction: row;
   gap: 2em;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 1em;
+
 
   @media screen and (max-width:560px) {
     gap: 1em;
@@ -953,9 +990,23 @@ main, body, html {
 .fullRatingBarBG {
   position: relative;
   width: 100%;
+  min-width: 420px;
   height: 16px;
   border-radius: 2em;
   overflow: clip;
+  align-self: center;
+
+  @media screen and (max-width:560px) {
+    min-width: 200px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    min-width: 360px;
+  };
+
+  @media screen and (min-width:1280px) {
+    min-width: 540px;
+  };
 }
 
 .closeEnoughRatingBar {
@@ -1001,16 +1052,18 @@ main, body, html {
   height: 100%;
   z-index: 10;
   translate: -50% 0%;
+  box-shadow: var(--shadow-style);
 }
 
 .ratingBarComparisonContainer {
-  width: 100%;
+  width: fit-content;
   height: fit-content;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: .5em;
   margin-bottom: 2em;
+  align-self: center;
 }
 
 .ratingBarCorrectScoreText {
@@ -1026,16 +1079,17 @@ main, body, html {
   text-wrap-mode:nowrap;
   border-radius: 2em;
   translate: -50% 0%;
-  background-color: #2f00ff;
+  box-shadow: var(--shadow-style);
+  background-color: #18a045;
   color: var(--text-popup-color);
   font-weight:600;
 
   @media screen and (max-width:560px) {
-    font-size:10px;
+    font-size:8px;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
-    font-size: 11px;
+    font-size: 10px;
   };
 
 
@@ -1058,16 +1112,16 @@ main, body, html {
   text-wrap-mode:nowrap;
   border-radius: 2em;
   translate: -50% 0%;
-  background-color: #158d55;
+  box-shadow: var(--shadow-style);
   color: var(--text-popup-color);
   font-weight:600;
 
   @media screen and (max-width:560px) {
-    font-size:10px;
+    font-size:8px;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
-    font-size: 11px;
+    font-size: 10px;
   };
 
 
@@ -1075,3 +1129,4 @@ main, body, html {
     font-size: 14px;
   };
 }
+
