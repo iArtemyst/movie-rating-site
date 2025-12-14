@@ -659,6 +659,7 @@ main, body, html {
   padding-right: .25em;
   font-weight: 700;
   font-size: 32px;
+  text-align: center;
 
   @media screen and (max-width:560px) {
     font-size:18px;

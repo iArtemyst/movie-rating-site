@@ -1,7 +1,7 @@
 'use client'
 
 
-import { IPlayerStats } from "./player-stats";
+import { IPlayerScoreInfo, IPlayerStats } from "./player-stats";
 import { moviePointValues, scoreErrorMargin, ratingStringEndings } from "./movie-interfaces";
 
 export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRatingString}:{ratingSourceInt:number, movieRatingString:string}) {
@@ -51,10 +51,11 @@ export function CheckPlayerPerfectScore({playerStats, arrayLength}:{playerStats:
     }
 }
 
-export function UpdatePlayerScoreBasedOnRating({ratingIndex: ratingSourceInt, movieRatingString, playerMovieRating, playerStats}:{ratingIndex: number, movieRatingString: string, playerMovieRating: number, playerStats: IPlayerStats}) {
+export function UpdatePlayerScoreBasedOnRating({ratingSourceInt, movieRatingString, playerMovieRating, playerStats, selectedIndex}:{ratingSourceInt: number, movieRatingString: string, playerMovieRating: number, playerStats: IPlayerStats, selectedIndex:number}) {
     const playersMovieRatingIndex = GetPlayerRatingScoreIndexValue({ratingSourceInt:ratingSourceInt, movieRatingString:movieRatingString, playerMovieRating:playerMovieRating})
-    const getPlayerScoreValue = moviePointValues[playersMovieRatingIndex];
-    playerStats.todaysScore += getPlayerScoreValue;
-    playerStats.todaysMovieRatings.push(playerMovieRating);
+    const playerScoreValue = moviePointValues[playersMovieRatingIndex];
+    playerStats.todaysScore += playerScoreValue;
+    const newPlayerScoreData: IPlayerScoreInfo = {MovieIndex:selectedIndex, MovieRating:playerMovieRating, MovieScore:playerScoreValue};
+    playerStats.todaysMovieRatings.push(newPlayerScoreData);
     console.log("TODAYS SCORE: " + playerStats.todaysScore)
 }

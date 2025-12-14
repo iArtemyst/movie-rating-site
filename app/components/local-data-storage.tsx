@@ -1,14 +1,15 @@
 'use client'
 
-
-import { IPlayerStats } from "./player-stats";
-
+import { IPlayerScoreInfo, IPlayerStats } from "./player-stats";
 
 export function getLocalData(keyName: string): string | null {
     const data = localStorage.getItem(keyName)
     return data;
 }
 
+export function SaveDataLocally(keyName: string, valueToSave: string) {
+    localStorage.setItem(keyName, valueToSave);
+}
 
 export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
     const keys = (s: string) => `${prefix}${s}`;
@@ -44,16 +45,10 @@ export function loadLocalPlayerStats(prefix = ''): IPlayerStats | null {
         todaysScore: parseNumber(todaysScore, 0),
         hasPlayedToday: parseBool(hasPlayedToday, false),
         localGameIndex: parseNumber(localDailyIndex, 0),
-        todaysMovieRatings: todaysMovieRatings ? JSON.parse(todaysMovieRatings) as number[] : [],
+        todaysMovieRatings: todaysMovieRatings ? JSON.parse(todaysMovieRatings) as IPlayerScoreInfo[] : [],
         playerTheme: (playerTheme === "light" || playerTheme === "dark") ? playerTheme : "dark",
     } as IPlayerStats;
 }
-
-
-export function SaveDataLocally(keyName: string, valueToSave: string) {
-    localStorage.setItem(keyName, valueToSave);
-}
-
 
 export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
     const keys = (s: string) => `${prefix}${s}`;
@@ -71,7 +66,6 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
     console.log("SAVING LOCAL PLAYER STATS:")
     console.log(stats)
 }
-
 
 export function ClearLocalStorage() {
     console.log("clearing the local storage")

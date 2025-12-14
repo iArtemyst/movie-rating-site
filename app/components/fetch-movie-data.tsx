@@ -5,7 +5,7 @@ import { IDailyMovieInformation } from "./movie-interfaces";
 import * as constants from "../constants";
 
 export async function FetchMovieData(): Promise<IDailyMovieInformation> {
-    const response = await fetch(constants.hostLink, {
+    const response = await fetch(constants.hostLink("MovieInfo"), {
         method: "GET",
         headers: { Accept: "application/json" }
     });

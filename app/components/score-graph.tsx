@@ -6,10 +6,10 @@ import { IPlayerStats } from "./player-stats";
 import { SplitMovieRatingStringAndReturnNumber, GetPlayerRatingScoreIndexValue } from "./compare-movie-scores";
 import { moviePointValues } from "./movie-interfaces";
 import { LazyImageCoreSizer } from "./load-asset";
-import { pickLogo, pickLogoNoTheme } from "./movie-source-logos";
+import { pickLogoNoTheme } from "./movie-source-logos";
 import "@/app/globals.css";
 
-export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats | null}) {
+export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
         return (
             <div className={`divCenterHorizontalText`}>
@@ -22,9 +22,9 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
     function ShareScoreButton() {
         const [shareButtonText, setShareButtonText] = useState("Share Your Score!")
         const playersPointValuesArray = [ 
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[0].RatingInfo.RatingIndex, movieRatingString:movies[0].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[0] : 0})],
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[1].RatingInfo.RatingIndex, movieRatingString:movies[1].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[1] : 0})],
-            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[2].RatingInfo.RatingIndex, movieRatingString:movies[2].RatingInfo.RatingValue, playerMovieRating:playerStats ? playerStats.todaysMovieRatings[2] : 0})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[0].RatingInfo.RatingIndex, movieRatingString:movies[0].RatingInfo.RatingValue, playerMovieRating:playerStats.todaysMovieRatings[0].MovieRating})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[1].RatingInfo.RatingIndex, movieRatingString:movies[1].RatingInfo.RatingValue, playerMovieRating:playerStats.todaysMovieRatings[1].MovieRating})],
+            moviePointValues[GetPlayerRatingScoreIndexValue({ratingSourceInt:movies[2].RatingInfo.RatingIndex, movieRatingString:movies[2].RatingInfo.RatingValue, playerMovieRating:playerStats.todaysMovieRatings[2].MovieRating})],
         ]
         const shareTextExpanded =   "Check out my score on WhatIsItRated.com! 🎬🍿\n\n" +
                                     String(movies[0].Title) + ": " + String(playersPointValuesArray[0]) + "\n" +
@@ -83,9 +83,9 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
         }
         return (
             <div className="scoreScreenMoviePostersAndRatingsContainer">
-                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats ? playerStats.todaysMovieRatings[0] : 0} />
-                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats ? playerStats.todaysMovieRatings[1] : 0} />
-                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats ? playerStats.todaysMovieRatings[2] : 0} />
+                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats.todaysMovieRatings[0].MovieRating} />
+                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats.todaysMovieRatings[1].MovieRating} />
+                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats.todaysMovieRatings[2].MovieRating} />
             </div>
         )
     }

@@ -5,8 +5,15 @@ export interface IPlayerStats
     todaysScore: number;
     hasPlayedToday: boolean;
     localGameIndex: number;
-    todaysMovieRatings: number[];
+    todaysMovieRatings: IPlayerScoreInfo[];
     playerTheme: "light" | "dark";
+}
+
+export interface IPlayerScoreInfo
+{
+    MovieIndex: number;
+    MovieRating: number;
+    MovieScore: number;
 }
 
 export const newPlayerStats: IPlayerStats = {

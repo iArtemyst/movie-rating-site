@@ -14,6 +14,7 @@ import * as lstorage from "./components/local-data-storage";
 import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components/theme-switch-button";
 import { SiteFooter } from "./components/site-footer";
 import { MovieTitleAndSourceLogoContainer } from "./components/movie-title-source-logo";
+import { PostPlayerScoreData } from "./components/post-player-score-data";
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
@@ -101,7 +102,12 @@ export default function Home() {
   function SubmitRatingButton({currentPlayerMovieRating, playerStats}:{currentPlayerMovieRating: number, playerStats:IPlayerStats | null}) {    
     function SubmitRatingOnClick() {
       if (playerStats) {
-        UpdatePlayerScoreBasedOnRating({ratingIndex: serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex, movieRatingString: serverMovieInfoArray[selectedIndex].RatingInfo.RatingValue, playerMovieRating: currentPlayerMovieRating, playerStats: playerStats})
+        UpdatePlayerScoreBasedOnRating({
+          ratingSourceInt: serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex, 
+          movieRatingString: serverMovieInfoArray[selectedIndex].RatingInfo.RatingValue, 
+          playerMovieRating: currentPlayerMovieRating, 
+          playerStats: playerStats,
+          selectedIndex: selectedIndex})
         lstorage.SavePlayerStats(playerStats)
       }
       setCurrentMovieScoreScreenVisibility(true)
@@ -115,7 +121,7 @@ export default function Home() {
     )
   }
 
-  function UpdateToNextMovie() {
+  async function UpdateToNextMovie() {
     const newIndex: number | null = IncrementArrayIndex({ currentIndex: selectedIndex, arrayLength: serverMovieInfoArray.length - 1 })
     if (newIndex) {
       setSelectedIndex(newIndex)
@@ -123,6 +129,9 @@ export default function Home() {
       setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RatingInfo.RatingIndex])
     }
     else {
+      await PostPlayerScoreData({playerScores:localPlayerData!.todaysMovieRatings , playerOverallScore:localPlayerData!.todaysScore})
+
+      console.log("posted player score?")
       setSelectedIndex(0)
       setCurrentMovieScoreScreenVisibility(false)
       setCurrentRating(middleRatingArray[serverMovieInfoArray[0].RatingInfo.RatingIndex])
@@ -175,7 +184,7 @@ export default function Home() {
               selectedIndex={selectedIndex}
               onNextMovie={UpdateToNextMovie}
               /> 
-            <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData?.hasPlayedToday ?? false} playerStats={localPlayerData}/>
+            <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData!.hasPlayedToday} playerStats={localPlayerData!}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
             <SiteFooter />
           </div>
