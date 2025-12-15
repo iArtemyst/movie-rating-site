@@ -19,8 +19,8 @@ export function SplitMovieRatingStringAndReturnNumber({ratingSourceInt, movieRat
         movieRatingString.split(ratingStringEndings[2]),
     ]
     const splitScore = splitScoreArray[ratingSourceInt] ? splitScoreArray[ratingSourceInt][0] : ""
-    const movieScoreAsNumber = Number(splitScore)
-    return movieScoreAsNumber
+    const movieScoreAsNumber = (ratingSourceInt == 0 ? Number(splitScore).toFixed(1) : Number(splitScore));
+    return Number(movieScoreAsNumber)
 }
 
 export function GetPlayerRatingScoreIndexValue({ratingSourceInt, movieRatingString, playerMovieRating}:{ratingSourceInt:number, movieRatingString: string, playerMovieRating: number}) {

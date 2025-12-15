@@ -15,6 +15,7 @@ import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components
 import { SiteFooter } from "./components/site-footer";
 import { MovieTitleAndSourceLogoContainer } from "./components/movie-title-source-logo";
 import { PostPlayerScoreData } from "./components/post-player-score-data";
+import { IAverageDailyPlayerScore, FetchAverageScoreData, tempAverageDailyStats } from "./components/average-score-data";
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
@@ -30,6 +31,7 @@ export default function Home() {
   const [currentMovieScoreScreenVisibility, setCurrentMovieScoreScreenVisibility] = useState(false);
   const [localPlayerData, setLocalPlayerData] = useState<IPlayerStats | null>(null);
   const [movieDataLoaded, setMovieDataLoaded] = useState(false);
+  const [averageCommunityScores, setAverageCommunityScores] = useState<IAverageDailyPlayerScore | null>(null)
 
   useEffect(() => {
     const fn = async () => {
@@ -130,7 +132,7 @@ export default function Home() {
     }
     else {
       await PostPlayerScoreData({playerScores:localPlayerData!.todaysMovieRatings , playerOverallScore:localPlayerData!.todaysScore})
-
+      setAverageCommunityScores(await FetchAverageScoreData())
       console.log("posted player score?")
       setSelectedIndex(0)
       setCurrentMovieScoreScreenVisibility(false)
@@ -184,7 +186,11 @@ export default function Home() {
               selectedIndex={selectedIndex}
               onNextMovie={UpdateToNextMovie}
               /> 
-            <TodaysFinalScoreScreen movies={serverMovieInfoArray} visible={localPlayerData!.hasPlayedToday} playerStats={localPlayerData!}/>
+            <TodaysFinalScoreScreen 
+              movies={serverMovieInfoArray} 
+              visible={localPlayerData!.hasPlayedToday} 
+              playerStats={localPlayerData!}
+              averageCommunityScores={averageCommunityScores? averageCommunityScores : tempAverageDailyStats}/>
             <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
             <SiteFooter />
           </div>

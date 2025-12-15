@@ -4,6 +4,7 @@ import React from "react";
 import { GetPlayerRatingScoreIndexValue, SplitMovieRatingStringAndReturnNumber } from "./compare-movie-scores";
 import { IPlayerStats } from "./player-stats";
 import { ratingStringEndings } from "./movie-interfaces";
+import { IMovieScoreInfo } from "./average-score-data";
 
 
 const WinningTextArray: string[] = [

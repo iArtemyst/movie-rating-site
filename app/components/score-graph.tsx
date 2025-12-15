@@ -8,13 +8,33 @@ import { moviePointValues } from "./movie-interfaces";
 import { LazyImageCoreSizer } from "./load-asset";
 import { pickLogoNoTheme } from "./movie-source-logos";
 import "@/app/globals.css";
+import { IAverageDailyPlayerScore } from "./average-score-data";
 
-export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats}) {
+export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
         return (
             <div className={`divCenterHorizontalText`}>
                 <p className={`finalScoreTextSecondary`}>{text}</p>
                 <p className={`finalScoreTextPrimary`}>{stats ?? "No Stats"}</p>
+            </div>
+        )
+    }
+
+    function TextWithStatsSmall({text, stats}:{text:string, stats:string | undefined}) {
+        return (
+            <div className={`divCenterHorizontalTextSmall`}>
+                <p className={`scoreTextSecondarySmall`}>{text}</p>
+                <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
+            </div>
+        )
+    }
+
+
+    function TextWithStatsTiny({text, stats}:{text:string, stats:string | undefined}) {
+        return (
+            <div className={`divCenterHorizontalTextTiny`}>
+                <p className={`scoreTextSecondaryTiny`}>{text}</p>
+                <p className={`scoreTextPrimaryTiny`}>{stats ?? "No Stats"}</p>
             </div>
         )
     }
@@ -51,19 +71,10 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
     }
 
     function PlayerVsActualRatingsToday() {
-        function MoviePosterAndRatings({movie, playerMovieRating}:{movie:IMovieInformation, playerMovieRating:number}) {
-            function TextWithStatsSmall({text, stats}:{text:string, stats:string | undefined}) {
-                return (
-                    <div className={`divCenterHorizontalTextSmall`}>
-                        <p className={`scoreTextSecondarySmall`}>{text}</p>
-                        <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
-                    </div>
-                )
-            }
-
+        function MoviePosterAndRatings({movie, playerMovieRating, avgCommunityRating}:{movie:IMovieInformation, playerMovieRating:number, avgCommunityRating:number}) {
             function SourceLogoWithRating({stats}:{stats:string | undefined}) {
                 return (
-                    <div className={`divCenterHorizontalTextSmall`}>
+                    <div className={`divCenterHorizontalTextLogo mb-[.5em]`}>
                         <LazyImageCoreSizer imgLink={pickLogoNoTheme({source:movie.RatingInfo.RatingIndex})} imgAlt={`${movie.RatingInfo.RatingIndex} logo`} imgStyle="smallMovieSourceLogoImage" />
                         <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
                     </div>
@@ -72,20 +83,21 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
 
             return (
                 <div className="scoreScreenMoviePosterAndRatingDiv">
+                    <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>
                     <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
                     {/* <p className="scoreTextPrimarySmall mb-[.25em]">{movie.Title} ({movie.Year})</p> */}
-                    <div className="flex flex-col gap-[.25em] w-fit">
-                        <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>
-                        <TextWithStatsSmall text={"Yours:"} stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating + ratingStringEndings[movie.RatingInfo.RatingIndex] : Number(playerMovieRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
+                    <div className="flex flex-col gap-[.25em] w-full">
+                        <TextWithStatsSmall text={"Yours:"} stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating.toFixed(1) + ratingStringEndings[movie.RatingInfo.RatingIndex] : Number(playerMovieRating) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
+                        <TextWithStatsTiny text={"Avg Guess:"} stats={movie.RatingInfo.RatingIndex === 0 ? String(avgCommunityRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex] : avgCommunityRating + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
                     </div>
                 </div>
             )
         }
         return (
             <div className="scoreScreenMoviePostersAndRatingsContainer">
-                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats.todaysMovieRatings[0].MovieRating} />
-                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats.todaysMovieRatings[1].MovieRating} />
-                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats.todaysMovieRatings[2].MovieRating} />
+                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats.todaysMovieRatings[0].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[0].averageRating}/>
+                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats.todaysMovieRatings[1].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[1].averageRating}/>
+                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats.todaysMovieRatings[2].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[2].averageRating}/>
             </div>
         )
     }
@@ -96,7 +108,10 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
                 <div className={`fullScreenBlockingDiv`} onClick={e => {e.stopPropagation()}}>
                     <div className="finalScoreBackgroundDiv">
                         <div className="finalScoreTextContainer">
-                            <p className="scoreTitleText">{`Today\'s final score: `}{playerStats?.todaysScore} points</p>
+                            <div className="scoreTitleText">
+                                <p className="">Your Score Today: {playerStats?.todaysScore} points!</p>
+                                <TextWithStats text="Average Points Today:" stats={averageCommunityScores.averageOverallScore} />
+                            </div>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&
                                     <PlayerVsActualRatingsToday />
@@ -106,6 +121,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats}:{movies:IM
                                 <TextWithStats text="Games played:" stats={playerStats?.totalGamesPlayed } />
                                 <TextWithStats text="Perfect games:" stats={playerStats?.totalPerfectGames } />
                             </div>
+
                         </div>
                         <ShareScoreButton />
                     </div>

@@ -557,11 +557,11 @@ main, body, html {
   }
 }
 
-.divCenterHorizontalTextSmall {
+.divCenterHorizontalTextLogo {
   display: flex;
   flex-direction: row;
   gap: .25em;
-  width: auto;
+  width: 100%;
   height: fit-content;
   place-content: center;
   place-items: center;
@@ -570,7 +570,24 @@ main, body, html {
   padding-left: .5em;
   padding-right: .5em;
   border-radius: 1em;
-  background-color: #03140b;
+  background-color: #00000050;
+  box-shadow: var(--shadow-style);
+}
+
+.divCenterHorizontalTextSmall {
+  display: flex;
+  flex-direction: row;
+  gap: .25em;
+  width: 100%;
+  height: fit-content;
+  place-content: center;
+  place-items: center;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  padding-left: .5em;
+  padding-right: .5em;
+  border-radius: 1em;
+  background-color: #086433a6;
   box-shadow: var(--shadow-style);
 }
 
@@ -598,6 +615,56 @@ main, body, html {
 
   @media screen and (min-width:560px) and (max-width:768px) {
     font-size: 10px;
+  };
+}
+
+.divCenterHorizontalTextTiny {
+  display: flex;
+  flex-direction: row;
+  gap: .25em;
+  width: fit-content;
+  place-self: center;
+  height: fit-content;
+  place-content: center;
+  align-items: center;
+  align-content: center;
+  place-items: center;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-radius: 1em;
+  background-color: #00000050;
+  box-shadow: var(--shadow-style);
+}
+
+.scoreTextPrimaryTiny {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  place-self: center;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+  }
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 10px;
+  };
+}
+
+.scoreTextSecondaryTiny {
+  font-size: 8px;
+  font-weight: 400;
+  text-align: center;
+  place-self: center;
+
+  @media screen and (max-width:560px) {
+    font-size:7px;
+  }
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 9px;
   };
 }
 
@@ -660,6 +727,8 @@ main, body, html {
   font-weight: 700;
   font-size: 32px;
   text-align: center;
+  height: fit-content;
+  line-height: 1.125em;
 
   @media screen and (max-width:560px) {
     font-size:18px;
