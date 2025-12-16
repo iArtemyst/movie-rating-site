@@ -8,7 +8,7 @@ export function MovieTitleAndSourceLogoContainer({title, year, source, theme}:{t
     return (
         <div className="mainQuestionDiv">
             <p className="movieTitleAndYearText">{title} {`\(${year}\)`}</p>
-            <div className="flex flex-col place-items-center mt-[.125em] sm:mt-[.25em] md:mt-[.5em] lg:mt-[.75em]">
+            <div className="flex flex-col place-items-center">
                 <p className="textBesideSourceLogo">on</p>
                 <LazyImageCoreSizer imgLink={pickLogo({source:source, theme:theme})} imgAlt={`${source} logo`} imgStyle="sourceLogo" />
             </div>

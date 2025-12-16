@@ -7,21 +7,21 @@ export const tempAverageDailyStats: IAverageDailyPlayerScore = {
     [
         {
             movieIndex: 0,
-            averageScore: 200,
-            averageRating: 50,
+            averageScore: 0,
+            averageRating: 0,
         },
         {
             movieIndex: 1,
-            averageScore: 100,
-            averageRating: 30,
+            averageScore: 0,
+            averageRating: 0,
         },
         {
             movieIndex: 2,
-            averageScore: 350,
-            averageRating: 70,
+            averageScore: 0,
+            averageRating: 0,
         },
     ],
-    averageOverallScore: 450
+    averageOverallScore: 0
 }
 
 

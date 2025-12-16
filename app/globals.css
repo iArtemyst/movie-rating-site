@@ -37,7 +37,7 @@
   --text-button: #111111;
   --primary-color: #ececec;
   --accent-color: #00ff6a;
-  --accent-color-2: #31dd79;
+  --accent-color-2: #34af68;
   --gallery-dot-active: #00ff6a;
   --gallery-dot-default: #c4c4c4;
   --gallery-dot-inactive: #424242;
@@ -63,7 +63,7 @@
   --text-button: #1f1f1f;
   --primary-color: #dddddd;
   --accent-color: #00ff6a;
-  --accent-color-2: #2cbe69;
+  --accent-color-2: #21854b;
   --gallery-dot-active: #00ff6a;
   --gallery-dot-default: #c4c4c4;
   --gallery-dot-inactive: #424242;
@@ -258,8 +258,9 @@ main, body, html {
   flex-direction: row;
   gap: 0px;
   width:100%;
-  place-items: start;
+  max-width: 840px;
   aspect-ratio: 4/3;
+  place-items: start;
   align-self: center;
   gap: 1em;
 
@@ -273,18 +274,20 @@ main, body, html {
     aspect-ratio: unset;
     place-items: center;
   };
+
+  @media screen and (min-width:1280px) {
+    max-width: 960px;
+  };
 }
 
 .mainMovieInfoDiv {
   display: flex;
   flex-direction: column;
   gap: 1em;
-  width:100%;
+  width:fit-content;
   place-items: center;
-  aspect-ratio: 4/3;
   align-self: center;
   padding: 1em;
-  margin-bottom: 1em;
   border-radius: 2.5em;
   background-color: var(--base-variant);
 
@@ -378,6 +381,7 @@ main, body, html {
   place-items: center;
   flex-direction: row;
   place-self: center;
+  margin-top: 2em;
   gap: 1.25em;
 };
 
@@ -467,13 +471,71 @@ main, body, html {
 
 }
 
+.finalScoreDivContainer {
+  width: fit-content;
+  background-color: var(--accent-color-2);
+  border-radius: 2em;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  padding-block: .5em;
+  padding-inline: 1em;
+  gap: .375em;
+  text-align: center;
+  place-self: center;
+
+
+  @media screen and (max-width:560px) {
+    font-size: 12px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 14px;
+  };
+
+  @media screen and (min-width:1280px) {
+    font-size: 24px;
+  };
+}
+
+.finalAvgScoreDivContainer {
+  width: fit-content;
+  background-color: #00000050;
+  border-radius: 2em;
+  font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  padding-block: .5em;
+  padding-inline: 1em;
+  gap: .375em;
+  text-align: center;
+  place-self: center;
+
+
+  @media screen and (max-width:560px) {
+    font-size: 7px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 8px;
+  };
+
+  @media screen and (min-width:1280px) {
+    font-size: 12px;
+  };
+}
+
 .scoreTitleText {
   font-size:24px;
+  width: 100%;
   font-weight: 700;
   align-self: center;
   text-align: center;
   margin-bottom: 1em;
   color: var(--text-variant);
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
 
   @media screen and (max-width:560px) {
     font-size:18px;
@@ -492,6 +554,7 @@ main, body, html {
   width: fit-content;
   max-width: 720px;
   height: fit-content;
+  position: relative;
   color: var(--text-variant);
   background-color: #001f1a;
   padding-left: 4em;
@@ -570,7 +633,7 @@ main, body, html {
   padding-left: .5em;
   padding-right: .5em;
   border-radius: 1em;
-  background-color: #00000050;
+  background-color: #000000;
   box-shadow: var(--shadow-style);
 }
 
@@ -587,7 +650,7 @@ main, body, html {
   padding-left: .5em;
   padding-right: .5em;
   border-radius: 1em;
-  background-color: #086433a6;
+  background-color: var(--accent-color-2);
   box-shadow: var(--shadow-style);
 }
 
@@ -722,6 +785,59 @@ main, body, html {
   };
 }
 
+/* .mainWiirLogoContainer {
+  width: fit-content;
+
+  @media screen and (max-width:560px) {
+    width: 108px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    width: 128px;
+  };
+
+  @media screen and (min-width:1280px) {
+    width: 196px;
+  };
+} */
+
+.mainWiirLogo {
+  width: 60%;
+  place-self: center;
+  margin-bottom: 1em;
+
+  @media screen and (max-width:560px) {
+
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+
+  };
+
+  @media screen and (min-width:1280px) {
+
+  };
+}
+
+
+.finalScreenWiirLogo {
+  width: 192px;
+  place-self: center;
+  position: relative;
+
+  @media screen and (max-width:560px) {
+
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+
+  };
+
+  @media screen and (min-width:1280px) {
+
+  };
+}
+
 .movieTitleAndYearText {
   padding-right: .25em;
   font-weight: 700;
@@ -826,7 +942,7 @@ main, body, html {
   appearance: none;
   width: 16px;
   height: 32px;
-  background: var(--accent-color-2);
+  background: var(--accent-color);
   cursor: pointer;
   border-radius: 1em;
   box-shadow: var(--shadow-style-thumb);
@@ -850,7 +966,7 @@ main, body, html {
 .ratingSliderStyle::-moz-range-thumb {
   width: 16px;
   height: 48px;
-  background: var(--accent-color-2);
+  background: var(--accent-color);
   border: none;
   cursor: pointer;
   border-radius: 1em;
@@ -883,11 +999,9 @@ main, body, html {
 }
 
 .switchThemeButton {
-  position: fixed;
+  position: absolute;
   right: 0;
   top: 0;
-  margin-right: 1em;
-  margin-top: 1em;
   font-size: 12px;
   font-weight: 700;
   padding-top: .5em;
@@ -902,12 +1016,11 @@ main, body, html {
   box-shadow: var(--shadow-style);
 
   @media screen and (max-width:560px) {
-    margin-top: 1.25em;
     font-size:10px;
     padding-top: .25em;
     padding-bottom: .25em;
-    padding-left: .5em;
-    padding-right: .5em;
+    padding-left: .75em;
+    padding-right: .75em;
   };
 }
 
@@ -949,7 +1062,7 @@ main, body, html {
   padding-top: .75em;
   padding-bottom:.75em;
   border-radius: 1em;
-  color: var(--text-button);
+  color: var(--text-color);
   background-color: var(--accent-color-2);
   place-content: center;
   place-self: center;
@@ -957,7 +1070,6 @@ main, body, html {
   font-weight: 700;
   font-size: 16px;
   opacity: .9;
-  margin-top: 1em;
 
   @media screen and (max-width:560px) {
     font-size:12px;
@@ -1173,8 +1285,8 @@ main, body, html {
   border-radius: 2em;
   translate: -50% 0%;
   box-shadow: var(--shadow-style);
-  background-color: #18a045;
-  color: var(--text-popup-color);
+  background-color: #ffbb00;
+  color: black;
   font-weight:600;
 
   @media screen and (max-width:560px) {
@@ -1206,7 +1318,7 @@ main, body, html {
   border-radius: 2em;
   translate: -50% 0%;
   box-shadow: var(--shadow-style);
-  color: var(--text-popup-color);
+  color: black;
   font-weight:600;
 
   @media screen and (max-width:560px) {

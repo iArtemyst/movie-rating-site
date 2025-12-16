@@ -1,5 +1,6 @@
 'use client'
 
+import { IAverageDailyPlayerScore, IMovieScoreInfo } from "./average-score-data";
 import { IPlayerScoreInfo, IPlayerStats } from "./player-stats";
 
 export function getLocalData(keyName: string): string | null {
@@ -70,4 +71,38 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
 export function ClearLocalStorage() {
     console.log("clearing the local storage")
     localStorage.clear()
+}
+
+
+
+export function SaveCommunityStats(stats: IAverageDailyPlayerScore, prefix = ''): void {
+    const keys = (s: string) => `${prefix}${s}`;
+    try {
+        SaveDataLocally(keys('averageMovieScores'), JSON.stringify(stats.averageMovieScores));
+        SaveDataLocally(keys('averageOverallScore'), String(stats.averageOverallScore));
+    } catch (err) {
+        console.error('Error saving player stats to localStorage', err);
+    }
+    console.log("SAVING LOCAL PLAYER STATS:")
+    console.log(stats)
+}
+
+export function loadLocalCommunityStats(prefix = ''): IAverageDailyPlayerScore | null {
+    const keys = (s: string) => `${prefix}${s}`;
+    const averageMovieScores = getLocalData(keys('averageMovieScores'));
+    const averageOverallScore = getLocalData(keys('averageOverallScore'));
+    const anyLoaded = [
+        averageMovieScores,
+        averageOverallScore,
+    ].some(v => v !== null);
+    if (!anyLoaded) return null;
+    const parseNumber = (s: string | null, fallback = 0) => {
+        if (s === null) return fallback;
+        const n = Number(s);
+        return Number.isFinite(n) ? n : fallback;
+    };
+    return {
+        averageMovieScores: averageMovieScores ? JSON.parse(averageMovieScores) as IMovieScoreInfo[] : [],
+        averageOverallScore: parseNumber(averageOverallScore, 0),
+    } as IAverageDailyPlayerScore;
 }

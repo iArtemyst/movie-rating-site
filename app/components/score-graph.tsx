@@ -1,5 +1,6 @@
 'use client'
 
+import "@/app/globals.css";
 import React, {useState} from "react";
 import { IMovieInformation, ratingStringEndings } from "./movie-interfaces";
 import { IPlayerStats } from "./player-stats";
@@ -7,8 +8,8 @@ import { SplitMovieRatingStringAndReturnNumber, GetPlayerRatingScoreIndexValue }
 import { moviePointValues } from "./movie-interfaces";
 import { LazyImageCoreSizer } from "./load-asset";
 import { pickLogoNoTheme } from "./movie-source-logos";
-import "@/app/globals.css";
 import { IAverageDailyPlayerScore } from "./average-score-data";
+import { pickWiiRLogo } from "../components/movie-source-logos";
 
 export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
@@ -16,6 +17,15 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
             <div className={`divCenterHorizontalText`}>
                 <p className={`finalScoreTextSecondary`}>{text}</p>
                 <p className={`finalScoreTextPrimary`}>{stats ?? "No Stats"}</p>
+            </div>
+        )
+    }
+
+    function TextWithStatsStyle({text, stats, divstyle, textAStyle, textBStyle}:{text:string, stats:number | undefined, divstyle:string, textAStyle:string, textBStyle:string}) {
+        return (
+            <div className={`${divstyle}`}>
+                <p className={`${textBStyle}`}>{text}</p>
+                <p className={`${textAStyle}`}>{stats ?? "No Stats"}</p>
             </div>
         )
     }
@@ -74,7 +84,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
         function MoviePosterAndRatings({movie, playerMovieRating, avgCommunityRating}:{movie:IMovieInformation, playerMovieRating:number, avgCommunityRating:number}) {
             function SourceLogoWithRating({stats}:{stats:string | undefined}) {
                 return (
-                    <div className={`divCenterHorizontalTextLogo mb-[.5em]`}>
+                    <div className={`divCenterHorizontalTextLogo`}>
                         <LazyImageCoreSizer imgLink={pickLogoNoTheme({source:movie.RatingInfo.RatingIndex})} imgAlt={`${movie.RatingInfo.RatingIndex} logo`} imgStyle="smallMovieSourceLogoImage" />
                         <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
                     </div>
@@ -83,12 +93,12 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
 
             return (
                 <div className="scoreScreenMoviePosterAndRatingDiv">
-                    <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>
                     <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
                     {/* <p className="scoreTextPrimarySmall mb-[.25em]">{movie.Title} ({movie.Year})</p> */}
-                    <div className="flex flex-col gap-[.25em] w-full">
+                    <div className="flex flex-col gap-[.5em] w-full">
+                        <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>
                         <TextWithStatsSmall text={"Yours:"} stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating.toFixed(1) + ratingStringEndings[movie.RatingInfo.RatingIndex] : Number(playerMovieRating) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
-                        <TextWithStatsTiny text={"Avg Guess:"} stats={movie.RatingInfo.RatingIndex === 0 ? String(avgCommunityRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex] : avgCommunityRating + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
+                        <TextWithStatsTiny text={"Community:"} stats={movie.RatingInfo.RatingIndex === 0 ? String(avgCommunityRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex] : avgCommunityRating.toFixed(0) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
                     </div>
                 </div>
             )
@@ -107,10 +117,11 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
             {   visible &&
                 <div className={`fullScreenBlockingDiv`} onClick={e => {e.stopPropagation()}}>
                     <div className="finalScoreBackgroundDiv">
+                        <LazyImageCoreSizer imgAlt="What Is It Rated Logo" imgLink={pickWiiRLogo({theme:playerStats.playerTheme})} imgStyle="finalScreenWiirLogo"/>
                         <div className="finalScoreTextContainer">
                             <div className="scoreTitleText">
-                                <p className="">Your Score Today: {playerStats?.todaysScore} points!</p>
-                                <TextWithStats text="Average Points Today:" stats={averageCommunityScores.averageOverallScore} />
+                                <TextWithStatsStyle text="Your Final Score:" stats={playerStats?.todaysScore} divstyle="finalScoreDivContainer" textAStyle="font-black" textBStyle=""/>
+                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores.averageOverallScore} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
                             </div>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&
@@ -121,7 +132,6 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                                 <TextWithStats text="Games played:" stats={playerStats?.totalGamesPlayed } />
                                 <TextWithStats text="Perfect games:" stats={playerStats?.totalPerfectGames } />
                             </div>
-
                         </div>
                         <ShareScoreButton />
                     </div>

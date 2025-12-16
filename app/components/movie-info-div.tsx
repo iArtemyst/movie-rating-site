@@ -3,10 +3,9 @@
 import React from "react";
 import { LazyImageCoreSizer } from "./load-asset";
 import { IMovieInformation } from "./movie-interfaces";
-import { GalleryProgressDots } from "./gallery-progress-dots";
 import "@/app/globals.css";
 
-export function MovieInfoDiv({movie, index}:{movie: IMovieInformation, index:number}) {
+export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
     const splitActors = movie.Actors.split(",");
 
     function ActorBulletPoint({actor}:{actor:string}) {
@@ -50,7 +49,6 @@ export function MovieInfoDiv({movie, index}:{movie: IMovieInformation, index:num
                     </div>
                 </div>
             </div>
-            <GalleryProgressDots selectedIndex={index}/>
         </>
     )
 }

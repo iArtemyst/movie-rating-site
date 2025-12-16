@@ -11,11 +11,14 @@ import { LoadingPage } from "./components/loading";
 import { ScoreComparisonDiv } from "./components/score-comparison-div";
 import { TodaysFinalScoreScreen } from "./components/score-graph";
 import * as lstorage from "./components/local-data-storage";
-import { SwitchThemeButton, enableDarkMode, enableLightMode } from "./components/theme-switch-button";
+import { enableDarkMode, enableLightMode } from "./components/theme-switch-button";
+import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { SiteFooter } from "./components/site-footer";
 import { MovieTitleAndSourceLogoContainer } from "./components/movie-title-source-logo";
 import { PostPlayerScoreData } from "./components/post-player-score-data";
 import { IAverageDailyPlayerScore, FetchAverageScoreData, tempAverageDailyStats } from "./components/average-score-data";
+import { pickWiiRLogo } from "./components/movie-source-logos";
+import { LazyImageCoreSizer } from "./components/load-asset";
 
 const minRatingArray = [0, 0, 0];
 const maxRatingArray = [10, 100, 100];
@@ -36,6 +39,7 @@ export default function Home() {
   useEffect(() => {
     const fn = async () => {
       const result: IDailyMovieInformation = await FetchMovieData();
+      const communityScoresResult: IAverageDailyPlayerScore = await FetchAverageScoreData();
 
       // Movie info
       setServerMovieInfoArray(result.movies)
@@ -56,6 +60,14 @@ export default function Home() {
       } else {
         enableDarkMode({playerStats:tempPlayerStats});
       }
+      if (!communityScoresResult) {
+        console.log("no current community averages found")
+        setAverageCommunityScores(tempAverageDailyStats)
+      }
+      if (communityScoresResult && communityScoresResult !== averageCommunityScores) {
+        console.log("updating community average scores")
+        setAverageCommunityScores(communityScoresResult)
+      }
 
       // Check if partially through today's game
       if (tempPlayerStats.todaysMovieRatings.length < result.movies.length) {
@@ -72,7 +84,7 @@ export default function Home() {
     if (!movieDataLoaded) {
       fn();
     }
-  }, [serverMovieInfoArray, currentRating, localPlayerData, movieDataLoaded]);
+  }, [serverMovieInfoArray, currentRating, localPlayerData, movieDataLoaded, averageCommunityScores]);
 
   //------------------------------------------------------------------------
 
@@ -129,6 +141,7 @@ export default function Home() {
       setSelectedIndex(newIndex)
       setCurrentMovieScoreScreenVisibility(false)
       setCurrentRating(middleRatingArray[serverMovieInfoArray[newIndex].RatingInfo.RatingIndex])
+      window.scrollTo(0,0)
     }
     else {
       await PostPlayerScoreData({playerScores:localPlayerData!.todaysMovieRatings , playerOverallScore:localPlayerData!.todaysScore})
@@ -140,6 +153,7 @@ export default function Home() {
       if (localPlayerData) {
         SavePlayerStatsUponComplete({playedToday:true, playerStats:localPlayerData})
       }
+      window.scrollTo(0,0)
     }
   }
 
@@ -155,8 +169,8 @@ export default function Home() {
         <main className="mainPage">
           <div className="mainContainer">
             <div className="contentContainer">
-              <p className="siteTitleText">WHAT IS IT RATED?</p>
-              <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]} index={selectedIndex}/>
+              <LazyImageCoreSizer imgAlt="What Is It Rated Logo" imgLink={pickWiiRLogo({theme:localPlayerData!.playerTheme})} imgStyle="mainWiirLogo"/>
+              <MovieInfoDiv movie={serverMovieInfoArray[selectedIndex]}/>
               <MovieTitleAndSourceLogoContainer 
                 title={serverMovieInfoArray[selectedIndex].Title}
                 year={serverMovieInfoArray[selectedIndex].Year}
@@ -176,6 +190,7 @@ export default function Home() {
                 </div>
                 <SubmitRatingButton currentPlayerMovieRating={currentRating} playerStats={localPlayerData}/>
                 </div>
+                <GalleryProgressDots selectedIndex={selectedIndex}/>
             </div>
             <ScoreComparisonDiv 
               ratingIndex={serverMovieInfoArray[selectedIndex].RatingInfo.RatingIndex} 
@@ -191,8 +206,7 @@ export default function Home() {
               visible={localPlayerData!.hasPlayedToday} 
               playerStats={localPlayerData!}
               averageCommunityScores={averageCommunityScores? averageCommunityScores : tempAverageDailyStats}/>
-            <SwitchThemeButton playerStats={localPlayerData ?? newPlayerStats}/>
-            <SiteFooter />
+            <SiteFooter playerStats={localPlayerData ?? newPlayerStats}/>
           </div>
         </main>
     );

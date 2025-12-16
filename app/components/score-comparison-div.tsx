@@ -4,7 +4,6 @@ import React from "react";
 import { GetPlayerRatingScoreIndexValue, SplitMovieRatingStringAndReturnNumber } from "./compare-movie-scores";
 import { IPlayerStats } from "./player-stats";
 import { ratingStringEndings } from "./movie-interfaces";
-import { IMovieScoreInfo } from "./average-score-data";
 
 
 const WinningTextArray: string[] = [
@@ -14,18 +13,8 @@ const WinningTextArray: string[] = [
     "Close Enough!",
     "Sorry, That's Incorrect!",
 ];
-const scoreDivStyle: string[] = [
-    "bg-[#18a045]",
-    "bg-[#388863]",
-    "bg-[#5c3fa0]",
-    "bg-[#296392]",
-    "bg-[#612323]"
-];
-
 
 function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{correctRating:string, playerRating:number, sourceIndex:number}) {
-    const playerScoreRatingValue = GetPlayerRatingScoreIndexValue({ratingSourceInt:sourceIndex, movieRatingString:correctRating, playerMovieRating:playerRating});
-
     return (
         <div className="ratingBarComparisonContainer">
             <div className="w-full h-fit relative">
@@ -46,14 +35,14 @@ function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{
                     </div>
                 </div>
                 <div 
-                    className={`playerRatingBar ${scoreDivStyle[playerScoreRatingValue]}`}
+                    className={`playerRatingBar bg-[#00ff4c]`}
                     style={{ left: `${sourceIndex === 0 ? playerRating*10 : playerRating}%` }}
                 />
             </div>
 
             <div className="w-full h-fit relative">
                 <p 
-                    className={`${scoreDivStyle[playerScoreRatingValue]} ratingBarPlayerText`}
+                    className={`bg-[#00ff4c] ratingBarPlayerText`}
                     style={{ left: `${sourceIndex === 0 ? playerRating*10 : playerRating}%` }}>
                     Your Rating: {playerRating}{ratingStringEndings[sourceIndex]}
                 </p>
