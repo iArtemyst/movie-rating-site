@@ -16,7 +16,7 @@ import { GalleryProgressDots } from "./components/gallery-progress-dots";
 import { SiteFooter } from "./components/site-footer";
 import { MovieTitleAndSourceLogoContainer } from "./components/movie-title-source-logo";
 import { PostPlayerScoreData } from "./components/post-player-score-data";
-import { IAverageDailyPlayerScore, FetchAverageScoreData, tempAverageDailyStats } from "./components/average-score-data";
+import { IAverageDailyPlayerScore, FetchAverageScoreData } from "./components/average-score-data";
 import { pickWiiRLogo } from "./components/movie-source-logos";
 import { LazyImageCoreSizer } from "./components/load-asset";
 
@@ -39,41 +39,39 @@ export default function Home() {
   useEffect(() => {
     const fn = async () => {
       const result: IDailyMovieInformation = await FetchMovieData();
-      const communityScoresResult: IAverageDailyPlayerScore = await FetchAverageScoreData();
+      const communityScoresResult: IAverageDailyPlayerScore | null = await FetchAverageScoreData();
+      const tempPlayerStats: IPlayerStats = getLocalPlayerData();
 
       // Movie info
       setServerMovieInfoArray(result.movies)
       setCurrentRating(middleRatingArray[result.movies[0].RatingInfo.RatingIndex])
 
       // Current day
-      const tempPlayerStats: IPlayerStats = getLocalPlayerData();
       if (tempPlayerStats.localGameIndex !== result.dailyId) {
         tempPlayerStats.hasPlayedToday = false;
         tempPlayerStats.localGameIndex = result.dailyId;
         tempPlayerStats.todaysScore = 0;
         tempPlayerStats.todaysMovieRatings = [];
-        console.log("Resetting Daily Stats")
-        console.log(tempPlayerStats)
       }
       if (tempPlayerStats.playerTheme === 'light') {
         enableLightMode({playerStats:tempPlayerStats});
       } else {
         enableDarkMode({playerStats:tempPlayerStats});
       }
-      if (!communityScoresResult) {
-        console.log("no current community averages found")
-        setAverageCommunityScores(tempAverageDailyStats)
-      }
-      if (communityScoresResult && communityScoresResult !== averageCommunityScores) {
-        console.log("updating community average scores")
-        setAverageCommunityScores(communityScoresResult)
-      }
 
       // Check if partially through today's game
-      if (tempPlayerStats.todaysMovieRatings.length < result.movies.length) {
-        console.log("Loading game status...")
-        setSelectedIndex(tempPlayerStats.todaysMovieRatings.length);
-        setCurrentRating(middleRatingArray[result.movies[tempPlayerStats.todaysMovieRatings.length].RatingInfo.RatingIndex])
+      if (tempPlayerStats.todaysMovieRatings.length <= result.movies.length) {
+        if (tempPlayerStats.todaysMovieRatings.length < result.movies.length) {
+          setSelectedIndex(tempPlayerStats.todaysMovieRatings.length);
+          setCurrentRating(middleRatingArray[result.movies[tempPlayerStats.todaysMovieRatings.length].RatingInfo.RatingIndex])
+        }
+        else {
+          setSelectedIndex(0);
+          setCurrentRating(middleRatingArray[result.movies[0].RatingInfo.RatingIndex])
+          tempPlayerStats.hasPlayedToday = true
+          setLocalPlayerData(tempPlayerStats)
+          setAverageCommunityScores(communityScoresResult)
+        }
       }
 
       setLocalPlayerData(tempPlayerStats)
@@ -91,13 +89,10 @@ export default function Home() {
   function getLocalPlayerData() {
     const localDataResult = lstorage.loadLocalPlayerStats();
     if (!localDataResult) {
-      console.log("no current local stats: saving new player stats")
       lstorage.SavePlayerStats(newPlayerStats)
       setLocalPlayerData(newPlayerStats)
       return newPlayerStats
     } else {
-      console.log("local data found:");
-      console.log(localDataResult);
       setLocalPlayerData(localDataResult)
       return localDataResult;
     }
@@ -145,8 +140,10 @@ export default function Home() {
     }
     else {
       await PostPlayerScoreData({playerScores:localPlayerData!.todaysMovieRatings , playerOverallScore:localPlayerData!.todaysScore})
-      setAverageCommunityScores(await FetchAverageScoreData())
-      console.log("posted player score?")
+      const fetchedAverageScores = await FetchAverageScoreData()
+      if (fetchedAverageScores) {
+        setAverageCommunityScores(fetchedAverageScores)
+      }
       setSelectedIndex(0)
       setCurrentMovieScoreScreenVisibility(false)
       setCurrentRating(middleRatingArray[serverMovieInfoArray[0].RatingInfo.RatingIndex])
@@ -205,7 +202,7 @@ export default function Home() {
               movies={serverMovieInfoArray} 
               visible={localPlayerData!.hasPlayedToday} 
               playerStats={localPlayerData!}
-              averageCommunityScores={averageCommunityScores? averageCommunityScores : tempAverageDailyStats}/>
+              averageCommunityScores={averageCommunityScores}/>
             <SiteFooter playerStats={localPlayerData ?? newPlayerStats}/>
           </div>
         </main>

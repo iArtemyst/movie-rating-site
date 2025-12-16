@@ -21,7 +21,7 @@ function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{
                 <p 
                     className={`ratingBarCorrectScoreText`}
                     style={{ left: `${sourceIndex === 0 ? Number(correctRating)*10 : correctRating}%` }}>
-                Actual Rating: {correctRating}{ratingStringEndings[sourceIndex]}</p>
+                Actual Rating: {sourceIndex === 0 ? Number(correctRating).toFixed(1) + ratingStringEndings[sourceIndex] : correctRating + ratingStringEndings[sourceIndex] }</p>
             </div>
 
             <div className={`fullRatingBarBG bg-slate-50`}>
@@ -44,7 +44,7 @@ function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{
                 <p 
                     className={`bg-[#00ff4c] ratingBarPlayerText`}
                     style={{ left: `${sourceIndex === 0 ? playerRating*10 : playerRating}%` }}>
-                    Your Rating: {playerRating}{ratingStringEndings[sourceIndex]}
+                    Your Rating: {sourceIndex === 0 ? playerRating.toFixed(1) + ratingStringEndings[sourceIndex] : playerRating + ratingStringEndings[sourceIndex]}
                 </p>
             </div>
         </div>

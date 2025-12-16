@@ -826,15 +826,15 @@ main, body, html {
   position: relative;
 
   @media screen and (max-width:560px) {
-
+    width: 128px;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
-
+    width: 144px;
   };
 
   @media screen and (min-width:1280px) {
-
+    width: 256px;
   };
 }
 

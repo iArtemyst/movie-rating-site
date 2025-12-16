@@ -3,11 +3,8 @@ import * as constants from "../constants";
 import { IPlayerScoreInfo } from "./player-stats";
 
 export async function PostPlayerScoreData({playerScores, playerOverallScore}:{playerScores:IPlayerScoreInfo[], playerOverallScore:number}) {
-    const response = await fetch(constants.hostLink("PlayerScoreInfo"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            movieScores: [
+    const dataObject = {
+        "movieScores": [
                 {
                     "movieIndex": 0,
                     "movieScore": playerScores[0].MovieScore,
@@ -24,9 +21,22 @@ export async function PostPlayerScoreData({playerScores, playerOverallScore}:{pl
                     "movieRating": playerScores[2].MovieRating
                 }
             ],
-            overallScore: playerOverallScore
-        })
+            "overallScore": playerOverallScore
+        }
+    const response = await fetch(constants.hostLink("PlayerScoreInfo"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataObject)
     });
 
-    if (!response.ok) throw new Error('Sending Daily Score Data to Server Failed')
+    if (!response.ok) {
+        console.error('Sending Daily Score Data to Server Failed')
+        console.log("data object:")
+        console.log(dataObject)
+        console.log(response)
+    }
+    else {
+        console.log('player scores uploaded to server')
+        console.log(dataObject)
+    }
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import * as constants from "../constants";
+import { SaveCommunityStats } from "./local-data-storage";
 
 export const tempAverageDailyStats: IAverageDailyPlayerScore = {
     averageMovieScores:
@@ -38,7 +39,7 @@ export interface IMovieScoreInfo
     averageRating: number
 }
 
-export async function FetchAverageScoreData(): Promise<IAverageDailyPlayerScore> {
+export async function FetchAverageScoreData(): Promise<IAverageDailyPlayerScore | null> {
     const response = await fetch(constants.hostLink("AverageScoreInfo"), {
         method: "GET",
         headers: { Accept: "application/json" }
@@ -47,6 +48,11 @@ export async function FetchAverageScoreData(): Promise<IAverageDailyPlayerScore>
     if (!response.ok) throw new Error(`Fetch average score data failed`);
 
     const data: IAverageDailyPlayerScore = await response.json();
-    console.log(data)
+
+    if (!data.averageOverallScore) {
+        return null;
+    }
+
+    SaveCommunityStats(data)
     return data;
 }

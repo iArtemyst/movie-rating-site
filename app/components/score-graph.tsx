@@ -11,7 +11,7 @@ import { pickLogoNoTheme } from "./movie-source-logos";
 import { IAverageDailyPlayerScore } from "./average-score-data";
 import { pickWiiRLogo } from "../components/movie-source-logos";
 
-export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore}) {
+export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore | null}) {
     function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
         return (
             <div className={`divCenterHorizontalText`}>
@@ -105,9 +105,9 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
         }
         return (
             <div className="scoreScreenMoviePostersAndRatingsContainer">
-                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats.todaysMovieRatings[0].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[0].averageRating}/>
-                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats.todaysMovieRatings[1].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[1].averageRating}/>
-                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats.todaysMovieRatings[2].MovieRating} avgCommunityRating={averageCommunityScores.averageMovieScores[2].averageRating}/>
+                <MoviePosterAndRatings movie={movies[0]} playerMovieRating={playerStats.todaysMovieRatings[0].MovieRating} avgCommunityRating={averageCommunityScores? averageCommunityScores.averageMovieScores[0].averageRating : playerStats.todaysMovieRatings[0].MovieRating}/>
+                <MoviePosterAndRatings movie={movies[1]} playerMovieRating={playerStats.todaysMovieRatings[1].MovieRating} avgCommunityRating={averageCommunityScores? averageCommunityScores.averageMovieScores[1].averageRating : playerStats.todaysMovieRatings[1].MovieRating}/>
+                <MoviePosterAndRatings movie={movies[2]} playerMovieRating={playerStats.todaysMovieRatings[2].MovieRating} avgCommunityRating={averageCommunityScores? averageCommunityScores.averageMovieScores[2].averageRating : playerStats.todaysMovieRatings[2].MovieRating}/>
             </div>
         )
     }
@@ -121,7 +121,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                         <div className="finalScoreTextContainer">
                             <div className="scoreTitleText">
                                 <TextWithStatsStyle text="Your Final Score:" stats={playerStats?.todaysScore} divstyle="finalScoreDivContainer" textAStyle="font-black" textBStyle=""/>
-                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores.averageOverallScore} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
+                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores? averageCommunityScores.averageOverallScore : playerStats.todaysScore} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
                             </div>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&

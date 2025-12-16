@@ -64,8 +64,8 @@ export function SavePlayerStats(stats: IPlayerStats, prefix = ''): void {
     } catch (err) {
         console.error('Error saving player stats to localStorage', err);
     }
-    console.log("SAVING LOCAL PLAYER STATS:")
-    console.log(stats)
+    // console.log("SAVING LOCAL PLAYER STATS:")
+    // console.log(stats)
 }
 
 export function ClearLocalStorage() {
@@ -81,9 +81,9 @@ export function SaveCommunityStats(stats: IAverageDailyPlayerScore, prefix = '')
         SaveDataLocally(keys('averageMovieScores'), JSON.stringify(stats.averageMovieScores));
         SaveDataLocally(keys('averageOverallScore'), String(stats.averageOverallScore));
     } catch (err) {
-        console.error('Error saving player stats to localStorage', err);
+        console.error('Error saving community stats to localStorage', err);
     }
-    console.log("SAVING LOCAL PLAYER STATS:")
+    console.log("SAVING LOCAL COMMUNITY STATS:")
     console.log(stats)
 }
 
