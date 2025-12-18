@@ -12,16 +12,7 @@ import { IAverageDailyPlayerScore } from "./average-score-data";
 import { pickWiiRLogo } from "../components/movie-source-logos";
 
 export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore | null}) {
-    function TextWithStats({text, stats}:{text:string, stats:number | undefined}) {
-        return (
-            <div className={`divCenterHorizontalText`}>
-                <p className={`finalScoreTextSecondary`}>{text}</p>
-                <p className={`finalScoreTextPrimary`}>{stats ?? "No Stats"}</p>
-            </div>
-        )
-    }
-
-    function TextWithStatsStyle({text, stats, divstyle, textAStyle, textBStyle}:{text:string, stats:number | undefined, divstyle:string, textAStyle:string, textBStyle:string}) {
+    function TextWithStatsStyle({text, stats, divstyle, textAStyle, textBStyle}:{text:string, stats:string, divstyle:string, textAStyle:string, textBStyle:string}) {
         return (
             <div className={`${divstyle}`}>
                 <p className={`${textBStyle}`}>{text}</p>
@@ -30,21 +21,14 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
         )
     }
 
-    function TextWithStatsSmall({text, stats}:{text:string, stats:string | undefined}) {
+    function TextWithCommStatsStyle({textA, textB, statsA, statsB, divstyle1, textAStyle, textBStyle}:{textA:string, textB:string, statsA:string, statsB:string, divstyle1:string, textAStyle:string, textBStyle:string}) {
         return (
-            <div className={`divCenterHorizontalTextSmall`}>
-                <p className={`scoreTextSecondarySmall`}>{text}</p>
-                <p className={`scoreTextPrimarySmall`}>{stats ?? "No Stats"}</p>
-            </div>
-        )
-    }
-
-
-    function TextWithStatsTiny({text, stats}:{text:string, stats:string | undefined}) {
-        return (
-            <div className={`divCenterHorizontalTextTiny`}>
-                <p className={`scoreTextSecondaryTiny`}>{text}</p>
-                <p className={`scoreTextPrimaryTiny`}>{stats ?? "No Stats"}</p>
+            <div className={`${divstyle1}`}>
+                    <p className={`${textBStyle}`}>{textA}</p>
+                    <p className={`${textAStyle}`}>{statsA ?? "No Stats"}</p>
+                    <p> | </p>
+                    <p className={`${textAStyle}`}>{statsB ?? "No Data"}</p>
+                    <p className={`${textBStyle}`}>{textB}</p>
             </div>
         )
     }
@@ -97,8 +81,19 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                     {/* <p className="scoreTextPrimarySmall mb-[.25em]">{movie.Title} ({movie.Year})</p> */}
                     <div className="flex flex-col gap-[.5em] w-full">
                         <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>
-                        <TextWithStatsSmall text={"Yours:"} stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating.toFixed(1) + ratingStringEndings[movie.RatingInfo.RatingIndex] : Number(playerMovieRating) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
-                        <TextWithStatsTiny text={"Community:"} stats={movie.RatingInfo.RatingIndex === 0 ? String(avgCommunityRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex] : avgCommunityRating.toFixed(0) + ratingStringEndings[movie.RatingInfo.RatingIndex]} />
+                        <TextWithStatsStyle 
+                            text="Yours:"
+                            stats={movie.RatingInfo.RatingIndex === 0 ? playerMovieRating.toFixed(1) + ratingStringEndings[movie.RatingInfo.RatingIndex] : Number(playerMovieRating) + ratingStringEndings[movie.RatingInfo.RatingIndex]} 
+                            divstyle="divCenterHorizontalTextSmall"
+                            textAStyle="scoreTextPrimarySmall"
+                            textBStyle="scoreTextSecondarySmall"/>
+                        <TextWithStatsStyle
+                            text="Community:"
+                            stats={movie.RatingInfo.RatingIndex === 0 ? String(avgCommunityRating.toFixed(1)) + ratingStringEndings[movie.RatingInfo.RatingIndex] : avgCommunityRating.toFixed(0) + ratingStringEndings[movie.RatingInfo.RatingIndex]}
+                            divstyle="divCenterHorizontalTextTiny"
+                            textAStyle="scoreTextPrimaryTiny"
+                            textBStyle="scoreTextSecondaryTiny"
+                            />
                     </div>
                 </div>
             )
@@ -120,8 +115,20 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                         <LazyImageCoreSizer imgAlt="What Is It Rated Logo" imgLink={pickWiiRLogo({theme:playerStats.playerTheme})} imgStyle="finalScreenWiirLogo"/>
                         <div className="finalScoreTextContainer">
                             <div className="scoreTitleText">
-                                <TextWithStatsStyle text="Your Final Score:" stats={playerStats?.todaysScore} divstyle="finalScoreDivContainer" textAStyle="font-black" textBStyle=""/>
-                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores? Number(averageCommunityScores.averageOverallScore.toFixed(0)) : Number(playerStats.todaysScore)} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
+                                <TextWithStatsStyle 
+                                    text="Your Final Score:" 
+                                    stats={String(playerStats?.todaysScore)} 
+                                    divstyle="finalScoreDivContainer" 
+                                    textAStyle="" 
+                                    textBStyle=""/>
+                                <TextWithCommStatsStyle 
+                                    textA="Community Average:" 
+                                    statsA={averageCommunityScores? String(averageCommunityScores.averageOverallScore.toFixed(0)) : String(playerStats.todaysScore)}
+                                    statsB={String(averageCommunityScores?.totalDailyPlayers)}
+                                    textB={averageCommunityScores?.totalDailyPlayers === 1 ? "Player Today" : "Players Today"}
+                                    divstyle1="finalAvgScoreDivContainer"
+                                    textAStyle="" 
+                                    textBStyle=""/>
                             </div>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&
@@ -129,8 +136,18 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                                 }
                             </>
                             <div className="w-fit flex flex-row gap-[1em] self-center">
-                                <TextWithStats text="Games played:" stats={playerStats?.totalGamesPlayed } />
-                                <TextWithStats text="Perfect games:" stats={playerStats?.totalPerfectGames } />
+                                <TextWithStatsStyle 
+                                    text="Games played:" 
+                                    stats={String(playerStats?.totalGamesPlayed)} 
+                                    divstyle="divCenterHorizontalText"
+                                    textAStyle="finalScoreTextPrimary"
+                                    textBStyle="finalScoreTextSecondary"/>
+                                <TextWithStatsStyle 
+                                    text="Perfect games:" 
+                                    stats={String(playerStats?.totalPerfectGames)} 
+                                    divstyle="divCenterHorizontalText"
+                                    textAStyle="finalScoreTextPrimary"
+                                    textBStyle="finalScoreTextSecondary"/>
                             </div>
                         </div>
                         <ShareScoreButton />

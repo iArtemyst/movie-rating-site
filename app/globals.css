@@ -1044,6 +1044,7 @@ main, body, html {
   font-size: 10px;
   color: var(--inactive-color);
   cursor: pointer;
+  
 
   @media screen and (max-width:560px) {
     font-size:8px;
@@ -1140,32 +1141,38 @@ main, body, html {
 
 .footerAboutDiv {
   width: fit-content;
+  max-width: 50%;
   position: relative;
   height: fit-content;
   display: flex;
   gap: 1em;
-  padding-top: 1.5em;
-  padding-bottom: 2em;
-  padding-left: 2em;
-  padding-right: 2em;
+  padding-top: 2em;
+  padding-bottom: 3em;
+  padding-left: 3em;
+  padding-right: 3em;
   flex-direction: column;
   border-radius: 2em;
   place-content: space-between;
   place-items: center;
   background-color: var(--base-variant);
   box-shadow: var(--shadow-style);
-  font-size: 14px;
+  font-size: 12px;
+  text-align: center;
+  text-wrap-style: balance;
 
   @media screen and (max-width:560px) {
-    font-size:12px;
+    font-size:10px;
+    max-width: 80%;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
     font-size: 12px;
+    max-width: 75%;
   };
 
   @media screen and (min-width:1280px) {
     font-size: 18px;
+    max-width: 40%;
   };
 }
 

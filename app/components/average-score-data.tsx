@@ -22,14 +22,16 @@ export const tempAverageDailyStats: IAverageDailyPlayerScore = {
             averageRating: 0,
         },
     ],
-    averageOverallScore: 0
+    averageOverallScore: 0,
+    totalDailyPlayers: 0
 }
 
 
 export interface IAverageDailyPlayerScore
 {
     averageMovieScores: IMovieScoreInfo[],
-    averageOverallScore: number
+    averageOverallScore: number,
+    totalDailyPlayers: number
 }
 
 export interface IMovieScoreInfo 
