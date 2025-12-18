@@ -121,7 +121,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                         <div className="finalScoreTextContainer">
                             <div className="scoreTitleText">
                                 <TextWithStatsStyle text="Your Final Score:" stats={playerStats?.todaysScore} divstyle="finalScoreDivContainer" textAStyle="font-black" textBStyle=""/>
-                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores? averageCommunityScores.averageOverallScore : playerStats.todaysScore} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
+                                <TextWithStatsStyle text="Community Average Today:" stats={averageCommunityScores? Number(averageCommunityScores.averageOverallScore.toFixed(0)) : Number(playerStats.todaysScore)} divstyle="finalAvgScoreDivContainer" textAStyle="font-black" textBStyle=""/>
                             </div>
                             <>
                                 { playerStats?.todaysMovieRatings.length === 3 &&
