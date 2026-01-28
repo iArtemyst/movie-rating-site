@@ -64,6 +64,63 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
         )
     }
 
+    function StreamingButton({movie}:{movie:IMovieInformation}) {
+        const [visible, setVisible] = useState(false)
+        
+        function ListOfWatchProviders() {
+            return (
+                <>
+                {
+                    visible && movie.WatchProviders && movie.WatchProviders.length > 0 &&
+                    <div className="fullScreenBlockingDiv" onClick={() => setVisible(false)}>
+                        <div className="watchProvidersContainer">
+                            <div className="w-fit flex flex-col md:flex-row md:gap-[.25em] text-[12px] sm:text-[12px] md:text-[14px] lg:text-[18px]">
+                                <p className="font-bold content-end h-full ">{movie.Title}</p>
+                                <p className="font-bold content-end h-full ">is streaming on:</p>
+                            </div>
+                            <ul className="flex flex-col w-fit">
+                                {movie.WatchProviders!.map((provider, index) => (
+                                    <li className="text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] text-center" key={index}>{provider.provider_name}</li>
+                                ))}
+                            </ul>
+                            <div className="hideMeText">
+                                <p>Click anywhere to close</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                </>
+            )
+        }
+
+        return (
+            <div className="w-fit h-fit absolute top-[.5em] left-[.5em]">
+                {
+                    movie.WatchProviders && movie.WatchProviders.length > 0 ?
+                    <>
+                        <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#21854b] text-center cursor-pointer" onClick={() => setVisible(!visible)}>
+                            <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
+                                fill="#ffffff"/>
+                            </svg>
+                        </div>
+                    </>
+                    :
+                    <>
+                        <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#83838390] text-center cursor-not-allowed">
+                            <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
+                                fill="#ffffff90"/>
+                            </svg>
+                        </div>
+                    </>
+                }
+                <ListOfWatchProviders />
+            </div>
+        )
+    }
+
+
     function PlayerVsActualRatingsToday() {
         function MoviePosterAndRatings({movie, playerMovieRating, avgCommunityRating}:{movie:IMovieInformation, playerMovieRating:number, avgCommunityRating:number}) {
             function SourceLogoWithRating({stats}:{stats:string | undefined}) {
@@ -77,7 +134,10 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
 
             return (
                 <div className="scoreScreenMoviePosterAndRatingDiv">
-                    <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
+                    <div className="w-fit h-fit">
+                        <StreamingButton movie={movie}/>
+                        <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
+                    </div>
                     {/* <p className="scoreTextPrimarySmall mb-[.25em]">{movie.Title} ({movie.Year})</p> */}
                     <div className="flex flex-col gap-[.5em] w-full">
                         <SourceLogoWithRating stats={String(SplitMovieRatingStringAndReturnNumber({ratingSourceInt:movie.RatingInfo.RatingIndex, movieRatingString:movie.RatingInfo.RatingValue})) + ratingStringEndings[movie.RatingInfo.RatingIndex]}/>

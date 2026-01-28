@@ -12,7 +12,7 @@
     --text-button: #fcfcfc;
     --primary-color: #dddddd;
     --accent-color: #00ff6a;
-    --accent-color-2: #2cbe69;
+    --accent-color-2: #21854b;
     --gallery-dot-active: #00ff6a;
     --gallery-dot-default: #c4c4c4;
     --gallery-dot-inactive: #424242;
@@ -199,6 +199,108 @@ main, body, html {
   };
 }
 
+.movieInfoReviewTextDiv {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--base-color);
+  padding-top: .75em;
+  padding-bottom: .75em;
+  padding-right: 1.25em;
+  padding-left: 1.25em;
+  border-radius: 1em;
+  box-shadow: var(--shadow-style);
+  cursor: pointer;
+
+  @media screen and (max-width:560px) {
+    margin-top: 1em;
+    gap: .5em;
+  };
+}
+
+.movieInfoReviewText {
+  display: -webkit-box;
+  font-size: 12px;
+  margin-left: 1em;
+  text-align:left;
+  width: auto;
+  list-style-type: none;
+  font-style: italic;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+    text-align: center;
+    margin-left:0;
+    align-self: center;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size:10px;
+  };
+};
+
+.watchProvidersContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  position: fixed;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-top: 1em;
+  padding-bottom: 2.5em;
+  border-radius: 2em;
+  min-width: 540px;
+  gap: .5em;
+  background-color: var(--base-variant);
+  width: fit-content;
+  place-content: center;
+  place-items: center;
+  height: fit-content;
+  z-index: 100;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+
+  @media screen and (max-width:560px) {
+    min-width: 60%;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    min-width: 480px;
+  };
+}
+
+.movieInfoReviewTextExpanded {
+  display: -webkit-box;
+  font-size: 12px;
+  margin-left: 1em;
+  text-align:left;
+  width: auto;
+  list-style-type: none;
+  font-style: italic;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+    text-align: center;
+    margin-left:0;
+    align-self: center;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size:10px;
+  };
+};
+
 
 .movieInfoPrimaryText {
   font-size: 16px;
@@ -310,7 +412,7 @@ main, body, html {
   cursor: pointer;
 
   @media screen and (max-width:560px) {
-    width: 90%;
+    width: 70%;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
@@ -1123,6 +1225,7 @@ main, body, html {
   flex-direction: column;
   align-items: center;
   width: 33%;
+  height: fit-content;
 }
 
 .scoreScreenMoviePostersAndRatingsContainer {
@@ -1191,7 +1294,7 @@ main, body, html {
   };
 
   @media screen and (min-width:1280px) {
-    font-size: 14px;
+    font-size: 12px;
   };
 }
 

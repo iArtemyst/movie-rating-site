@@ -13,7 +13,18 @@ export interface IMovieInformation
     Plot: string, 
     Poster: string,
     RatingInfo: IRatingInfo,
+    BoxOffice: string,
+    WatchProviders?: IWatchProvider[],
+    Reviews?: string[]
 };
+
+export interface IWatchProvider
+{
+    logo_path: string,
+    provider_id: number,
+    provider_name: string,
+    display_priority: number,
+}
 
 export interface IRatingInfo
 {
