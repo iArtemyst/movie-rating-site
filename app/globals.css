@@ -153,6 +153,7 @@ main, body, html {
   display: flex;
   place-items: center;
   place-content: center;
+
 }
 
 .movieInfoTextDiv {
@@ -168,6 +169,7 @@ main, body, html {
   border-radius: 1em;
   box-shadow: var(--shadow-style);
   cursor: pointer;
+  align-self:center;
 
   @media screen and (max-width:560px) {
     margin-top: 1em;
@@ -335,6 +337,7 @@ main, body, html {
   font-weight: 800;
   display: flex;
   margin-bottom: .25em;
+  text-align: center;
 
   @media screen and (max-width:560px) {
     font-size:12px;
@@ -354,6 +357,7 @@ main, body, html {
   flex-direction: column;
   align-self: left;
   text-align: start;
+  width: 100%;
 
   @media screen and (max-width:560px) {
     flex-direction: row;
@@ -402,6 +406,7 @@ main, body, html {
   padding: 1em;
   border-radius: 2.5em;
   background-color: var(--base-variant);
+  width: 90%;
 
   @media screen and (max-width:560px) {
     aspect-ratio: unset;
@@ -424,7 +429,7 @@ main, body, html {
   cursor: pointer;
 
   @media screen and (max-width:560px) {
-    width: 70%;
+    width: 80%;
   };
 
   @media screen and (min-width:560px) and (max-width:768px) {
@@ -439,7 +444,7 @@ main, body, html {
   grid-column: 2;
   gap: 1em;
   width: 100%;
-  place-items: start;
+  place-items: center;
   height: 100%;
 
   @media screen and (max-width:560px) {
@@ -450,6 +455,30 @@ main, body, html {
   @media screen and (min-width:560px) and (max-width:768px) {
     gap: 1em;
     place-items: center;
+  };
+};
+
+.reviewDotSelected {
+  width: 12px;
+  height: 12px;
+  background: #FFFFFF90;
+  border-radius: 100%;
+
+  @media screen and (max-width:560px) {
+    width: 8px;
+    height: 8px;
+  };
+};
+
+.reviewDotInactive {
+  width: 8px;
+  height: 8px;
+  background: var(--gallery-dot-inactive);
+  border-radius: 100%;
+
+  @media screen and (max-width:560px) {
+    width: 6px;
+    height: 6px;
   };
 };
 

@@ -64,6 +64,20 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
             )
         }
 
+        function CircleIcon({currentIndex}:{currentIndex:number}) {
+            return (
+                <div className={`${currentIndex == index ? "reviewDotSelected" : "reviewDotInactive"}`} />
+            )
+        }
+
+        function MapCirclesAmount({count}:{count:number}) {
+            const iconArray = [];
+            for (let i = 0; i < count; i++ ) {
+                iconArray.push(<CircleIcon currentIndex={i} key={i}/>);
+            }
+            return iconArray;
+        }
+
         if (movie.Reviews && movie.Reviews.length > 0) {
             return (
                 <div className="movieInfoReviewTextDiv h-full">
@@ -72,8 +86,11 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                         <p className={`movieInfoReviewText h-full`} id="movieInfoReviewText">{movie.Reviews[index]}</p>
                         
                         { movie.Reviews.length > 1 &&
-                            <div className="flex flex-row w-full h-fit justify-around place-self-end">
+                            <div className="flex flex-row w-full h-fit justify-around place-self-end mt-[.5em]">
                                 <GalleryButtonPrevious/>
+                                <div className="flex flex-row gap-[.75em] self-end mb-[.125em]">
+                                    <MapCirclesAmount count={movie.Reviews.length} />
+                                </div>
                                 <GalleryButtonForward/>
                             </div>
                         }
@@ -92,20 +109,20 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                         <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="w-full h-full rounded-[1em]"/>
                     </div>
                     <div className="movieInfoDivCol2">
-                        <div className="flex flex-row gap-[.5em] w-full self-center place-content-center h-fit">
-                            <div className="movieInfoTextDiv h-fit">
-                                <p className="movieInfoSecondaryText">Director:</p>
-                                <div className="movieActorBulletPoints">
-                                    <MapInfoToBullets count={splitDirectors.length} array={splitDirectors} />
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-[.5em] w-fit md:w-full self-center place-items-center">
+                                <div className="movieInfoTextDiv h-fit w-fit">
+                                    <p className="movieInfoSecondaryText">Director:</p>
+                                    <div className="movieActorBulletPoints">
+                                        <MapInfoToBullets count={splitDirectors.length} array={splitDirectors} />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="movieInfoTextDiv h-fit">
-                                <p className="movieInfoSecondaryText">Box Office:</p>
-                                <p className="movieInfoPrimaryText">{movie.BoxOffice}</p>
-                            </div>
+                                <div className="movieInfoTextDiv h-fit w-fit">
+                                    <p className="movieInfoSecondaryText">Box Office:</p>
+                                    <p className="movieInfoPrimaryText">{movie.BoxOffice}</p>
+                                </div>
 
-                            <div className="movieInfoTextDiv h-fit">
+                            <div className="movieInfoTextDiv h-fit w-fit col-span-2 md:col-span-1 ">
                                 <p className="movieInfoSecondaryText">Top Billed:</p>
                                 <div className="movieActorBulletPoints">
                                     <MapInfoToBullets count={splitActors.length} array={splitActors} />
