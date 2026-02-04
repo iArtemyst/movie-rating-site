@@ -406,7 +406,7 @@ main, body, html {
   padding: 1em;
   border-radius: 2.5em;
   background-color: var(--base-variant);
-  width: 90%;
+  width: 95%;
 
   @media screen and (max-width:560px) {
     aspect-ratio: unset;
