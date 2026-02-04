@@ -25,23 +25,59 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
         return Array;
     }
 
-    function MapMovieReviews({movie}:{movie:IMovieInformation}) {
-        const [textExpanded, setTextExpanded] = React.useState(false);
-        
-        if (movie.Reviews && movie.Reviews.length > 0) {
-            if (movie.Reviews.length > 3) {
-                movie.Reviews = movie.Reviews.slice(0,3);
-            }
+    function MovieReviews({movie}:{movie:IMovieInformation}) {
+        const [index, setIndex] = React.useState(0)
 
+        function onClickA() {
+            const reviewTextDiv = document.getElementById("movieInfoReviewText");
+            if (index < (movie.Reviews!.length - 1)) {
+                setIndex(index + 1)}
+            else setIndex(0)
+            reviewTextDiv!.scrollTop = 0
+        }
+
+        function onClickB() {
+            const reviewTextDiv = document.getElementById("movieInfoReviewText");
+            if (index > 0) {
+                setIndex(index - 1)}
+            else setIndex(movie.Reviews!.length - 1)
+            reviewTextDiv!.scrollTop = 0
+        }
+
+        function GalleryButtonForward() {
             return (
-                <div className="movieInfoReviewTextDiv">
+                <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickA}>
+                    <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
+                        NEXT
+                    </p>
+                </div>
+            )
+        }
+
+        function GalleryButtonPrevious() {
+            return (
+                <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickB}>
+                    <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
+                        PREV
+                    </p>
+                </div>
+            )
+        }
+
+        if (movie.Reviews && movie.Reviews.length > 0) {
+            return (
+                <div className="movieInfoReviewTextDiv h-full">
                     <p className="movieInfoSecondaryText">Audience Reviews:</p>
-                    <div className="flex flex-col gap-[.5em]">
-                        {
-                            movie.Reviews.map((review, index) => (
-                                <p className={`${textExpanded ? "movieInfoReviewTextExpanded" : "movieInfoReviewText"}`} onClick={() => setTextExpanded(!textExpanded)} key={index}>{review}</p>
-                            ))
+                    <div className="flex flex-col h-[95%] w-full relative">
+                        <p className={`movieInfoReviewText h-full`} id="movieInfoReviewText">{movie.Reviews[index]}</p>
+                        
+                        { movie.Reviews.length > 1 &&
+                            <div className="flex flex-row w-full h-fit justify-around place-self-end">
+                                <GalleryButtonPrevious/>
+                                <GalleryButtonForward/>
+                            </div>
                         }
+
                     </div>
                 </div>
             )
@@ -52,35 +88,39 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
         <>
             <div className={`mainMovieInfoDiv`}>
                 <div className={`secMovieInfoDiv`}>
-                    <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="moviePosterImage"/>
+                    <div className="moviePosterImage">
+                        <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="w-full h-full rounded-[1em]"/>
+                    </div>
                     <div className="movieInfoDivCol2">
-                        <div className="flex flex-row gap-[.5em] w-full self-center place-content-center">
-                            <div className="movieInfoTextDiv">
+                        <div className="flex flex-row gap-[.5em] w-full self-center place-content-center h-fit">
+                            <div className="movieInfoTextDiv h-fit">
                                 <p className="movieInfoSecondaryText">Director:</p>
                                 <div className="movieActorBulletPoints">
                                     <MapInfoToBullets count={splitDirectors.length} array={splitDirectors} />
                                 </div>
                             </div>
 
-                            <div className="movieInfoTextDiv">
+                            <div className="movieInfoTextDiv h-fit">
                                 <p className="movieInfoSecondaryText">Box Office:</p>
                                 <p className="movieInfoPrimaryText">{movie.BoxOffice}</p>
                             </div>
-                        </div>
 
-                        <div className="movieInfoTextDiv">
-                            <p className="movieInfoSecondaryText">Top Billed:</p>
-                            <div className="movieActorBulletPoints">
-                                <MapInfoToBullets count={splitActors.length} array={splitActors} />
+                            <div className="movieInfoTextDiv h-fit">
+                                <p className="movieInfoSecondaryText">Top Billed:</p>
+                                <div className="movieActorBulletPoints">
+                                    <MapInfoToBullets count={splitActors.length} array={splitActors} />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="movieInfoLongTextDiv">
+
+
+                        <div className="movieInfoLongTextDiv h-fit">
                             <p className="movieInfoSecondaryText">Movie Summary:</p>
                             <p className="movieInfoPrimaryText text-balance">{movie.Plot}</p>
-                        </div> 
-{/* 
-                        <MapMovieReviews movie={movie}/> */}
+                        </div>
+
+                        <MovieReviews movie={movie}/>
                     </div>
                 </div>
             </div>
