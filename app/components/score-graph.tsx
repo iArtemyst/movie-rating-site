@@ -74,16 +74,17 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                     visible && movie.WatchProviders && movie.WatchProviders.length > 0 &&
                     <div className="fullScreenBlockingDiv" onClick={() => setVisible(false)}>
                         <div className="watchProvidersContainer">
-                            <div className="w-fit flex flex-col md:flex-row md:gap-[.25em] text-[12px] sm:text-[12px] md:text-[14px] lg:text-[18px]">
-                                <p className="font-bold content-end h-full ">{movie.Title}</p>
-                                <p className="font-bold content-end h-full ">is streaming on:</p>
+                            <div className="w-fit flex flex-col leading-tight">
+                                <p className="font-bold content-end h-fit text-[12px] sm:text-[12px] md:text-[14px] lg:text-[18px]">{movie.Title}</p>
+                                <p className="font-normal content-end h-fit text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px]">is streaming on:</p>
                             </div>
                             <ul className="flex flex-col w-fit">
                                 {movie.WatchProviders!.map((provider, index) => (
-                                    <li className="text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] text-center" key={index}>{provider.provider_name}</li>
+                                    <li className="font-bold text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] text-center" key={index}>{provider.provider_name}</li>
                                 ))}
                             </ul>
-                            <div className="hideMeText">
+                            <div className="hideMeText2">
+                                <p>Data provided by JustWatch through TMDB</p>
                                 <p>Click anywhere to close</p>
                             </div>
                         </div>

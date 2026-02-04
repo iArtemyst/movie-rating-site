@@ -262,11 +262,11 @@ main, body, html {
   padding-left: 2em;
   padding-right: 2em;
   padding-top: 1em;
-  padding-bottom: 2.5em;
+  padding-bottom: 4em;
   border-radius: 2em;
-  min-width: 540px;
+  min-width: 360px;
   gap: .5em;
-  background-color: var(--base-variant);
+  background-color: var(--accent-color-2);
   width: fit-content;
   place-content: center;
   place-items: center;
@@ -1326,6 +1326,27 @@ main, body, html {
   bottom: .75em;
   color: var(--inactive-color);
   font-size: 12px;
+  gap: .25em;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 10px;
+  };
+
+  @media screen and (min-width:1280px) {
+    font-size: 12px;
+  };
+}
+
+.hideMeText2 {
+  position: absolute;
+  bottom: .75em;
+  color: #FFFFFF90;
+  font-size: 12px;
+  gap: .25em;
 
   @media screen and (max-width:560px) {
     font-size:8px;

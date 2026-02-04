@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { LazyImageCoreSizer } from "./load-asset";
 import { IMovieInformation } from "./movie-interfaces";
 import "@/app/globals.css";
@@ -26,81 +26,108 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
     }
 
     function MovieReviews({movie}:{movie:IMovieInformation}) {
-        const [index, setIndex] = React.useState(0)
+        // const [index, setIndex] = useState(0)
+        const [shownReview, setShownReview] = useState<string | null>(null)
 
-        function onClickA() {
-            const reviewTextDiv = document.getElementById("movieInfoReviewText");
-            if (index < (movie.Reviews!.length - 1)) {
-                setIndex(index + 1)}
-            else setIndex(0)
-            reviewTextDiv!.scrollTop = 0
-        }
+        // function onClickA() {
+        //     const reviewTextDiv = document.getElementById("movieInfoReviewText");
+        //     if (index < (movie.Reviews!.length - 1)) {
+        //         setIndex(index + 1)}
+        //     else setIndex(0)
+        //     reviewTextDiv!.scrollTop = 0
+        // }
 
-        function onClickB() {
-            const reviewTextDiv = document.getElementById("movieInfoReviewText");
-            if (index > 0) {
-                setIndex(index - 1)}
-            else setIndex(movie.Reviews!.length - 1)
-            reviewTextDiv!.scrollTop = 0
-        }
+        // function onClickB() {
+        //     const reviewTextDiv = document.getElementById("movieInfoReviewText");
+        //     if (index > 0) {
+        //         setIndex(index - 1)}
+        //     else setIndex(movie.Reviews!.length - 1)
+        //     reviewTextDiv!.scrollTop = 0
+        // }
 
-        function GalleryButtonForward() {
-            return (
-                <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickA}>
-                    <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
-                        NEXT
-                    </p>
-                </div>
-            )
-        }
+        // function GalleryButtonForward() {
+        //     return (
+        //         <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickA}>
+        //             <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
+        //                 NEXT
+        //             </p>
+        //         </div>
+        //     )
+        // }
 
-        function GalleryButtonPrevious() {
-            return (
-                <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickB}>
-                    <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
-                        PREV
-                    </p>
-                </div>
-            )
-        }
+        // function GalleryButtonPrevious() {
+        //     return (
+        //         <div className={`bg-[#FFFFFF20] px-[.75em] py-[.25em] text-center rounded-[1em] h-fit`} onClick={onClickB}>
+        //             <p className="align-middle self-center text-center font-semibold text-[10px] sm:text-[10px] md:text-[12px]">
+        //                 PREV
+        //             </p>
+        //         </div>
+        //     )
+        // }
 
-        function CircleIcon({currentIndex}:{currentIndex:number}) {
-            return (
-                <div className={`${currentIndex == index ? "reviewDotSelected" : "reviewDotInactive"}`} />
-            )
-        }
+        // function CircleIcon({currentIndex}:{currentIndex:number}) {
+        //     return (
+        //         <div className={`${currentIndex == index ? "reviewDotSelected" : "reviewDotInactive"}`} />
+        //     )
+        // }
 
-        function MapCirclesAmount({count}:{count:number}) {
-            const iconArray = [];
-            for (let i = 0; i < count; i++ ) {
-                iconArray.push(<CircleIcon currentIndex={i} key={i}/>);
-            }
-            return iconArray;
-        }
+        // function MapCirclesAmount({count}:{count:number}) {
+        //     const iconArray = [];
+        //     for (let i = 0; i < count; i++ ) {
+        //         iconArray.push(<CircleIcon currentIndex={i} key={i}/>);
+        //     }
+        //     return iconArray;
+        // }
 
+    useEffect(() => {
         if (movie.Reviews && movie.Reviews.length > 0) {
-            return (
-                <div className="movieInfoReviewTextDiv h-full">
-                    <p className="movieInfoSecondaryText">Audience Reviews:</p>
-                    <div className="flex flex-col h-[95%] w-full relative">
-                        <p className={`movieInfoReviewText h-full`} id="movieInfoReviewText">{movie.Reviews[index]}</p>
-                        
-                        { movie.Reviews.length > 1 &&
-                            <div className="flex flex-row w-full h-fit justify-around place-self-end mt-[.5em]">
-                                <GalleryButtonPrevious/>
-                                <div className="flex flex-row gap-[.75em] self-end mb-[.125em]">
-                                    <MapCirclesAmount count={movie.Reviews.length} />
-                                </div>
-                                <GalleryButtonForward/>
-                            </div>
-                        }
-
-                    </div>
-                </div>
-            )
+            for (let i=0; i < movie.Reviews.length; i++){
+                const reviewLength = movie.Reviews[i].length
+                if (reviewLength >= 100 && reviewLength <= 1250) {
+                    console.log("within review length")
+                    setShownReview(movie.Reviews[i]);
+                }
+                else {
+                    console.log("movie review outside length preference");
+                }
+                if (movie.Reviews.length === 1 || i === movie.Reviews.length) {
+                    console.log("only remaining review for this movie, showing it no matter what length")
+                    setShownReview(movie.Reviews[i])
+                }
+            }
         }
+        else {
+            console.log("no reviews in our database for this film")
+        }
+    }, [movie.Reviews]);
+
+    console.log(movie.Reviews)
+            return (
+                <>
+                { 
+                    shownReview &&
+
+                    <div className="movieInfoReviewTextDiv h-full w-full">
+                        <p className="movieInfoSecondaryText">Movie Review:</p>
+                        <div className="flex flex-col h-[95%] w-full relative">
+                            <p className={`movieInfoReviewText h-full`} id="movieInfoReviewText">{shownReview}</p>
+
+                            {/* { movie.Reviews.length > 1 &&
+                                <div className="flex flex-row w-full h-fit justify-around place-self-end mt-[.5em]">
+                                    <GalleryButtonPrevious/>
+                                    <div className="flex flex-row gap-[.75em] self-end mb-[.125em]">
+                                        <MapCirclesAmount count={movie.Reviews.length} />
+                                    </div>
+                                    <GalleryButtonForward/>
+                                </div>
+                            } */}
+                        </div>
+                    </div>
+                }
+                </>
+            )
     }
-    
+
     return (
         <>
             <div className={`mainMovieInfoDiv`}>
@@ -130,9 +157,7 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                             </div>
                         </div>
 
-
-
-                        <div className="movieInfoLongTextDiv h-fit">
+                        <div className="movieInfoLongTextDiv h-fit w-full">
                             <p className="movieInfoSecondaryText">Movie Summary:</p>
                             <p className="movieInfoPrimaryText text-balance">{movie.Plot}</p>
                         </div>
