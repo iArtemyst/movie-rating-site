@@ -173,7 +173,7 @@ main, body, html {
 
   @media screen and (max-width:560px) {
     margin-top: 1em;
-    width: fit-content;
+    width: 100%;
     place-items: center;
     place-content: center;
     align-items: center;

@@ -135,7 +135,7 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                         <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={`${movie.Title} Poster`} imgStyle="w-full h-full rounded-[1em]"/>
                     </div>
                     <div className="movieInfoDivCol2">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-[.5em] w-fit md:w-full self-center place-items-center">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-[.5em] w-full self-center place-items-center">
                                 <div className="movieInfoTextDiv h-fit w-fit">
                                     <p className="movieInfoSecondaryText">Director:</p>
                                     <div className="movieActorBulletPoints">
@@ -148,7 +148,7 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                                     <p className="movieInfoPrimaryText">{movie.BoxOffice}</p>
                                 </div>
 
-                            <div className="movieInfoTextDiv h-fit w-fit col-span-2 md:col-span-1 ">
+                            <div className="movieInfoTextDiv h-fit w-full md:w-fit col-span-2 md:col-span-1 ">
                                 <p className="movieInfoSecondaryText">Top Billed:</p>
                                 <div className="movieActorBulletPoints">
                                     <MapInfoToBullets count={splitActors.length} array={splitActors} />
