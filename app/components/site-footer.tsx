@@ -21,7 +21,7 @@ export function SiteFooter({playerStats}:{playerStats:IPlayerStats}) {
                 <div className="footerAboutDiv">
                     <div className="w-fit flex flex-col gap-[1em]">
                         <p className="">Thanks for playing my Daily Movie Rating Site!</p>
-                        <div className="flex flex-col gap-[.125em] text-[14px]">
+                        <div className="flex flex-col gap-[.125em] text-[10px] md:text-[14px]">
                             <div className="w-full flex flex-col self-center place-content-center mb-[.5em]">
                                 <div className="w-full flex flex-row self-center place-content-center gap-[.25em]">
                                     <p>Data obtained from</p>

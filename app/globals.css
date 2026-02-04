@@ -360,9 +360,9 @@ main, body, html {
   width: 100%;
 
   @media screen and (max-width:560px) {
-    flex-direction: row;
     align-self: center;
     place-self: center;
+    text-align: center;
     gap: .5em;
   };
 };
