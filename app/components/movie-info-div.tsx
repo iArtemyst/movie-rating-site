@@ -101,7 +101,6 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
         }
     }, [movie.Reviews]);
 
-    console.log(movie.Reviews)
             return (
                 <>
                 { 
