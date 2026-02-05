@@ -68,11 +68,6 @@ function MovieReviews({movie}:{movie:IMovieInformation}) {
     )
 }
 
-function IsBoxOffice() {
-
-}
-
-
 //---------------------------------
 
 export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {

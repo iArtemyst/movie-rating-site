@@ -203,7 +203,7 @@ export default function Home() {
               visible={localPlayerData!.hasPlayedToday} 
               playerStats={localPlayerData!}
               averageCommunityScores={averageCommunityScores}/>
-            <SiteFooter playerStats={localPlayerData ?? newPlayerStats}/>
+            <SiteFooter />
           </div>
         </main>
     );

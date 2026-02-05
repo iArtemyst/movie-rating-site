@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { IPlayerStats } from "./player-stats";
-import { SwitchThemeButton } from "../components/theme-switch-button";
 
-export function SiteFooter({playerStats}:{playerStats:IPlayerStats}) {
+export function SiteFooter() {
     const [visible, setVisible] = useState(false)
 
     function FooterOnClick() {
@@ -62,7 +60,6 @@ export function SiteFooter({playerStats}:{playerStats:IPlayerStats}) {
         <>
             <div className="siteFooterDiv">
                 <p className="place-self-center" onClick={(() => FooterOnClick())}>Daily Movie Rating © 2026 | Designed by iArtemyst</p>
-                {/* <SwitchThemeButton playerStats={playerStats}/> */}
             </div>
             <ShowAboutDiv/>
         </>

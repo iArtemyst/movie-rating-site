@@ -3,20 +3,20 @@
 :root {
     color-scheme: light only;
     --base-color: #1c1c1c;
-    --base-variant: #1f1f1f;
+    --base-variant: #0c0c0c;
     --base-variant2: #bbbbbb;
     --text-color: #fcfcfc;
-    --text-variant: #1f1f1f;
     --text-popup-color: #fcfcfc;
     --text-popup-color-variant: #fcfcfc;
-    --text-button: #fcfcfc;
+    --text-variant: #e0e0e0;
+    --text-button: #1f1f1f;
     --primary-color: #dddddd;
     --accent-color: #00ff6a;
     --accent-color-2: #21854b;
     --gallery-dot-active: #00ff6a;
     --gallery-dot-default: #c4c4c4;
     --gallery-dot-inactive: #424242;
-    --inactive-color: #424242;
+    --inactive-color: #838383;
     --border-color: #000000;
     --background-color: #111111;
     --blocker-color: #000000DD;
