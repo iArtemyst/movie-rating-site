@@ -372,8 +372,7 @@ main, body, html {
   flex-direction: row;
   gap: 0px;
   width:100%;
-  max-width: 840px;
-  aspect-ratio: 4/3;
+  max-width: 640px;
   place-items: start;
   align-self: center;
   gap: 1em;
@@ -392,7 +391,7 @@ main, body, html {
   };
 
   @media screen and (min-width:1280px) {
-    max-width: 960px;
+    max-width: 720px;
   };
 }
 
@@ -406,7 +405,7 @@ main, body, html {
   padding: 1em;
   border-radius: 2.5em;
   background-color: var(--base-variant);
-  width: 95%;
+  max-width: 840px;
 
   @media screen and (max-width:560px) {
     aspect-ratio: unset;
@@ -414,8 +413,8 @@ main, body, html {
     gap: .5em;
   };
 
-  @media screen and (min-width:560px) and (max-width:768px) {
-    aspect-ratio: unset;
+  @media screen and (min-width:1280px) {
+    max-width: 960px;
   };
 };
 
@@ -423,10 +422,11 @@ main, body, html {
   position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 2em;
   box-shadow: var(--shadow-style);
   cursor: pointer;
+  aspect-ratio: 3/5;
 
   @media screen and (max-width:560px) {
     width: 80%;
@@ -442,20 +442,10 @@ main, body, html {
   display: flex;
   flex-direction: column;
   grid-column: 2;
-  gap: 1em;
-  width: 100%;
+  gap: .5em;
+  width: 80%;
   place-items: center;
   height: 100%;
-
-  @media screen and (max-width:560px) {
-    gap: .25em;
-    place-items: center;
-  };
-
-  @media screen and (min-width:560px) and (max-width:768px) {
-    gap: 1em;
-    place-items: center;
-  };
 };
 
 .reviewDotSelected {

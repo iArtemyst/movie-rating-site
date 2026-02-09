@@ -85,20 +85,20 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                         {
                             movie.BoxOffice != "N/A" || !movie.BoxOffice ?
                             <>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-[.5em] w-full self-center place-items-center">
-                                        <div className="movieInfoTextDiv h-fit w-full">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-[.5em] w-full self-center place-items-center">
+                                        <div className="movieInfoTextDiv h-fit w-full col-span-1">
                                             <p className="movieInfoSecondaryText">Director:</p>
                                             <div className="movieActorBulletPoints">
                                                 <MapInfoToBullets count={splitDirectors.length} array={splitDirectors} />
                                             </div>
                                         </div>
 
-                                        <div className="movieInfoTextDiv h-fit w-full">
+                                        <div className="movieInfoTextDiv h-fit w-full col-span-1">
                                             <p className="movieInfoSecondaryText">Box Office:</p>
                                             <p className="movieInfoPrimaryText">{movie.BoxOffice}</p>
                                         </div>
 
-                                    <div className="movieInfoTextDiv h-fit w-full md:w-fit col-span-2 md:col-span-1 ">
+                                    <div className="movieInfoTextDiv h-fit w-full md:w-fit col-span-1 md:col-span-2">
                                         <p className="movieInfoSecondaryText">Top Billed:</p>
                                         <div className="movieActorBulletPoints">
                                             <MapInfoToBullets count={splitActors.length} array={splitActors} />
@@ -126,14 +126,12 @@ export function MovieInfoDiv({movie}:{movie: IMovieInformation}) {
                             </>
                         }
 
-
-
                         <div className="movieInfoLongTextDiv h-fit w-full">
                             <p className="movieInfoSecondaryText">Movie Summary:</p>
                             <p className="movieInfoPrimaryText text-balance">{movie.Plot}</p>
                         </div>
 
-                        <MovieReviews movie={movie}/>
+                        {/* <MovieReviews movie={movie}/> */}
                     </div>
                 </div>
             </div>
