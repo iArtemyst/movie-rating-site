@@ -29,17 +29,20 @@ export function GetPlayerRatingScoreIndexValue({ratingSourceInt, movieRatingStri
     if (ratingDifference === 0) {
         return 0; //perfect score
     }
-    if (ratingDifference <= scoreErrorMargin[ratingSourceInt]) {
+    if (ratingDifference > 0 && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 2.5)) {
         return 1; //within range 1
     }
-    if (ratingDifference >= scoreErrorMargin[ratingSourceInt] && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 2)) {
+    if (ratingDifference > (scoreErrorMargin[ratingSourceInt] * 2) && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 5)) {
         return 2; //within range 2
     }
-    if (ratingDifference >= (scoreErrorMargin[ratingSourceInt] * 2) && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 3)) {
+    if (ratingDifference > (scoreErrorMargin[ratingSourceInt] * 5) && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 10)) {
         return 3; //within range 3
     }
+    if (ratingDifference > (scoreErrorMargin[ratingSourceInt] * 10) && ratingDifference <= (scoreErrorMargin[ratingSourceInt] * 15)) {
+        return 4; //within range 3
+    }
     else {
-        return 4; //out of range
+        return 5; //out of range
     }
 }
 
