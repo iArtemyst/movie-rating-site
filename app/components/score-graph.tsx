@@ -10,6 +10,7 @@ import { LazyImageCoreSizer } from "./load-asset";
 import { pickLogoNoTheme } from "./movie-source-logos";
 import { IAverageDailyPlayerScore } from "./average-score-data";
 import { pickWiiRLogo } from "../components/movie-source-logos";
+import { PlayerOverallRatingGraph } from "./score-comparison-div";
 
 export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCommunityScores}:{movies:IMovieInformation[], visible:boolean, playerStats:IPlayerStats, averageCommunityScores:IAverageDailyPlayerScore | null}) {
     function TextWithStatsStyle({text, stats, divstyle, textAStyle, textBStyle}:{text:string, stats:string, divstyle:string, textAStyle:string, textBStyle:string}) {
@@ -17,18 +18,6 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
             <div className={`${divstyle}`}>
                 <p className={`${textBStyle}`}>{text}</p>
                 <p className={`${textAStyle}`}>{stats ?? "No Stats"}</p>
-            </div>
-        )
-    }
-
-    function TextWithCommStatsStyle({textA, textB, statsA, statsB, divstyle1, textAStyle, textBStyle}:{textA:string, textB:string, statsA:string, statsB:string, divstyle1:string, textAStyle:string, textBStyle:string}) {
-        return (
-            <div className={`${divstyle1}`}>
-                    <p className={`${textBStyle}`}>{textA}</p>
-                    <p className={`${textAStyle}`}>{statsA ?? "No Stats"}</p>
-                    <p> | </p>
-                    <p className={`${textAStyle}`}>{statsB ?? "No Data"}</p>
-                    <p className={`${textBStyle}`}>{textB}</p>
             </div>
         )
     }
@@ -64,62 +53,62 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
         )
     }
 
-    function StreamingButton({movie}:{movie:IMovieInformation}) {
-        const [visible, setVisible] = useState(false)
+    // function StreamingButton({movie}:{movie:IMovieInformation}) {
+    //     const [visible, setVisible] = useState(false)
         
-        function ListOfWatchProviders() {
-            return (
-                <>
-                {
-                    visible && movie.WatchProviders && movie.WatchProviders.length > 0 &&
-                    <div className="fullScreenBlockingDiv" onClick={() => setVisible(false)}>
-                        <div className="watchProvidersContainer">
-                            <div className="w-fit flex flex-col leading-tight">
-                                <p className="font-bold content-end h-fit text-[12px] sm:text-[12px] md:text-[14px] lg:text-[18px]">{movie.Title}</p>
-                                <p className="font-normal content-end h-fit text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px]">is streaming on:</p>
-                            </div>
-                            <ul className="flex flex-col w-fit">
-                                {movie.WatchProviders!.map((provider, index) => (
-                                    <li className="font-bold text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] text-center" key={index}>{provider.provider_name}</li>
-                                ))}
-                            </ul>
-                            <div className="hideMeText2">
-                                <p>Data provided by JustWatch through TMDB</p>
-                                <p>Click anywhere to close</p>
-                            </div>
-                        </div>
-                    </div>
-                }
-                </>
-            )
-        }
+    //     function ListOfWatchProviders() {
+    //         return (
+    //             <>
+    //             {
+    //                 visible && movie.WatchProviders && movie.WatchProviders.length > 0 &&
+    //                 <div className="fullScreenBlockingDiv" onClick={() => setVisible(false)}>
+    //                     <div className="watchProvidersContainer">
+    //                         <div className="w-fit flex flex-col leading-tight">
+    //                             <p className="font-bold content-end h-fit text-[12px] sm:text-[12px] md:text-[14px] lg:text-[18px]">{movie.Title}</p>
+    //                             <p className="font-normal content-end h-fit text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px]">is streaming on:</p>
+    //                         </div>
+    //                         <ul className="flex flex-col w-fit">
+    //                             {movie.WatchProviders!.map((provider, index) => (
+    //                                 <li className="font-bold text-[10px] sm:text-[10px] md:text-[12px] lg:text-[14px] text-center" key={index}>{provider.provider_name}</li>
+    //                             ))}
+    //                         </ul>
+    //                         <div className="hideMeText2">
+    //                             <p>Data provided by JustWatch through TMDB</p>
+    //                             <p>Click anywhere to close</p>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             }
+    //             </>
+    //         )
+    //     }
 
-        return (
-            <div className="w-fit h-fit absolute top-[.5em] left-[.5em]">
-                {
-                    movie.WatchProviders && movie.WatchProviders.length > 0 ?
-                    <>
-                        <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#21854b] text-center cursor-pointer" onClick={() => setVisible(!visible)}>
-                            <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
-                                fill="#ffffff"/>
-                            </svg>
-                        </div>
-                    </>
-                    :
-                    <>
-                        <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#83838390] text-center cursor-not-allowed">
-                            <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
-                                fill="#ffffff90"/>
-                            </svg>
-                        </div>
-                    </>
-                }
-                <ListOfWatchProviders />
-            </div>
-        )
-    }
+    //     return (
+    //         <div className="w-fit h-fit absolute top-[.5em] left-[.5em]">
+    //             {
+    //                 movie.WatchProviders && movie.WatchProviders.length > 0 ?
+    //                 <>
+    //                     <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#21854b] text-center cursor-pointer" onClick={() => setVisible(!visible)}>
+    //                         <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
+    //                             <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
+    //                             fill="#ffffff"/>
+    //                         </svg>
+    //                     </div>
+    //                 </>
+    //                 :
+    //                 <>
+    //                     <div className="rounded-full w-fit px-[.5em] py-[.25em] bg-[#83838390] text-center cursor-not-allowed">
+    //                         <svg fill="none" viewBox="0 0 24 24" className="w-[12px] md:w-[24px] aspect-square" xmlns="http://www.w3.org/2000/svg">
+    //                             <path d="M4.75 3A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h9.75v-3c0-.818.393-1.544 1-2v-1A2.5 2.5 0 0 1 18 8.5h3c.356 0 .694.074 1 .208V5.75A2.75 2.75 0 0 0 19.25 3H4.75Zm1 15.5h9.001c.046.095.098.187.157.276l.8 1.224H5.75a.75.75 0 0 1 0-1.5ZM17.5 20l-1.337-2.045a1 1 0 0 1-.163-.547V14a1 1 0 0 1 1-1v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2a1 1 0 0 1 1 1v3.44a1 1 0 0 1-.167.554L21.5 20v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Zm1-8.5V13h2v-1.5h-2Z" 
+    //                             fill="#ffffff90"/>
+    //                         </svg>
+    //                     </div>
+    //                 </>
+    //             }
+    //             <ListOfWatchProviders />
+    //         </div>
+    //     )
+    // }
 
 
     function PlayerVsActualRatingsToday() {
@@ -136,7 +125,7 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
             return (
                 <div className="scoreScreenMoviePosterAndRatingDiv">
                     <div className="w-fit h-fit">
-                        <StreamingButton movie={movie}/>
+                        {/* <StreamingButton movie={movie}/> */}
                         <LazyImageCoreSizer imgLink={movie.Poster} imgAlt={String(movie.Poster)} imgStyle="smallMoviePosterImage" />
                     </div>
                     {/* <p className="scoreTextPrimarySmall mb-[.25em]">{movie.Title} ({movie.Year})</p> */}
@@ -174,44 +163,31 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                 <div className={`fullScreenBlockingDiv`} onClick={e => {e.stopPropagation()}}>
                     <div className="finalScoreBackgroundDiv">
                         <LazyImageCoreSizer imgAlt="What Is It Rated Logo" imgLink={pickWiiRLogo({theme:playerStats.playerTheme})} imgStyle="finalScreenWiirLogo"/>
+                        
                         <div className="finalScoreTextContainer">
-                            <div className="scoreTitleText">
-                                <TextWithStatsStyle 
-                                    text="Your Final Score:" 
-                                    stats={String(playerStats?.todaysScore)} 
-                                    divstyle="finalScoreDivContainer" 
-                                    textAStyle="" 
-                                    textBStyle=""/>
-                                <TextWithCommStatsStyle 
-                                    textA="Community Average:" 
-                                    statsA={averageCommunityScores? String(averageCommunityScores.averageOverallScore.toFixed(0)) : String(playerStats.todaysScore)}
-                                    statsB={String(averageCommunityScores?.totalDailyPlayers)}
-                                    textB={averageCommunityScores?.totalDailyPlayers === 1 ? "Player Today" : "Players Today"}
-                                    divstyle1="finalAvgScoreDivContainer"
-                                    textAStyle="" 
-                                    textBStyle=""/>
-                            </div>
-                            <>
-                                { playerStats?.todaysMovieRatings.length === 3 &&
-                                    <PlayerVsActualRatingsToday />
-                                }
-                            </>
-                            <div className="w-fit flex flex-row gap-[1em] self-center">
-                                <TextWithStatsStyle 
-                                    text="Games played:" 
-                                    stats={String(playerStats?.totalGamesPlayed)} 
-                                    divstyle="divCenterHorizontalText"
-                                    textAStyle="finalScoreTextPrimary"
-                                    textBStyle="finalScoreTextSecondary"/>
-                                <TextWithStatsStyle 
-                                    text="Perfect games:" 
-                                    stats={String(playerStats?.totalPerfectGames)} 
-                                    divstyle="divCenterHorizontalText"
-                                    textAStyle="finalScoreTextPrimary"
-                                    textBStyle="finalScoreTextSecondary"/>
-                            </div>
+                            <PlayerOverallRatingGraph communityRating={averageCommunityScores?.averageOverallScore || playerStats.todaysScore} playerRating={playerStats.todaysScore} sourceIndex={0}/>
+                            <>{ playerStats?.todaysMovieRatings.length === 3 && <PlayerVsActualRatingsToday />}</>
                         </div>
+                        
                         <ShareScoreButton />
+
+                        <div className="w-fit h-fit flex flex-col text-[8px] md:text-[12px] self-center mb-[-1em]">
+                            <TextWithStatsStyle 
+                                text="Games played:" 
+                                stats={String(playerStats?.totalGamesPlayed)} 
+                                divstyle="divCenterHorizontalText"
+                                textAStyle="finalScoreTextPrimary"
+                                textBStyle="finalScoreTextSecondary"/>
+                            <TextWithStatsStyle 
+                                text="Perfect games:" 
+                                stats={String(playerStats?.totalPerfectGames)} 
+                                divstyle="divCenterHorizontalText"
+                                textAStyle="finalScoreTextPrimary"
+                                textBStyle="finalScoreTextSecondary"/>
+                            <p className="self-center place-self-center opacity-50 mt-[.5em] text-[6px] md:text-[10px]">
+                                {averageCommunityScores?.totalDailyPlayers ? averageCommunityScores.totalDailyPlayers : 1} {averageCommunityScores?.totalDailyPlayers ? "Players" : "Player"} Today
+                            </p>
+                        </div>
                     </div>
                 </div>
             }

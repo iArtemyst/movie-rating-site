@@ -8,11 +8,49 @@ import { ratingStringEndings } from "./movie-interfaces";
 
 const WinningTextArray: string[] = [
     "Perfect!",
+    "Nearly Perfect!",
     "Excellent!",
     "Pretty Good!",
     "Close Enough!",
     "Sorry, That's Incorrect!",
 ];
+
+
+export function PlayerOverallRatingGraph({communityRating, playerRating}:{communityRating:number, playerRating:number}) {
+    const communityOverallScorePercentage = (communityRating/1500)*100;
+    const playerOverallScorePercentage = (playerRating/1500)*100;
+    
+    return (
+        <div className="overallScoreBarContainer">
+
+            <div className="w-full h-fit relative">
+                <p 
+                    className={`bg-[#00ff4c] overallScoreText`}
+                    style={{ left: `${playerOverallScorePercentage}%` }}>
+                    Your Score: {playerRating}/1500
+                </p>
+            </div>
+            <div className={`fullRatingBarBG bg-[#f5f5f5]`}>
+                <div 
+                    className={`overallScoreLine bg-[#ffbb00]`}
+                    style={{ left: `${communityOverallScorePercentage}%` }}
+                />
+                <div 
+                    className={`overallScoreLine bg-[#00ff4c]`}
+                    style={{ left: `${playerOverallScorePercentage}%` }}
+                />
+            </div>
+
+            <div className="w-full h-fit relative">
+                <p 
+                    className={`overallScoreText bg-[#ffbb00]`}
+                    style={{ left: `${communityOverallScorePercentage}%` }}>
+                    Community Avg: {communityRating}/1500
+                </p>
+            </div>
+        </div>
+    )
+}
 
 function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{correctRating:string, playerRating:number, sourceIndex:number}) {
     return (
@@ -24,13 +62,15 @@ function PlayerVsActualRatingsGraph({correctRating, playerRating, sourceIndex}:{
                 Actual Rating: {sourceIndex === 0 ? Number(correctRating).toFixed(1) + ratingStringEndings[sourceIndex] : correctRating + ratingStringEndings[sourceIndex] }</p>
             </div>
 
-            <div className={`fullRatingBarBG bg-slate-50`}>
+            <div className={`fullRatingBarBG bg-[#f5f5f5]`}>
                 <div 
                     className={`closeEnoughRatingBar bg-[#b13c46]`}
                     style={{ left: `${sourceIndex === 0 ? Number(correctRating)*10 : correctRating}%` }}>
                     <div className={`greatRatingBar bg-[#ff6a56]`}>
                         <div className={`excellentRatingBar bg-[#ff985d]`}>
-                            <div className={`perfectRatingBar bg-[#ffbb00]`} />
+                            <div className={`nearlyPerfectRatingBar bg-[#ffbb00]`}>
+                                <div className={`perfectRatingBar bg-[#fbff00]`} />
+                            </div>
                         </div>
                     </div>
                 </div>

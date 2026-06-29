@@ -691,16 +691,16 @@ main, body, html {
   position: relative;
   color: var(--text-variant);
   background-color: #001f1a;
-  padding-left: 4em;
-  padding-right: 4em;
-  padding-top: 3em;
-  padding-bottom:3em;
+  padding-left: 5em;
+  padding-right: 5em;
+  padding-top: 1.5em;
+  padding-bottom:2em;
   border-radius: 2em;
   align-self: center;
   place-self: center;
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: .5em;
   box-shadow: var(--shadow-style);
 
   @media screen and (max-width:560px) {
@@ -715,22 +715,22 @@ main, body, html {
 }
 
 .finalScoreTextPrimary {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-popup-color);
 
   @media screen and (max-width:560px) {
-    font-size:12px;
+    font-size:10px;
   }
 }
 
 .finalScoreTextSecondary {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--text-popup-color);
 
   @media screen and (max-width:560px) {
-    font-size:10px;
+    font-size:8px;
   }
 }
 
@@ -1406,9 +1406,18 @@ main, body, html {
   place-content: center;
 }
 
+.nearlyPerfectRatingBar {
+  position: relative;
+  width: 40%;
+  height: 100%;
+  z-index: 8;
+  display: flex;
+  place-content: center;
+}
+
 .perfectRatingBar {
   position: relative;
-  width: 10%;
+  width: 25%;
   height: 100%;
   z-index: 8;
   display: flex;
@@ -1422,6 +1431,27 @@ main, body, html {
   z-index: 10;
   translate: -50% 0%;
   box-shadow: var(--shadow-style);
+}
+
+.overallScoreLine {
+  position: absolute;
+  width: 1%;
+  height: 100%;
+  z-index: 10;
+  translate: -50% 0%;
+  box-shadow: var(--shadow-style);
+}
+
+.overallScoreBarContainer {
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .375em;
+  margin-bottom: 1.5em;
+  margin-top: .5em;
+  align-self: center;
 }
 
 .ratingBarComparisonContainer {
@@ -1464,6 +1494,37 @@ main, body, html {
 
   @media screen and (min-width:1280px) {
     font-size: 14px;
+  };
+}
+
+.overallScoreText {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  font-size: 11px;
+  padding-left: .75em;
+  padding-right: .75em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  text-wrap: none;
+  text-wrap-mode:nowrap;
+  border-radius: 2em;
+  translate: -50% 0%;
+  box-shadow: var(--shadow-style);
+  color: black;
+  font-weight:600;
+
+  @media screen and (max-width:560px) {
+    font-size:8px;
+  };
+
+  @media screen and (min-width:560px) and (max-width:768px) {
+    font-size: 10px;
+  };
+
+
+  @media screen and (min-width:1280px) {
+    font-size: 12px;
   };
 }
 
