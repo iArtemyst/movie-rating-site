@@ -45,7 +45,7 @@ export function PlayerOverallRatingGraph({communityRating, playerRating}:{commun
                 <p 
                     className={`overallScoreText bg-[#ffbb00]`}
                     style={{ left: `${communityOverallScorePercentage}%` }}>
-                    Community Avg: {communityRating}/1500
+                    Community Avg: {communityRating.toFixed(0)}/1500
                 </p>
             </div>
         </div>
