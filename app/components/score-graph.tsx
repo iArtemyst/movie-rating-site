@@ -172,18 +172,20 @@ export function TodaysFinalScoreScreen({movies, visible, playerStats, averageCom
                         <ShareScoreButton />
 
                         <div className="w-fit h-fit flex flex-col text-[8px] md:text-[12px] self-center mb-[-1em]">
-                            <TextWithStatsStyle 
-                                text="Games played:" 
-                                stats={String(playerStats?.totalGamesPlayed)} 
-                                divstyle="divCenterHorizontalText"
-                                textAStyle="finalScoreTextPrimary"
-                                textBStyle="finalScoreTextSecondary"/>
-                            <TextWithStatsStyle 
-                                text="Perfect games:" 
-                                stats={String(playerStats?.totalPerfectGames)} 
-                                divstyle="divCenterHorizontalText"
-                                textAStyle="finalScoreTextPrimary"
-                                textBStyle="finalScoreTextSecondary"/>
+                            <div className="w-fit h-fit flex flex-row gap-[.5em] self-center">
+                                <TextWithStatsStyle 
+                                    text="Games played:" 
+                                    stats={String(playerStats?.totalGamesPlayed)} 
+                                    divstyle="divCenterHorizontalText"
+                                    textAStyle="finalScoreTextPrimary"
+                                    textBStyle="finalScoreTextSecondary"/>
+                                <TextWithStatsStyle 
+                                    text="Perfect games:" 
+                                    stats={String(playerStats?.totalPerfectGames)} 
+                                    divstyle="divCenterHorizontalText"
+                                    textAStyle="finalScoreTextPrimary"
+                                    textBStyle="finalScoreTextSecondary"/>
+                            </div>
                             <p className="self-center place-self-center opacity-50 mt-[.5em] text-[6px] md:text-[10px]">
                                 {averageCommunityScores?.totalDailyPlayers ? averageCommunityScores.totalDailyPlayers : 1} {averageCommunityScores?.totalDailyPlayers ? "Players" : "Player"} Today
                             </p>
